@@ -39,15 +39,24 @@ function parseHash(): Route {
 const app = document.getElementById('app')!;
 app.innerHTML = `
   <header class="topbar">
-    <a class="brand" href="#/esplora"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">Platform STEM</span></a>
+    <a class="brand" href="#/esplora" data-ref="brand"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">Platform STEM</span></a>
     <nav class="tabs" aria-label="Sezioni">
       ${SECTIONS.map(s => `<a class="tab" data-section="${s.id}" href="#/${s.id}"><svg viewBox="0 0 24 24" aria-hidden="true">${s.icon}</svg><span>${s.label}</span></a>`).join('')}
     </nav>
-    <div class="machine-name" data-ref="machine"></div>
+    <label class="machine-pick">
+      <span class="visually-hidden">Modulo</span>
+      <select data-ref="machine" aria-label="Scegli il modulo">
+        ${MACHINES.map(m => `<option value="${m.id}">${m.module} · ${m.title}</option>`).join('')}
+      </select>
+    </label>
   </header>
   <main class="views" data-ref="views"><div class="loading">Caricamento…</div></main>`;
 const viewsEl = app.querySelector<HTMLElement>('[data-ref="views"]')!;
-const machineEl = app.querySelector<HTMLElement>('[data-ref="machine"]')!;
+const machineEl = app.querySelector<HTMLSelectElement>('[data-ref="machine"]')!;
+machineEl.addEventListener('change', () => {
+  // stessa sezione, altro modulo
+  location.hash = `#/${parseHash().section}/${machineEl.value}`;
+});
 
 interface View { el: HTMLElement; show?(): void; hide?(): void; explore?: ExploreView }
 const views = new Map<string, Promise<View>>();
@@ -66,6 +75,8 @@ async function makeView(section: SectionId, data: MachineData): Promise<View> {
 async function navigate() {
   const route = parseHash();
   const my = ++seq;
+  app.querySelector<HTMLAnchorElement>('[data-ref="brand"]')!.href = `#/esplora/${route.machine}`;
+  machineEl.value = route.machine;
   app.querySelectorAll<HTMLAnchorElement>('.tab').forEach(t => {
     const on = t.dataset.section === route.section;
     t.href = `#/${t.dataset.section}/${route.machine}`;
@@ -88,7 +99,7 @@ async function navigate() {
   const data = await loadMachine(route.machine);
   const label = SECTIONS.find(s => s.id === route.section)!.label;
   document.title = `${label} · ${data.title} · Platform STEM`;
-  machineEl.textContent = data.title;
+  machineEl.value = route.machine;
 
   if (current !== view) {
     current?.hide?.();

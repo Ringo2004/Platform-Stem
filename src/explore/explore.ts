@@ -23,6 +23,7 @@ export interface ExploreView {
 export function createExplore(data: MachineData): ExploreView {
   const el = document.createElement('div');
   el.className = 'explore';
+  const cycle = data.cycle;
   const stops = data.temperature.stops;
   const tMin = stops[0][0], tMax = stops[stops.length - 1][0];
   const gradient = stops.map(([t, c]) => `${c} ${Math.round((t - tMin) / (tMax - tMin) * 100)}%`).join(', ');
@@ -74,13 +75,27 @@ export function createExplore(data: MachineData): ExploreView {
     <section class="group">
       <h3>Visualizzazione</h3>
       <div class="toggles">
-        <label class="tg"><input type="checkbox" data-ref="tSpin"> Rotori in moto</label>
+        <label class="tg"><input type="checkbox" data-ref="tSpin"> ${esc(data.spinToggle ?? 'Rotori in moto')}</label>
         <label class="tg"><input type="checkbox" data-ref="tExplode"> Vista esplosa</label>
         <label class="tg"><input type="checkbox" data-ref="tTemp"> Mappa temperature</label>
         <label class="tg"><input type="checkbox" data-ref="tCasing" checked> Casse esterne</label>
-        <label class="tg"><input type="checkbox" data-ref="tStations" checked> Stazioni del ciclo</label>
+        ${data.stations.length ? '<label class="tg"><input type="checkbox" data-ref="tStations" checked> Stazioni del ciclo</label>' : ''}
       </div>
     </section>
+
+    ${cycle ? `
+    <section class="group wide cycle">
+      <h3>${esc(cycle.title)}</h3>
+      <div class="range">
+        <label><span>Angolo di manovella</span><output data-ref="oTheta"></output></label>
+        <input type="range" data-ref="rTheta" min="0" max="${cycle.length}" step="1" aria-label="Angolo di manovella">
+      </div>
+      <div class="cyls">
+        ${cycle.cylinders.map((cy, i) => `<div class="cyl" data-cyl="${i}"><span class="cyl-n">${esc(cy.label)}</span><span class="stroke"><span class="dot"></span><span class="stroke-name"></span></span><span class="cyl-bar"><i></i></span></div>`).join('')}
+      </div>
+      <div class="strokes">${cycle.strokes.map(st => `<span><span class="dot" style="background:${st.color}"></span>${esc(st.name)}</span>`).join('')}</div>
+      ${cycle.note ? `<p class="note">${esc(cycle.note)}</p>` : ''}
+    </section>` : ''}
 
     <section class="info wide" data-ref="info" aria-live="polite"></section>
 
@@ -154,7 +169,7 @@ export function createExplore(data: MachineData): ExploreView {
   /* ---------------- Modello */
   const model: MachineModel = buildModel(data, planes);
   scene.add(model.root);
-  const { comps, pickables, allMats, spools } = model;
+  const { comps, pickables, allMats } = model;
   const tempColor = temperatureScale(stops);
 
   /* ---------------- Stato e interfaccia */
@@ -225,7 +240,7 @@ export function createExplore(data: MachineData): ExploreView {
     updatePlanes();
     $('oAlpha').textContent = `${cut.alpha}°`;
     $('oCenter').textContent = `${cut.center}°`;
-    $('oExtent').textContent = cut.extent >= 100 ? 'tutta la macchina' : `x = ${(X_MIN + (X_MAX - X_MIN) * cut.extent / 100).toFixed(2).replace('.', ',')} m`;
+    $('oExtent').textContent = cut.extent >= 100 ? 'tutta la macchina' : `x = ${((X_MIN + (X_MAX - X_MIN) * cut.extent / 100) * (data.section.scale ?? 1)).toFixed(data.section.unit ? 0 : 2).replace('.', ',')} ${data.section.unit ?? 'm'}`;
     segBtns.forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.preset) === cut.alpha)));
   }
   segBtns.forEach(b => b.addEventListener('click', () => { cut.alpha = Number(b.dataset.preset); rAlpha.value = String(cut.alpha); syncCut(); }));
@@ -237,7 +252,7 @@ export function createExplore(data: MachineData): ExploreView {
   checkbox('tExplode', on => { state.explode = on; fitView(state.explode); });
   checkbox('tTemp', on => { state.temp = on; applyColors(); });
   checkbox('tCasing', on => { state.casing = on; applyCasing(); });
-  checkbox('tStations', on => { state.stations = on; });
+  if (data.stations.length) checkbox('tStations', on => { state.stations = on; });
   $('resetView').addEventListener('click', () => fitView(state.explode));
   const togglePanel = $('togglePanel');
   togglePanel.addEventListener('click', () => {
@@ -303,7 +318,7 @@ export function createExplore(data: MachineData): ExploreView {
     const center = box.getCenter(new THREE.Vector3());
     const offset = camera.position.clone().sub(controls.target);
     const size = box.getSize(new THREE.Vector3()).length();
-    const dist = THREE.MathUtils.clamp(size * 1.6, 2.2, offset.length());
+    const dist = THREE.MathUtils.clamp(size * 1.6, v.focusMin ?? 2.2, offset.length());
     animateTo(center.clone().add(offset.setLength(dist)), center);
   }
 
@@ -331,7 +346,9 @@ export function createExplore(data: MachineData): ExploreView {
       const id = h.object.userData.comp as string;
       if (!worldVisible(h.object)) return false;
       if (state.isolate && state.selected && id !== state.selected) return false;
-      return !isClipped(h.point);
+      // le parti che il taglio non seziona restano selezionabili anche dentro il cuneo
+      const mat = (h.object as THREE.Mesh).material as THREE.Material;
+      return !mat.clippingPlanes?.length || !isClipped(h.point);
     });
     if (hits.length) { const id = hits[0].object.userData.comp as string; select(state.selected === id ? null : id, { scroll: true }); }
     else select(null);
@@ -352,11 +369,60 @@ export function createExplore(data: MachineData): ExploreView {
   syncCut(); applyColors(); applyHighlight(); applyCasing(); renderInfo(); updateRpm();
 
   const clock = new THREE.Clock();
-  const spinning = [...spools].map(([id, g]) => ({ g, speed: data.spools[id].speed }));
+  /* ---------------- Alberi: angoli (rad). Gli alberi con "of" seguono un altro albero con un rapporto */
+  const angles: Record<string, number> = {};
+  const spoolIds = Object.keys(data.spools);
+  spoolIds.forEach(id => { angles[id] = 0; });
+  const roots = spoolIds.filter(id => !data.spools[id].of);
+  function resolveFollowers() {
+    for (let pass = 0; pass < spoolIds.length; pass++) for (const id of spoolIds) {
+      const sd = data.spools[id];
+      if (sd.of) angles[id] = (angles[sd.of] ?? 0) * (sd.ratio ?? 1);
+    }
+  }
+
+  /* ---------------- Fasi del ciclo (motori alternativi) */
+  let lastTheta = -1;
+  function updateCycle(force = false) {
+    if (!cycle) return;
+    const len = cycle.length;
+    const theta = ((Math.round((angles[cycle.spool] ?? 0) / Math.PI * 180) % len) + len) % len;
+    if (theta === lastTheta && !force) return;
+    lastTheta = theta;
+    $<HTMLInputElement>('rTheta').value = String(theta);
+    $('oTheta').textContent = `θ = ${theta}°`;
+    const n = cycle.strokes.length, span = len / n;
+    el.querySelectorAll<HTMLElement>('.cyl').forEach(row => {
+      const cy = cycle.cylinders[Number(row.dataset.cyl)];
+      const local = (((theta - cy.offset) % len) + len) % len, k = Math.floor(local / span);
+      const st = cycle.strokes[k];
+      (row.querySelector('.stroke .dot') as HTMLElement).style.background = st.color;
+      row.querySelector('.stroke-name')!.textContent = st.name;
+      const bar = row.querySelector('.cyl-bar i') as HTMLElement;
+      bar.style.width = `${((local % span) / span * 100).toFixed(1)}%`;
+      bar.style.background = st.color;
+    });
+  }
+  if (cycle) {
+    const r = $<HTMLInputElement>('rTheta');
+    r.addEventListener('input', () => {
+      // muovendo il cursore il motore si ferma: si studia una posizione alla volta
+      if (state.spin) { state.spin = false; tSpin.checked = false; updateRpm(); }
+      angles[cycle.spool] = Number(r.value) * Math.PI / 180;
+      resolveFollowers(); updateCycle(true);
+    });
+    updateCycle(true);
+  }
+
   let raf = 0;
   function frame() {
     const dt = Math.min(clock.getDelta(), 0.05);
-    if (state.spin) spinning.forEach(s => { s.g.rotation.x += dt * s.speed; });
+    if (state.spin) {
+      for (const id of roots) angles[id] = (angles[id] + dt * (data.spools[id].speed ?? 0)) % (Math.PI * 8);
+      resolveFollowers();
+      updateCycle();
+    }
+    model.update(angles, state.selected);
     const target = state.explode ? 1 : 0;
     ex += (target - ex) * Math.min(1, dt * (reduced ? 60 : 3.5));
     Object.values(comps).forEach(c => { c.group.position.copy(c.explode).multiplyScalar(ex); c.parts.forEach(p => p.obj.position.copy(p.dir).multiplyScalar(ex)); });

@@ -22,6 +22,12 @@
   "spools": {"gg":{"speed":1.6},"pt":{"speed":0.6}},
   "spinLabel": "GG ≈ 9.500 rpm · PT 3.600 rpm",
   "spinNote": "Rotori al rallentatore",
+  "spinToggle": "Rotori in moto",
+  "practice": [
+    ["Riconosci il componente", "Il modello evidenzia un pezzo: scegli il nome giusto tra quelli proposti."],
+    ["Segui il flusso", "Metti in ordine i componenti attraversati dall’aria e dai gas, dall’aspirazione allo scarico."],
+    ["Calcoli sul ciclo Joule-Brayton", "Lavoro di compressione, calore fornito, rendimento: esercizi numerici con i dati della macchina."]
+  ],
   "section": {"xMin":-0.65,"xMax":6.3,"alpha":90,"center":60,"extent":100},
   "view": {
     "fov": 32,

@@ -5,11 +5,7 @@ import { esc } from '../util';
 export function createPractice(data: MachineData): HTMLElement {
   const el = document.createElement('div');
   el.className = 'page practice';
-  const planned = [
-    ['Riconosci il componente', 'Il modello evidenzia un pezzo: scegli il nome giusto tra quelli proposti.'],
-    ['Segui il flusso', 'Metti in ordine i componenti attraversati dall’aria e dai gas, dall’aspirazione allo scarico.'],
-    ['Calcoli sul ciclo Joule-Brayton', 'Lavoro di compressione, calore fornito, rendimento: esercizi numerici con i dati della macchina.']
-  ];
+  const planned = data.practice ?? [['Riconosci il componente', 'Il modello evidenzia un pezzo: scegli il nome giusto tra quelli proposti.']];
   el.innerHTML = `
   <div class="page-inner">
     <header class="page-head">
