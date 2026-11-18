@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import type { Card, MachineData } from '../machines/types';
 import { buildModel, temperatureScale, type MachineModel } from './model';
+import { COLOR_INFO, FlowArrows, solveFlow, triangleSvg, type ColorMode, type FlowResult } from './flow';
 import { esc, factsHtml } from '../util';
 
 /*
@@ -24,6 +25,7 @@ export function createExplore(data: MachineData): ExploreView {
   const el = document.createElement('div');
   el.className = 'explore';
   const cycle = data.cycle;
+  const flowDef = data.flow;
   const stops = data.temperature.stops;
   const tMin = stops[0][0], tMax = stops[stops.length - 1][0];
   const gradient = stops.map(([t, c]) => `${c} ${Math.round((t - tMin) / (tMax - tMin) * 100)}%`).join(', ');
@@ -41,10 +43,13 @@ export function createExplore(data: MachineData): ExploreView {
       <button class="btn" data-ref="togglePanel" type="button" aria-expanded="true">Nascondi comandi</button>
     </div>
     <div data-ref="stations"></div>
-    <div class="legend" data-ref="legend">
-      <div>${esc(data.temperature.label)}</div>
-      <div class="bar" style="background: linear-gradient(90deg, ${gradient})"></div>
-      <div class="ticks">${stops.map(([t]) => `<span>${t}</span>`).join('')}</div>
+    <div class="legends">
+      ${flowDef ? '<div class="legend on" data-ref="flowLegend"></div>' : ''}
+      <div class="legend" data-ref="legend">
+        <div>${esc(data.temperature.label)}</div>
+        <div class="bar" style="background: linear-gradient(90deg, ${gradient})"></div>
+        <div class="ticks">${stops.map(([t]) => `<span>${t}</span>`).join('')}</div>
+      </div>
     </div>
     <div class="hint"><span class="tip">Trascina per ruotare · pizzica o scorri per lo zoom · tocca un componente</span><span class="rpm" data-ref="rpm"></span></div>
     <div class="err" data-ref="err">Questo browser non supporta WebGL: il modello 3D non può essere mostrato.</div>
@@ -95,6 +100,36 @@ export function createExplore(data: MachineData): ExploreView {
       </div>
       <div class="strokes">${cycle.strokes.map(st => `<span><span class="dot" style="background:${st.color}"></span>${esc(st.name)}</span>`).join('')}</div>
       ${cycle.note ? `<p class="note">${esc(cycle.note)}</p>` : ''}
+    </section>` : ''}
+
+    ${flowDef ? `
+    <section class="group wide flow">
+      <h3>${esc(flowDef.title)}</h3>
+      <div class="toggles">
+        <label class="tg"><input type="checkbox" data-ref="tFlow" checked> Frecce del flusso</label>
+        <label class="tg tg-select"><span>Colore</span>
+          <select data-ref="sFlowColor" aria-label="Grandezza mostrata dal colore delle frecce">
+            <option value="T">Temperatura</option><option value="p">Pressione</option><option value="c">Velocità</option>
+          </select>
+        </label>
+      </div>
+      <div class="range">
+        <label><span>Velocità di rotazione</span><output data-ref="oRpm"></output></label>
+        <input type="range" data-ref="rRpm" min="${flowDef.limits.rpm[0]}" max="${flowDef.limits.rpm[1]}" step="100" aria-label="Velocità di rotazione">
+      </div>
+      <div class="range">
+        <label><span>Portata</span><output data-ref="oMdot"></output></label>
+        <input type="range" data-ref="rMdot" min="${flowDef.limits.mdot[0]}" max="${flowDef.limits.mdot[1]}" step="0.01" aria-label="Portata">
+      </div>
+      <div class="flow-warn" data-ref="flowWarn" role="status" hidden></div>
+      <dl class="facts" data-ref="flowFacts"></dl>
+      <div class="tris">
+        <figure><figcaption>Triangolo in ingresso alla girante (raggio medio)</figcaption><div data-ref="triIn"></div></figure>
+        <figure><figcaption>Triangolo in uscita dalla girante</figcaption><div data-ref="triOut"></div></figure>
+        <div class="tri-key"><span class="tc">c velocità assoluta</span><span class="tw">w velocità relativa</span><span class="tu">u velocità periferica</span><span class="tb">direzione della pala</span></div>
+      </div>
+      <div class="actions"><button class="btn" type="button" data-ref="flowReset">Torna al punto di progetto</button></div>
+      <p class="note">${esc(flowDef.note)}</p>
     </section>` : ''}
 
     <section class="info wide" data-ref="info" aria-live="polite"></section>
@@ -175,6 +210,9 @@ export function createExplore(data: MachineData): ExploreView {
   /* ---------------- Stato e interfaccia */
   const state = { spin: !reduced, explode: false, temp: false, casing: true, stations: true, selected: null as string | null, isolate: false, panel: true };
   let ex = 0;
+  let flowRes: FlowResult | null = null;
+  let flowArrows: FlowArrows | null = null;
+  let flowOn = true;
   const tSpin = $<HTMLInputElement>('tSpin'); tSpin.checked = state.spin;
 
   function applyColors() {
@@ -261,7 +299,10 @@ export function createExplore(data: MachineData): ExploreView {
     togglePanel.textContent = state.panel ? 'Nascondi comandi' : 'Mostra comandi';
     togglePanel.setAttribute('aria-expanded', String(state.panel));
   });
-  function updateRpm() { $('rpm').innerHTML = state.spin ? `<span class="long">${esc(data.spinNote)} · </span>${esc(data.spinLabel)}` : ''; }
+  function updateRpm() {
+    const label = flowRes ? `nella realtà ${flowRes.rpm.toLocaleString('it-IT')} giri/min` : data.spinLabel;
+    $('rpm').innerHTML = state.spin ? `<span class="long">${esc(data.spinNote)} · </span>${esc(label)}` : '';
+  }
 
   /* ---------------- Stazioni del ciclo */
   const stEls = data.stations.map(s => {
@@ -277,7 +318,7 @@ export function createExplore(data: MachineData): ExploreView {
     const w = viewer.clientWidth, h = viewer.clientHeight;
     data.stations.forEach((s, i) => {
       const d = stEls[i];
-      tmpV.set(s.x, s.y, 0).project(camera);
+      tmpV.set(s.x, s.y, s.z ?? 0).project(camera);
       const vis = show && tmpV.z < 1 && Math.abs(tmpV.x) < 1.05 && Math.abs(tmpV.y) < 1.05;
       d.style.display = vis ? 'flex' : 'none';
       if (vis) d.style.transform = `translate(${(tmpV.x * 0.5 + 0.5) * w}px, ${(-tmpV.y * 0.5 + 0.5) * h - 16}px) translate(${s.flip ? 'calc(-100% + 10px)' : '-10px'}, -100%)`;
@@ -286,7 +327,7 @@ export function createExplore(data: MachineData): ExploreView {
 
   /* ---------------- Camera: inquadratura, focus */
   const VIEW_DIR = new THREE.Vector3();
-  const viewDir = () => (camera.aspect < 1 ? VIEW_DIR.set(1.15, 0.55, 0.85).normalize() : VIEW_DIR.set(0.62, 0.42, 1.0).normalize());
+  const viewDir = () => (camera.aspect < 1 ? VIEW_DIR.set(...(v.dirPortrait ?? [1.15, 0.55, 0.85])).normalize() : VIEW_DIR.set(...(v.dir ?? [0.62, 0.42, 1.0])).normalize());
   const camAnim = { active: false, t: 0, fromP: new THREE.Vector3(), toP: new THREE.Vector3(), fromT: new THREE.Vector3(), toT: new THREE.Vector3() };
   function animateTo(pos: THREE.Vector3, target: THREE.Vector3) {
     camAnim.fromP.copy(camera.position); camAnim.toP.copy(pos);
@@ -374,6 +415,61 @@ export function createExplore(data: MachineData): ExploreView {
   const spoolIds = Object.keys(data.spools);
   spoolIds.forEach(id => { angles[id] = 0; });
   const roots = spoolIds.filter(id => !data.spools[id].of);
+
+  /* ---------------- Simulazione del flusso (compressori) */
+  const spoolSpeed = (id: string) =>
+    flowDef && flowRes && id === flowDef.spool ? (flowRes.rpm * 2 * Math.PI) / 60 / flowDef.timeScale : data.spools[id].speed ?? 0;
+  if (flowDef) {
+    const fd = flowDef;
+    flowArrows = new FlowArrows(fd);
+    scene.add(flowArrows.mesh);
+    const rRpm = $<HTMLInputElement>('rRpm'), rMdot = $<HTMLInputElement>('rMdot'), sel = $<HTMLSelectElement>('sFlowColor');
+    const num = (v: number, d = 0) => v.toLocaleString('it-IT', { minimumFractionDigits: d, maximumFractionDigits: d });
+    const legend = () => {
+      const mode = flowArrows!.mode, info = COLOR_INFO[mode], st = fd.colors[mode];
+      const lo = st[0][0], hi = st[st.length - 1][0];
+      const grad = st.map(([vv, c]) => `${c} ${Math.round((vv - lo) / (hi - lo) * 100)}%`).join(', ');
+      $('flowLegend').innerHTML = `<div>${esc(info.label)} (${info.unit})</div><div class="bar" style="background: linear-gradient(90deg, ${grad})"></div><div class="ticks">${st.map(([vv]) => `<span>${num(vv)}</span>`).join('')}</div>`;
+    };
+    const solve = () => {
+      const rpm = Number(rRpm.value), mdot = Number(rMdot.value);
+      flowRes = solveFlow(fd, rpm, mdot);
+      flowArrows!.setResult(flowRes);
+      const r = flowRes;
+      $('oRpm').textContent = `${num(rpm)} giri/min`;
+      $('oMdot').textContent = `${num(mdot, 2)} kg/s`;
+      $('flowFacts').innerHTML = ([
+        ['Rapporto di compressione (totale)', `${num(r.pr, 2)} : 1`],
+        ['Pressione totale di mandata', `${num(r.p04 / 1e5, 2)} bar`],
+        ['Temperatura totale di mandata', `${num(r.T02 - 273.15)} °C`],
+        ['Lavoro (equazione di Eulero)', `${num(r.work / 1000, 1)} kJ/kg`],
+        ['Potenza assorbita', `${num(r.power / 1000)} kW`],
+        ['Rendimento dello stadio', `${num(r.etaStage * 100, 1)} %`],
+        ['Velocità periferica u₂', `${num(r.u2)} m/s`],
+        ['Fattore di scorrimento σ', num(r.sigma, 3)],
+        ['Incidenza al raggio medio', `${r.incidence >= 0 ? '+' : '−'}${num(Math.abs(r.incidence), 1)}°`],
+        ['Mach relativo all’apice d’ingresso', num(r.machRelTip, 2)]
+      ] as [string, string][]).map(([k, val]) => `<dt>${esc(k)}</dt><dd>${esc(val)}</dd>`).join('');
+      $('triIn').innerHTML = triangleSvg(r.inlet, 'in');
+      $('triOut').innerHTML = triangleSvg(r.outlet, 'out');
+      const warn = $('flowWarn');
+      const msgs: string[] = [];
+      if (r.surge) msgs.push('Portata troppo bassa per questi giri: l’incidenza è elevata e la macchina è vicina al pompaggio (flusso instabile, inversioni di portata).');
+      if (r.choke) msgs.push('Velocità vicine a quella del suono: la macchina è vicina al blocco sonico e la portata non può crescere oltre.');
+      if (!r.surge && r.incidence < -8) msgs.push('Incidenza negativa elevata: portata alta per questi giri, il rendimento cala.');
+      warn.hidden = !msgs.length;
+      warn.innerHTML = msgs.map(m => `<p>${esc(m)}</p>`).join('');
+      updateRpm();
+    };
+    rRpm.value = String(fd.design.rpm); rMdot.value = String(fd.design.mdot);
+    rRpm.addEventListener('input', solve);
+    rMdot.addEventListener('input', solve);
+    sel.addEventListener('change', () => { flowArrows!.mode = sel.value as ColorMode; legend(); flowArrows!.update(0); });
+    $<HTMLInputElement>('tFlow').addEventListener('change', e => { flowOn = (e.target as HTMLInputElement).checked; $('flowLegend').classList.toggle('on', flowOn); });
+    $('flowReset').addEventListener('click', () => { rRpm.value = String(fd.design.rpm); rMdot.value = String(fd.design.mdot); solve(); });
+    legend();
+    solve();
+  }
   function resolveFollowers() {
     for (let pass = 0; pass < spoolIds.length; pass++) for (const id of spoolIds) {
       const sd = data.spools[id];
@@ -418,11 +514,15 @@ export function createExplore(data: MachineData): ExploreView {
   function frame() {
     const dt = Math.min(clock.getDelta(), 0.05);
     if (state.spin) {
-      for (const id of roots) angles[id] = (angles[id] + dt * (data.spools[id].speed ?? 0)) % (Math.PI * 8);
+      for (const id of roots) angles[id] = (angles[id] + dt * spoolSpeed(id)) % (Math.PI * 8);
       resolveFollowers();
       updateCycle();
     }
     model.update(angles, state.selected);
+    if (flowArrows) {
+      flowArrows.mesh.visible = flowOn && ex < 0.05;
+      if (state.spin && flowArrows.mesh.visible) flowArrows.update(dt);
+    }
     const target = state.explode ? 1 : 0;
     ex += (target - ex) * Math.min(1, dt * (reduced ? 60 : 3.5));
     Object.values(comps).forEach(c => { c.group.position.copy(c.explode).multiplyScalar(ex); c.parts.forEach(p => p.obj.position.copy(p.dir).multiplyScalar(ex)); });

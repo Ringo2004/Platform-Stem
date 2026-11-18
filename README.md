@@ -6,6 +6,7 @@ Piattaforma didattica sulle macchine a fluido, con modelli 3D sezionabili (Three
 | --- | --- | --- |
 | Modulo 1 | Turbogas aeroderivativo **GE LM2500** | `src/machines/lm2500.json` |
 | Modulo 2 | Motore a benzina, ciclo Otto, **FIAT FIRE 1.2 8V** (169A4000) | `src/machines/fire12.json` |
+| Modulo 3 | Compressore centrifugo con girante **Eckardt O** e simulazione del flusso | `src/machines/eckardt.json` |
 
 Il modulo si sceglie dal menu in alto a destra; la scheda aperta (Esplora, Esercitati, Teoria) resta la stessa.
 
@@ -24,6 +25,15 @@ Nel modulo del motore a benzina il pannello **Ciclo Otto a quattro tempi** ha il
 (0–720°) e mostra la fase di ogni cilindro; nel modello la colonna di gas nei cilindri cambia colore con la fase.
 Pistoni, bielle, valvole, molle e pulegge si muovono in modo coerente con l'albero motore.
 
+Nel modulo del compressore centrifugo il pannello **Simulazione del flusso** mostra frecce che si muovono lungo
+48 linee di corrente con la velocità calcolata e un colore che segue temperatura, pressione o velocità del fluido.
+Giri e portata si possono cambiare: si aggiornano rapporto di compressione, lavoro, potenza, rendimento, i
+triangoli di velocità in ingresso e in uscita dalla girante e gli avvisi di pompaggio e blocco sonico.
+Il modello (`src/explore/flow.ts`) è monodimensionale lungo le linee di corrente: continuità, equazione di Eulero
+con fattore di scorrimento, conservazione del momento della quantità di moto nel diffusore e perdite tramite i
+rendimenti. Non è una CFD vera e propria, ma nel punto di progetto riproduce i dati misurati da Eckardt
+(β = 2,094, η ≈ 88 %).
+
 ## Pubblicazione
 
 A ogni modifica del ramo `main` il workflow `.github/workflows/deploy.yml` compila il progetto e lo pubblica su
@@ -40,10 +50,13 @@ src/main.ts                schede e navigazione
 src/style.css              tema e layout (desktop, iPad orizzontale/verticale, telefono)
 src/explore/explore.ts     sezione Esplora: renderer, comandi, selezione
 src/explore/model.ts       costruisce le geometrie 3D a partire dai dati
+src/explore/flow.ts        simulazione semplificata del flusso, frecce animate, triangoli di velocità
+src/explore/geom.ts        funzioni geometriche condivise (chiocciola, superfici a griglia)
 src/pages/theory.ts        sezione Teoria
 src/pages/practice.ts      sezione Esercitati
 src/machines/lm2500.json   modulo 1: geometria, componenti, testi, valori
 src/machines/fire12.json   modulo 2: motore a benzina FIAT FIRE 1.2 8V
+src/machines/eckardt.json  modulo 3: compressore centrifugo Eckardt O
 src/machines/types.ts      formato dei file macchina (commentato)
 src/machines/index.ts      elenco delle macchine disponibili
 public/                    icone e manifest (installazione su schermata Home dell'iPad)
@@ -60,7 +73,9 @@ prototipo/                 il prototipo originale in un solo file HTML, per rife
      `box`, `bar` (cilindro tra due punti), `tube` (condotti e molle a elica);
    - parti mobili: alberi rotanti (`spools`, anche con asse fuori centro o trascinati con un rapporto),
      `motion` per pistoni, bielle e valvole (`kinematics`), colonna di gas `charge` e pannello `cycle`
-     per i motori alternativi.
+     per i motori alternativi;
+   - macchine radiali: girante `impeller` (pale tra profilo del mozzo e della cassa), chiocciola `volute`
+     e blocco `flow` per la simulazione del flusso.
 2. Aggiungi la voce in `src/machines/index.ts` (comparirà nel menu dei moduli).
 3. La macchina sarà raggiungibile con `#/esplora/<id>`, `#/teoria/<id>`, `#/esercitati/<id>`.
 

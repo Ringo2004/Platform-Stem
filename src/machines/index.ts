@@ -19,7 +19,8 @@ export interface MachineEntry {
  */
 export const MACHINES: MachineEntry[] = [
   { id: 'lm2500', module: 'Modulo 1', kind: 'Turbogas', title: 'GE LM2500', load: () => import('./lm2500.json').then(m => m.default as unknown as MachineData) },
-  { id: 'fire12', module: 'Modulo 2', kind: 'Motore a benzina', title: 'FIAT FIRE 1.2 8V', load: () => import('./fire12.json').then(m => m.default as unknown as MachineData) }
+  { id: 'fire12', module: 'Modulo 2', kind: 'Motore a benzina', title: 'FIAT FIRE 1.2 8V', load: () => import('./fire12.json').then(m => m.default as unknown as MachineData) },
+  { id: 'eckardt', module: 'Modulo 3', kind: 'Compressore centrifugo', title: 'Compressore Eckardt O', load: () => import('./eckardt.json').then(m => m.default as unknown as MachineData) }
 ];
 
 export const DEFAULT_MACHINE = MACHINES[0].id;
