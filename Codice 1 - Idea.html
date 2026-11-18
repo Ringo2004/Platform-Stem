@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Turbogas LM2500 in sezione</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Single dark "officina" theme: slate workshop background, amber = heat accent */
+  --bg: #0c1217;
+  --panel: #121a21;
+  --raise: #18222b;
+  --line: #24323d;
+  --ink: #e3eaef;
+  --muted: #8d9ca8;
+  --accent: #f0a43a;
+  --accent-ink: #1b1206;
+  --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  /* layout: 3D viewer + docked control panel (right on desktop, below on phones) */
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.45; }
+#app { display: grid; height: 100%; grid-template-columns: minmax(0, 1fr) 368px; }
+#viewer { position: relative; min-height: 0; min-width: 0; overflow: hidden; background: radial-gradient(ellipse 70% 60% at 50% 42%, #1a2630 0%, var(--bg) 72%); }
+#c { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+#c:active { cursor: grabbing; }
+#panel { min-height: 0; overflow-y: auto; background: var(--panel); border-left: 1px solid var(--line); padding: 18px 18px 28px; display: flex; flex-direction: column; gap: 22px; }
+
+.titleblock { position: absolute; top: 14px; left: 16px; right: 120px; pointer-events: none; }
+.eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: 34px; line-height: 1; margin: 4px 0 4px; letter-spacing: .01em; text-wrap: balance; }
+.sub { margin: 0; color: var(--muted); font-size: 13px; }
+.viewbtns { position: absolute; top: 14px; right: 14px; display: flex; gap: 8px; }
+.hint { position: absolute; left: 16px; bottom: 12px; right: 16px; font-size: 12px; color: var(--muted); pointer-events: none; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.hint .rpm { font-family: var(--font-mono); color: var(--ink); opacity: .85; }
+.legend { position: absolute; right: 14px; bottom: 40px; width: 210px; background: rgba(18, 26, 33, .9); border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px 7px; font-size: 11px; display: none; }
+.legend.on { display: block; }
+.legend .bar { height: 9px; border-radius: 3px; margin: 6px 0 3px; background: linear-gradient(90deg, #3d6fb0 0%, #3fa7a0 19%, #d9c94a 39%, #ec8a2f 64%, #d6372a 100%); }
+.legend .ticks { display: flex; justify-content: space-between; font-family: var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.station { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--ink); white-space: nowrap; pointer-events: none; transform: translate(-50%, -100%); }
+.station b { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-family: var(--font-mono); font-size: 11px; font-weight: 500; }
+.station span { background: rgba(12, 18, 23, .78); padding: 2px 6px; border-radius: 4px; }
+.station.rev { flex-direction: row-reverse; }
+.station.rev::after { left: auto; right: 10px; }
+.station::after { content: ""; position: absolute; left: 10px; top: 100%; width: 1px; height: 16px; background: var(--accent); opacity: .7; }
+
+button { font: inherit; color: inherit; }
+.btn { background: var(--raise); border: 1px solid var(--line); border-radius: 7px; padding: 7px 12px; font-size: 13px; cursor: pointer; }
+.btn:hover { border-color: #3a4c5a; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 25px; line-height: 1.05; margin: 2px 0 8px; text-wrap: balance; }
+h3 { font-family: var(--font-mono); font-weight: 500; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+.group { display: flex; flex-direction: column; gap: 12px; }
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); background: var(--raise); border: 1px solid var(--line); border-radius: 8px; padding: 3px; gap: 3px; }
+.seg button { background: transparent; border: 0; border-radius: 6px; padding: 7px 4px; font-size: 13px; cursor: pointer; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.range label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+.range output { font-family: var(--font-mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+input[type="range"] { width: 100%; accent-color: var(--accent); margin: 0; }
+.toggles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tg { display: flex; align-items: center; gap: 9px; background: var(--raise); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 13px; cursor: pointer; user-select: none; }
+.tg input { appearance: none; width: 30px; height: 17px; border-radius: 9px; background: #2c3a46; position: relative; flex: none; margin: 0; cursor: pointer; transition: background .15s; }
+.tg input::after { content: ""; position: absolute; top: 2px; left: 2px; width: 13px; height: 13px; border-radius: 50%; background: #c8d2da; transition: transform .15s; }
+.tg input:checked { background: var(--accent); }
+.tg input:checked::after { transform: translateX(13px); background: var(--accent-ink); }
+
+.info { background: var(--raise); border: 1px solid var(--line); border-radius: 10px; padding: 14px 15px 15px; }
+.tag { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.dot { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.info p { margin: 0 0 12px; max-width: 65ch; }
+.facts { display: grid; grid-template-columns: auto 1fr; gap: 5px 14px; margin: 0 0 12px; font-size: 13px; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; font-family: var(--font-mono); font-size: 12.5px; font-variant-numeric: tabular-nums; text-align: right; }
+.course { border-left: 3px solid var(--accent); background: rgba(240, 164, 58, .07); padding: 8px 11px; border-radius: 0 6px 6px 0; font-size: 13px; margin-bottom: 12px; }
+.course strong { display: block; font-family: var(--font-mono); font-size: 10.5px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 2px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 7px; background: var(--raise); border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px 5px 8px; font-size: 12.5px; cursor: pointer; }
+.chip[aria-pressed="true"] { border-color: var(--accent); background: rgba(240, 164, 58, .12); }
+.note { font-size: 12px; color: var(--muted); margin: 0; max-width: 65ch; }
+#err { position: absolute; inset: 0; display: none; place-items: center; padding: 24px; text-align: center; color: var(--muted); }
+
+@media (max-width: 820px) {
+  #app { grid-template-columns: 1fr; grid-template-rows: 56% minmax(0, 1fr); }
+  #panel { border-left: 0; border-top: 1px solid var(--line); padding: 14px 16px 28px; gap: 18px; }
+  h1 { font-size: 27px; }
+  .sub { font-size: 12px; }
+  .titleblock { right: 100px; }
+  .legend { bottom: 34px; width: 180px; }
+  .hint .tip { display: none; }
+  .station span { display: none; }
+  .hint .long { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="app">
+  <div id="viewer">
+    <canvas id="c" aria-label="Modello 3D interattivo del turbogas GE LM2500"></canvas>
+    <div class="titleblock">
+      <div class="eyebrow">Macchine a fluido · Modulo 1</div>
+      <h1>GE LM2500</h1>
+      <p class="sub">Turbogas aeroderivativo · 25 MW · turbina di potenza libera</p>
+    </div>
+    <div class="viewbtns"><button class="btn" id="resetView" type="button">Ripristina vista</button></div>
+    <div id="stations"></div>
+    <div class="legend" id="legend">
+      <div>Temperatura indicativa del gas (°C)</div>
+      <div class="bar"></div>
+      <div class="ticks"><span>15</span><span>250</span><span>500</span><span>800</span><span>1250</span></div>
+    </div>
+    <div class="hint"><span class="tip">Trascina per ruotare · pizzica o scorri per lo zoom · tocca un componente</span><span class="rpm" id="rpm"></span></div>
+    <div id="err">Il tuo browser non supporta WebGL: il modello 3D non può essere mostrato.</div>
+  </div>
+
+  <aside id="panel">
+    <section class="group" aria-labelledby="h-cut">
+      <h3 id="h-cut">Sezione</h3>
+      <div class="seg" role="group" aria-label="Preset di sezione">
+        <button type="button" data-preset="0" aria-pressed="false">Intera</button>
+        <button type="button" data-preset="90" aria-pressed="true">Spaccato 90°</button>
+        <button type="button" data-preset="180" aria-pressed="false">Metà sezione</button>
+      </div>
+      <div class="range">
+        <label for="rAlpha"><span>Apertura del taglio</span><output id="oAlpha">90°</output></label>
+        <input type="range" id="rAlpha" min="0" max="180" step="1" value="90">
+      </div>
+      <div class="range">
+        <label for="rCenter"><span>Orientamento del taglio</span><output id="oCenter">60°</output></label>
+        <input type="range" id="rCenter" min="0" max="360" step="1" value="60">
+      </div>
+      <div class="range">
+        <label for="rExtent"><span>Taglio fino a</span><output id="oExtent">tutta la macchina</output></label>
+        <input type="range" id="rExtent" min="0" max="100" step="1" value="100">
+      </div>
+    </section>
+
+    <section class="group" aria-labelledby="h-vis">
+      <h3 id="h-vis">Visualizzazione</h3>
+      <div class="toggles">
+        <label class="tg"><input type="checkbox" id="tSpin" checked> Rotori in moto</label>
+        <label class="tg"><input type="checkbox" id="tExplode"> Vista esplosa</label>
+        <label class="tg"><input type="checkbox" id="tTemp"> Mappa temperature</label>
+        <label class="tg"><input type="checkbox" id="tCasing" checked> Casse esterne</label>
+        <label class="tg"><input type="checkbox" id="tStations" checked> Stazioni del ciclo</label>
+      </div>
+    </section>
+
+    <section class="info" id="info" aria-live="polite"></section>
+
+    <section class="group" aria-labelledby="h-comp">
+      <h3 id="h-comp">Componenti</h3>
+      <div class="chips" id="chips"></div>
+    </section>
+
+    <p class="note">Modello didattico parametrico. Architettura, numero di stadi e prestazioni seguono le schede pubbliche GE; forme, quote e numero di pale sono semplificati e indicativi.</p>
+  </aside>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+
+/* ------------------------------------------------------------------ */
+/* Contenuti didattici                                                 */
+/* ------------------------------------------------------------------ */
+const OVERVIEW = {
+  name: 'Vista d’insieme', sec: 'GE LM2500',
+  text: 'Turbogas aeroderivativo nato dal motore aeronautico CF6-6. Il generatore di gas (compressore, combustore e turbina di alta pressione sullo stesso albero) produce gas caldi in pressione; una turbina di potenza libera, su un albero separato, li espande e trascina il carico: alternatore, compressore di gasdotto o elica navale.',
+  facts: [['Potenza (ISO)', '25 MW'], ['Rendimento termico', '≈ 36–37 %'], ['Portata gas di scarico', '70,5 kg/s'], ['Temperatura di scarico', '566 °C'], ['Velocità turbina di potenza', '3.600 rpm'], ['Rapporto di compressione', '≈ 18 : 1']],
+  course: 'Ciclo Joule-Brayton aperto. 1→2 compressione, 2→3 combustione a pressione quasi costante, 3→4 espansione nella turbina di alta pressione e poi in quella di potenza. Le stazioni numerate sono segnate sul modello.'
+};
+
+const INFO = {
+  inlet: { name: 'Bocca di aspirazione', short: 'Aspirazione', sec: 'Aspirazione',
+    text: 'Raccordo a campana che accelera l’aria con perdite minime e la distribuisce in modo uniforme sulla prima schiera del compressore. Negli impianti reali a monte ci sono filtri e silenziatori.',
+    facts: [['Stazione', '1 · ingresso compressore'], ['Condizioni ISO', '15 °C · 1,013 bar']],
+    course: 'Ogni perdita di carico in aspirazione abbassa il rapporto di compressione utile: potenza e rendimento calano.' },
+  cff: { name: 'Telaio anteriore del compressore', short: 'Telaio anteriore', sec: 'Compressore',
+    text: 'Struttura portante con montanti radiali profilati: sostiene il cuscinetto anteriore del rotore e fa passare olio e aria di servizio. Sotto di essa parte l’albero radiale che comanda la scatola accessori.',
+    facts: [['Sigla', 'CFF'], ['Montanti', '6 (indicativo)']] },
+  vsv: { name: 'IGV e statori a calettamento variabile', short: 'IGV / VSV', sec: 'Compressore',
+    text: 'La schiera di pale guida in ingresso (IGV) e i primi sei statori ruotano sul proprio perno grazie agli anelli di comando esterni. Variando l’angolo il compressore si adatta a velocità e portate diverse ed evita stallo e pompaggio all’avviamento e ai carichi parziali.',
+    facts: [['Schiere variabili', 'IGV + 6 VSV'], ['Comando', 'anelli, leve e attuatori']],
+    course: 'Collegalo alla mappa del compressore: a bassa portata la linea di pompaggio limita il rapporto di compressione ottenibile.' },
+  hpc_rotor: { name: 'Rotore del compressore · 16 stadi', short: 'Rotore compressore', sec: 'Compressore',
+    text: 'Sedici schiere di pale rotoriche su dischi e tamburo. Ogni stadio alza la pressione di poco, circa 1,2 volte; in serie arrivano a circa 18:1. Il canale si restringe verso valle perché l’aria compressa occupa meno volume.',
+    facts: [['Stadi', '16 assiali'], ['Rapporto di stadio medio', '≈ 1,20'], ['Temperatura di mandata', '≈ 450 °C (stima)']],
+    course: 'Lavoro di compressione: L = cp (T2 − T1) ≈ 1,005 × (450 − 15) ≈ 440 kJ/kg.' },
+  hpc_stator: { name: 'Statore e cassa del compressore', short: 'Statore compressore', sec: 'Compressore',
+    text: 'Le schiere fisse raddrizzano il flusso uscito da ogni rotore e trasformano energia cinetica in pressione. La cassa è divisa sul piano orizzontale: nella vista esplosa le due metà si aprono come in officina, per ispezionare le pale senza smontare il rotore.',
+    facts: [['Schiere fisse', 'statori 7–15'], ['Cassa', 'divisa orizzontalmente']] },
+  crf: { name: 'Telaio posteriore del compressore', short: 'Telaio posteriore', sec: 'Compressore',
+    text: 'Chiude il compressore con le palette d’uscita e il diffusore, che rallenta l’aria prima della combustione. Regge il cuscinetto intermedio e contiene combustore e iniettori. Da qui si spilla aria per raffreddare la turbina.',
+    facts: [['Sigla', 'CRF'], ['Stazione', '2 · mandata compressore'], ['Pressione', '≈ 18 bar (stima)']] },
+  combustor: { name: 'Camera di combustione anulare', short: 'Combustore', sec: 'Combustione',
+    text: 'Un unico anello tra due pareti forate (liner). Solo una parte dell’aria brucia vicino alla cupola; il resto entra dai fori di diluizione e di raffreddamento, così la temperatura all’ingresso turbina resta sopportabile dai materiali.',
+    facts: [['Tipo', 'anulare singolo'], ['Varianti', 'DLE a basse emissioni'], ['Combustibili', 'gas naturale o distillato']],
+    course: 'Trasformazione 2→3: calore fornito Q₁ = ṁ cp (T3 − T2), a pressione quasi costante (perdite di pochi punti percentuali).' },
+  nozzles: { name: 'Iniettori di combustibile', short: 'Iniettori', sec: 'Combustione',
+    text: 'Gli iniettori attraversano la cassa, ricevono il combustibile dal collettore ad anello e lo spruzzano nella cupola, dove le palette di swirl lo mescolano con l’aria in rotazione.',
+    facts: [['Numero', '30 (versione standard)'], ['Alimentazione', 'collettore anulare esterno']] },
+  hpt_nozzle: { name: 'Distributori della turbina di alta pressione', short: 'Distributori HPT', sec: 'Turbina HP',
+    text: 'Schiere fisse che accelerano e deviano i gas caldi verso le pale rotoriche. Il primo distributore lavora nella zona più calda della macchina ed è raffreddato con aria del compressore che esce da piccoli fori sulla superficie (film cooling).',
+    facts: [['Stazione', '3 · ingresso turbina'], ['Raffreddamento', 'aria spillata dal compressore']] },
+  hpt_rotor: { name: 'Turbina di alta pressione · 2 stadi', short: 'Rotore HPT', sec: 'Turbina HP',
+    text: 'Estrae dai gas il lavoro che serve a trascinare il compressore, a cui è collegata dallo stesso albero. Le pale sono in superleghe di nichel, cave e raffreddate dall’interno.',
+    facts: [['Stadi', '2'], ['Trascina', 'il compressore'], ['Lavoro estratto', '≈ lavoro di compressione']],
+    course: 'Bilancio del generatore di gas: L_HPT ≈ L_compressore, a meno delle perdite meccaniche e degli accessori.' },
+  tmf: { name: 'Telaio intermedio e condotto di transizione', short: 'Telaio intermedio', sec: 'Turbina di potenza',
+    text: 'Collega il generatore di gas alla turbina di potenza: il canale si allarga per portare il flusso sul diametro maggiore delle pale della PT. Generatore di gas e turbina di potenza si possono separare per la manutenzione.',
+    facts: [['Funzione', 'supporto cuscinetti, transizione HPT → PT']] },
+  pt_stator: { name: 'Distributori della turbina di potenza', short: 'Statore PT', sec: 'Turbina di potenza',
+    text: 'Sei schiere fisse in una cassa separata. Insieme al rotore elaborano l’espansione residua fino quasi alla pressione atmosferica.',
+    facts: [['Stadi', '6'], ['Cassa', 'divisa orizzontalmente']] },
+  pt_rotor: { name: 'Turbina di potenza libera · 6 stadi', short: 'Rotore PT', sec: 'Turbina di potenza',
+    text: 'Non è collegata meccanicamente al compressore: gira alla velocità richiesta dal carico. A 3.600 rpm trascina direttamente un alternatore a 60 Hz; in marina passa da un riduttore all’elica. Le pale hanno un anello di testa (shroud) che limita le fughe e le vibrazioni.',
+    facts: [['Stadi', '6'], ['Velocità nominale', '3.600 rpm'], ['Potenza utile (ISO)', '25 MW']],
+    course: 'È il lavoro utile del ciclo: L_utile = L_turbine − L_compressore.' },
+  exhaust: { name: 'Telaio posteriore e diffusore di scarico', short: 'Scarico', sec: 'Scarico',
+    text: 'Il diffusore anulare rallenta i gas per recuperare pressione e li manda al collettore. I gas escono a circa 566 °C: in cogenerazione o in ciclo combinato questo calore produce vapore.',
+    facts: [['Stazione', '4 · scarico'], ['Temperatura', '566 °C'], ['Portata', '70,5 kg/s']],
+    course: 'Calore recuperabile: ≈ 70,5 × 1,1 × (566 − 100) ≈ 36 MW, ipotizzando gas al camino a 100 °C. Più della potenza meccanica prodotta.' },
+  gg_shaft: { name: 'Albero del generatore di gas', short: 'Albero GG', sec: 'Alberi',
+    text: 'Unisce rotore del compressore e turbina di alta pressione in un unico rotore veloce, sostenuto dai cuscinetti nei telai.',
+    facts: [['Velocità tipica', '≈ 9.000–10.000 rpm (indicativa)']] },
+  pt_shaft: { name: 'Albero della turbina di potenza', short: 'Albero PT', sec: 'Alberi',
+    text: 'Porta la coppia della turbina di potenza al carico, attraverso il condotto di scarico, fino alla flangia di accoppiamento sul lato caldo.',
+    facts: [['Uscita', 'lato caldo (posteriore)'], ['Velocità', '3.600 rpm']] },
+  agb: { name: 'Scatola accessori', short: 'Scatola accessori', sec: 'Accessori',
+    text: 'Prende il moto dal rotore del generatore di gas tramite un albero radiale e trascina le pompe dell’olio e del combustibile. All’avviamento il motorino montato qui mette in rotazione il compressore.',
+    facts: [['Sigla', 'AGB'], ['Comando', 'albero radiale dal rotore GG']] }
+};
+const ORDER = ['inlet','cff','vsv','hpc_rotor','hpc_stator','crf','nozzles','combustor','hpt_nozzle','hpt_rotor','gg_shaft','tmf','pt_stator','pt_rotor','pt_shaft','exhaust','agb'];
+
+/* ------------------------------------------------------------------ */
+/* Renderer, scena, camera                                             */
+/* ------------------------------------------------------------------ */
+const viewer = document.getElementById('viewer');
+const canvas = document.getElementById('c');
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+} catch (e) {
+  document.getElementById('err').style.display = 'grid';
+  throw e;
+}
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.localClippingEnabled = true;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 120);
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minDistance = 1.0;
+controls.maxDistance = 30;
+controls.addEventListener('start', () => { camAnim.active = false; });
+
+const key = new THREE.DirectionalLight(0xffffff, 1.5); key.position.set(3, 6, 5); scene.add(key);
+const rim = new THREE.DirectionalLight(0x9ec3ff, 0.55); rim.position.set(-4, 2, -5); scene.add(rim);
+scene.add(new THREE.HemisphereLight(0xcfe3ff, 0x1a1410, 0.35));
+
+const grid = new THREE.GridHelper(16, 32, 0x2b3a47, 0x1a242d);
+grid.position.set(2.8, -1.34, 0);
+scene.add(grid);
+
+/* ------------------------------------------------------------------ */
+/* Piani di taglio (clipIntersection: si taglia solo il cuneo comune)  */
+/* ------------------------------------------------------------------ */
+const planes = [new THREE.Plane(new THREE.Vector3(0, 0, -1), 0), new THREE.Plane(new THREE.Vector3(0, -1, 0), 0), new THREE.Plane(new THREE.Vector3(1, 0, 0), 1000)];
+const X_MIN = -0.65, X_MAX = 6.3;
+const cut = { alpha: 90, center: 60, extent: 100 };
+function updatePlanes() {
+  if (cut.alpha < 0.5) { planes[2].normal.set(1, 0, 0); planes[2].constant = 1000; return; }
+  const a = Math.min(cut.alpha, 180);
+  const t0 = THREE.MathUtils.degToRad(cut.center - a / 2);
+  const tb = THREE.MathUtils.degToRad(cut.center + a / 2);
+  // angolo φ misurato nel piano (y, z) a partire da +y
+  planes[0].normal.set(0, Math.sin(t0), -Math.cos(t0)); planes[0].constant = 0;
+  planes[1].normal.set(0, -Math.sin(tb), Math.cos(tb)); planes[1].constant = 0;
+  const x0 = X_MIN + (X_MAX - X_MIN) * cut.extent / 100;
+  planes[2].normal.set(1, 0, 0); planes[2].constant = -x0;
+}
+function isClipped(p) { return planes.every(pl => pl.distanceToPoint(p) < 0); }
+
+/* ------------------------------------------------------------------ */
+/* Materiali: faccia anteriore metallica, faccia posteriore = sezione  */
+/* ------------------------------------------------------------------ */
+const TSTOPS = [[15, '#3d6fb0'], [250, '#3fa7a0'], [500, '#d9c94a'], [800, '#ec8a2f'], [1250, '#d6372a']].map(([t, c]) => [t, new THREE.Color(c)]);
+function tempColor(T) {
+  if (T <= TSTOPS[0][0]) return TSTOPS[0][1].clone();
+  for (let i = 1; i < TSTOPS.length; i++) {
+    if (T <= TSTOPS[i][0]) {
+      const [ta, ca] = TSTOPS[i - 1], [tb, cb] = TSTOPS[i];
+      return ca.clone().lerp(cb, (T - ta) / (tb - ta));
+    }
+  }
+  return TSTOPS[TSTOPS.length - 1][1].clone();
+}
+const WHITE = new THREE.Color('#ffffff');
+const allMats = [];
+function makeMat(hex, T, { metal = 0.55, rough = 0.42 } = {}) {
+  const m = new THREE.MeshStandardMaterial({ color: hex, metalness: metal, roughness: rough, side: THREE.DoubleSide, clippingPlanes: planes, clipIntersection: true });
+  m.userData = { base: new THREE.Color(hex), T, metal, cap: { value: new THREE.Color(hex).lerp(WHITE, 0.28) } };
+  m.onBeforeCompile = (shader) => {
+    shader.uniforms.uCap = m.userData.cap;
+    shader.fragmentShader = 'uniform vec3 uCap;\n' + shader.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\n  if (!gl_FrontFacing) { gl_FragColor = vec4(uCap, gl_FragColor.a); }');
+  };
+  allMats.push(m);
+  return m;
+}
+
+/* ------------------------------------------------------------------ */
+/* Geometrie di base                                                   */
+/* ------------------------------------------------------------------ */
+// profilo [[r, x], ...] chiuso, rivoluzionato attorno all'asse x
+function revolve(profile, { seg = 96, phiStart = 0, phiLength = Math.PI * 2 } = {}) {
+  let pts = profile.slice();
+  let area = 0;
+  for (let i = 0; i < pts.length; i++) { const [r1, x1] = pts[i], [r2, x2] = pts[(i + 1) % pts.length]; area += r1 * x2 - r2 * x1; }
+  if (area < 0) pts.reverse();
+  const geoms = [];
+  for (let i = 0; i < pts.length; i++) {
+    const a = pts[i], b = pts[(i + 1) % pts.length];
+    if (Math.abs(a[0] - b[0]) < 1e-7 && Math.abs(a[1] - b[1]) < 1e-7) continue;
+    geoms.push(new THREE.LatheGeometry([new THREE.Vector2(a[0], a[1]), new THREE.Vector2(b[0], b[1])], seg, phiStart, phiLength));
+  }
+  const g = mergeGeometries(geoms, false);
+  geoms.forEach(x => x.dispose());
+  g.rotateZ(-Math.PI / 2);
+  return g;
+}
+const HALF = { up: { phiStart: Math.PI, phiLength: Math.PI }, lo: { phiStart: 0, phiLength: Math.PI } };
+function strip(pts, t) {
+  const off = pts.map((p, i) => {
+    const a = pts[Math.max(0, i - 1)], b = pts[Math.min(pts.length - 1, i + 1)];
+    const dr = b[0] - a[0], dx = b[1] - a[1], L = Math.hypot(dr, dx) || 1;
+    return [p[0] + t * dx / L, p[1] - t * dr / L];
+  });
+  return [...pts, ...off.reverse()];
+}
+function sample(x0, x1, rFn, n = 28) { const out = []; for (let i = 0; i <= n; i++) { const x = x0 + (x1 - x0) * i / n; out.push([rFn(x), x]); } return out; }
+const shellP = (x0, x1, rFn, t, n) => strip(sample(x0, x1, rFn, n), t);
+const ringP = (r0, r1, x0, x1) => [[r0, x0], [r1, x0], [r1, x1], [r0, x1]];
+function discP(xc, rb, rim, tb, tw) {
+  const a = rb + 0.035;
+  return [[rb, xc - tb / 2], [a, xc - tb / 2], [a, xc - tw / 2], [rim, xc - tw / 2], [rim, xc + tw / 2], [a, xc + tw / 2], [a, xc + tb / 2], [rb, xc + tb / 2]];
+}
+
+// condotto del flusso: x, raggio mozzo, raggio esterno
+const FP = [[-0.05, 0.20, 0.48], [0.34, 0.22, 0.47], [1.10, 0.30, 0.43], [2.06, 0.355, 0.40], [2.12, 0.355, 0.40], [2.96, 0.37, 0.445], [3.32, 0.37, 0.46], [3.80, 0.40, 0.56], [4.76, 0.42, 0.70], [4.80, 0.42, 0.71], [5.65, 0.24, 0.95]];
+function fp(x, k) {
+  if (x <= FP[0][0]) return FP[0][k];
+  for (let i = 1; i < FP.length; i++) if (x <= FP[i][0]) { const a = FP[i - 1], b = FP[i]; return a[k] + (b[k] - a[k]) * (x - a[0]) / (b[0] - a[0]); }
+  return FP[FP.length - 1][k];
+}
+const hubR = x => fp(x, 1), tipR = x => fp(x, 2);
+
+// pala: corda lungo x, apertura lungo y (radiale), spessore lungo z (tangenziale)
+function bladeGeo(chord, span, { thick = 0.1, stagger = 0, twist = 0, camber = 0.08, taper = 0.15 } = {}) {
+  const g = new THREE.BoxGeometry(chord, span, chord * thick, 4, 6, 1);
+  g.translate(0, span / 2, 0);
+  const p = g.attributes.position;
+  for (let i = 0; i < p.count; i++) {
+    let x = p.getX(i), y = p.getY(i), z = p.getZ(i);
+    const s = y / span;
+    x *= (1 - taper * s);
+    const xc = x / chord;
+    z = z * (1 - 2.4 * xc * xc) + camber * chord * (0.25 - xc * xc);
+    const a = THREE.MathUtils.degToRad(stagger + twist * (s - 0.5));
+    p.setXYZ(i, x * Math.cos(a) - z * Math.sin(a), y, x * Math.sin(a) + z * Math.cos(a));
+  }
+  g.computeVertexNormals();
+  return g;
+}
+
+/* ------------------------------------------------------------------ */
+/* Registro componenti                                                 */
+/* ------------------------------------------------------------------ */
+const root = new THREE.Group(); scene.add(root);
+const ggSpool = new THREE.Group(); root.add(ggSpool);
+const ptSpool = new THREE.Group(); root.add(ptSpool);
+const comps = {};
+const pickables = [];
+function comp(id, color, explode, parent = root) {
+  const g = new THREE.Group(); g.name = id; parent.add(g);
+  return (comps[id] = { id, color, group: g, meshes: [], mats: new Set(), explode: explode.clone(), parts: [] });
+}
+function halves(c, dy) {
+  const up = new THREE.Group(), lo = new THREE.Group();
+  c.group.add(up, lo);
+  c.parts.push({ obj: up, dir: new THREE.Vector3(0, dy, 0) }, { obj: lo, dir: new THREE.Vector3(0, -dy, 0) });
+  return { up, lo };
+}
+function add(c, geo, mat, parent, casing = false) {
+  const m = new THREE.Mesh(geo, mat);
+  m.userData.comp = c.id; m.userData.casing = casing;
+  (parent || c.group).add(m); c.meshes.push(m); c.mats.add(mat); pickables.push(m);
+  return m;
+}
+function addInst(c, geo, mat, transforms, parent) {
+  const im = new THREE.InstancedMesh(geo, mat, transforms.length);
+  const m4 = new THREE.Matrix4();
+  transforms.forEach((t, k) => { m4.makeRotationX(t.psi); m4.setPosition(t.x, t.r * Math.cos(t.psi), t.r * Math.sin(t.psi)); im.setMatrixAt(k, m4); });
+  im.instanceMatrix.needsUpdate = true;
+  im.computeBoundingSphere();
+  im.userData.comp = c.id;
+  (parent || c.group).add(im); c.meshes.push(im); c.mats.add(mat); pickables.push(im);
+  return im;
+}
+// schiera palettata; sides = {up, lo} per dividere sulle due metà della cassa
+function row(c, { x, n, chord, mat, rotor = true, stagger, twist = 0, camber = 0.1, thick = 0.1, root, tip, taper = 0.15, sides, parent }) {
+  const rh = root ?? hubR(x), rt = tip ?? tipR(x);
+  const geo = bladeGeo(chord, rt - rh - 0.004, { thick, stagger, twist, camber, taper });
+  const all = [];
+  for (let i = 0; i < n; i++) all.push({ psi: (i + (rotor ? 0 : 0.5)) / n * Math.PI * 2, x, r: rh });
+  if (sides) {
+    addInst(c, geo, mat, all.filter(t => Math.cos(t.psi) >= 0), sides.up);
+    addInst(c, geo, mat, all.filter(t => Math.cos(t.psi) < 0), sides.lo);
+  } else addInst(c, geo, mat, all, parent);
+}
+const ringAt = (n, x, r, offset = 0) => Array.from({ length: n }, (_, i) => ({ psi: (i + offset) / n * Math.PI * 2, x, r }));
+
+/* ------------------------------------------------------------------ */
+/* Costruzione del modello                                             */
+/* ------------------------------------------------------------------ */
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const COL = { casing: '#5c6771', frame: '#6c7882', inlet: '#7d8993', blade: '#aebfcf', vane: '#8fa4b6', vsv: '#c8b06e', drum: '#98a4ae',
+  comb: '#d07f3c', nozzle: '#cfa65a', hptV: '#b2563c', hptB: '#cc6c48', ptV: '#a87a4b', ptB: '#c99d60', exh: '#7d726a', shaft: '#c7cdd2', agb: '#64705a', dark: '#2a1b13' };
+
+const rotorX = i => 0.42 + i * 0.104;
+const statorX = i => rotorX(i) + 0.052;
+const compT = i => 15 + 435 * (i + 1) / 16;
+
+// 1 · Aspirazione
+{
+  const c = comp('inlet', COL.inlet, V(-1.5, 0, 0));
+  const m = makeMat(COL.inlet, 15, { metal: 0.4, rough: 0.5 });
+  add(c, revolve(shellP(-0.55, -0.02, x => 0.48 + 0.34 * Math.pow(-x / 0.55, 2.2), 0.025)), m, null, true);
+  add(c, revolve(ringP(0.48, 0.56, -0.03, 0.0)), m, null, true);
+}
+// 2 · Telaio anteriore
+{
+  const c = comp('cff', COL.frame, V(-0.9, 0, 0));
+  const m = makeMat(COL.frame, 15);
+  add(c, revolve(shellP(0.0, 0.34, x => 0.48 - 0.01 * x / 0.34, 0.05, 8)), m, null, true);
+  add(c, revolve(ringP(0.52, 0.575, 0.0, 0.03)), m, null, true);
+  add(c, revolve(ringP(0.51, 0.565, 0.31, 0.34)), m, null, true);
+  add(c, revolve([[0, -0.30], [0.09, -0.21], [0.16, -0.08], [0.20, 0.02], [0.215, 0.33], [0.12, 0.33], [0.12, 0.25], [0, 0.25]]), m);
+  row(c, { x: 0.16, n: 6, chord: 0.22, mat: m, rotor: false, stagger: 0, camber: 0, thick: 0.22, root: 0.205, tip: 0.485, taper: 0 });
+}
+// 3 · IGV + VSV (metà superiore/inferiore)
+{
+  const c = comp('vsv', COL.vsv, V(0, 0, 0));
+  const s = halves(c, 0.75);
+  const xs = [0.37, ...[0, 1, 2, 3, 4, 5].map(statorX)];
+  xs.forEach((x, k) => {
+    const m = makeMat(COL.vsv, k === 0 ? 15 : compT(k), { metal: 0.6, rough: 0.35 });
+    const n = k === 0 ? 36 : Math.round(44 + 3 * (k - 1));
+    row(c, { x, n, chord: k === 0 ? 0.05 : 0.055 - 0.002 * k, mat: m, rotor: false, stagger: k === 0 ? -8 : -30, twist: -6, camber: k === 0 ? 0.03 : 0.1, sides: s });
+    const rr = tipR(x) + 0.088;
+    const tor = new THREE.TorusGeometry(rr, 0.009, 8, 64, Math.PI); tor.rotateY(Math.PI / 2);
+    add(c, tor, m, s.up, true);
+    const tor2 = tor.clone(); tor2.rotateX(Math.PI); add(c, tor2, m, s.lo, true);
+    const lev = new THREE.BoxGeometry(0.012, 0.05, 0.012); lev.translate(0, 0.025, 0);
+    const levs = ringAt(Math.round(n / 2), x, tipR(x) + 0.04, 0.25);
+    addInst(c, lev, m, levs.filter(t => Math.cos(t.psi) >= 0), s.up);
+    addInst(c, lev, m, levs.filter(t => Math.cos(t.psi) < 0), s.lo);
+  });
+  const ma = makeMat('#8a8f94', 40);
+  const bar = new THREE.CylinderGeometry(0.014, 0.014, 0.82, 12); bar.rotateZ(Math.PI / 2);
+  const psi = THREE.MathUtils.degToRad(35);
+  const b = add(c, bar, ma, s.up, true); b.position.set(0.76, 0.6 * Math.cos(psi), 0.6 * Math.sin(psi));
+  const cyl = new THREE.CylinderGeometry(0.04, 0.04, 0.28, 16); cyl.rotateZ(Math.PI / 2);
+  const a = add(c, cyl, ma, s.up, true); a.position.set(0.20, 0.64 * Math.cos(psi), 0.64 * Math.sin(psi));
+}
+// 4 · Rotore del compressore (albero GG)
+{
+  const c = comp('hpc_rotor', COL.blade, V(0, 0, 0), ggSpool);
+  const md = makeMat(COL.drum, 230);
+  for (let i = 0; i < 16; i++) {
+    const x = rotorX(i);
+    const m = makeMat(COL.blade, compT(i), { metal: 0.7, rough: 0.3 });
+    row(c, { x, n: Math.round(36 + 2.6 * i), chord: 0.062 - 0.03 * i / 15, mat: m, stagger: 38, twist: 22, camber: 0.1 });
+    add(c, revolve(discP(x, 0.11, hubR(x) - 0.017, 0.05, 0.018), { seg: 64 }), md);
+  }
+  add(c, revolve(shellP(0.37, 2.06, hubR, -0.018, 30)), md);
+  add(c, revolve([[0.10, 0.33], [0.125, 0.33], [0.235, 0.37], [0.21, 0.37]], { seg: 64 }), md);
+  add(c, revolve([[0.335, 2.04], [0.355, 2.04], [0.14, 2.30], [0.115, 2.30]], { seg: 64 }), md);
+}
+// 5 · Statore e cassa del compressore (metà)
+{
+  const c = comp('hpc_stator', COL.casing, V(0, 0, 0));
+  const s = halves(c, 0.75);
+  const mc = makeMat(COL.casing, 230, { metal: 0.45, rough: 0.5 });
+  const casingFn = x => tipR(x) + 0.003;
+  const prof = shellP(0.34, 2.10, casingFn, 0.04, 34);
+  add(c, revolve(prof, HALF.up), mc, s.up, true);
+  add(c, revolve(prof, HALF.lo), mc, s.lo, true);
+  [0.34, 1.10, 2.08].forEach(x => {
+    const r = tipR(x) + 0.043; const p = ringP(r, r + 0.035, x, x + 0.025);
+    add(c, revolve(p, HALF.up), mc, s.up, true); add(c, revolve(p, HALF.lo), mc, s.lo, true);
+  });
+  for (let i = 0; i < 16; i++) {
+    const x = statorX(i); const r = tipR(x) + 0.043; const p = ringP(r, r + 0.014, x - 0.004, x + 0.004);
+    add(c, revolve(p, { ...HALF.up, seg: 64 }), mc, s.up, true); add(c, revolve(p, { ...HALF.lo, seg: 64 }), mc, s.lo, true);
+  }
+  // flange del piano di divisione orizzontale
+  [1, -1].forEach(sign => {
+    const gs = [];
+    for (let i = 0; i < 16; i++) {
+      const x0 = 0.34 + i * 0.11, xm = x0 + 0.055, r = tipR(xm) + 0.06;
+      [1, -1].forEach(side => { const b = new THREE.BoxGeometry(0.11, 0.022, 0.05); b.translate(xm, sign * 0.011, side * r); gs.push(b); });
+    }
+    add(c, mergeGeometries(gs), mc, sign > 0 ? s.up : s.lo, true);
+  });
+  for (let i = 6; i < 15; i++) {
+    const m = makeMat(COL.vane, compT(i), { metal: 0.65, rough: 0.35 });
+    row(c, { x: statorX(i), n: Math.round(44 + 3 * i), chord: (0.062 - 0.03 * i / 15) * 0.9, mat: m, rotor: false, stagger: -32, twist: -8, camber: 0.1, sides: s });
+  }
+}
+// 6 · Telaio posteriore del compressore
+{
+  const c = comp('crf', COL.frame, V(0.45, 0, 0));
+  const m = makeMat(COL.frame, 450);
+  const mo = makeMat(COL.vane, 450, { metal: 0.65, rough: 0.35 });
+  row(c, { x: 2.085, n: 90, chord: 0.03, mat: mo, rotor: false, stagger: -10, camber: 0.05, root: 0.355, tip: 0.40 });
+  add(c, revolve(shellP(2.10, 2.30, x => 0.40 + 0.065 * (x - 2.10) / 0.2, 0.012, 8)), m);
+  const innerFn = x => x < 2.40 ? 0.355 - 0.065 * (x - 2.10) / 0.30 : 0.29;
+  add(c, revolve(shellP(2.10, 2.96, innerFn, -0.015, 24)), m);
+  row(c, { x: 2.21, n: 10, chord: 0.12, mat: m, rotor: false, stagger: 0, camber: 0, thick: 0.2, root: 0.33, tip: 0.47, taper: 0 });
+  const outerFn = x => x < 2.26 ? 0.44 + 0.145 * (x - 2.10) / 0.16 : 0.585;
+  add(c, revolve(shellP(2.10, 2.95, outerFn, 0.03, 40)), m, null, true);
+  add(c, revolve(ringP(0.43, 0.50, 2.10, 2.13)), m, null, true);
+  add(c, revolve(ringP(0.49, 0.66, 2.95, 2.98)), m, null, true);
+  add(c, revolve(ringP(0.10, 0.16, 2.17, 2.27), { seg: 48 }), m);
+}
+// 7 · Combustore anulare
+{
+  const c = comp('combustor', COL.comb, V(0.95, 0, 0));
+  const m = makeMat(COL.comb, 1250, { metal: 0.5, rough: 0.45 });
+  add(c, revolve(shellP(2.40, 2.95, x => 0.465 - 0.017 * (x - 2.40) / 0.55, 0.008, 12)), m);
+  add(c, revolve(shellP(2.40, 2.95, x => 0.335 + 0.037 * (x - 2.40) / 0.55, -0.008, 12)), m);
+  const arc = []; for (let i = 0; i <= 16; i++) { const th = Math.PI * (1 - i / 16); arc.push([0.40 + 0.065 * Math.cos(th), 2.40 - 0.058 * Math.sin(th)]); }
+  add(c, revolve(strip(arc, 0.008)), m);
+  const mk = makeMat(COL.dark, 1250, { metal: 0.2, rough: 0.8 });
+  const sw = new THREE.CylinderGeometry(0.024, 0.024, 0.03, 16); sw.rotateZ(Math.PI / 2);
+  addInst(c, sw, m, ringAt(30, 2.355, 0.40));
+  const hole = new THREE.CylinderGeometry(0.012, 0.012, 0.018, 10);
+  addInst(c, hole, mk, [...ringAt(30, 2.60, 0.461), ...ringAt(30, 2.78, 0.457, 0.5), ...ringAt(30, 2.66, 0.342, 0.25)]);
+}
+// 8 · Iniettori
+{
+  const c = comp('nozzles', COL.nozzle, V(0.45, 0, 0));
+  const m = makeMat(COL.nozzle, 450, { metal: 0.7, rough: 0.3 });
+  const tor = new THREE.TorusGeometry(0.70, 0.013, 8, 96); tor.rotateY(Math.PI / 2); tor.translate(2.31, 0, 0);
+  add(c, tor, m);
+  const stem = new THREE.CylinderGeometry(0.012, 0.012, 0.30, 10); stem.translate(0, 0.15, 0);
+  addInst(c, stem, m, ringAt(30, 2.31, 0.40));
+  const pad = new THREE.CylinderGeometry(0.03, 0.03, 0.03, 12);
+  addInst(c, pad, m, ringAt(30, 2.31, 0.632));
+  const tip = new THREE.CylinderGeometry(0.011, 0.011, 0.05, 10); tip.rotateZ(Math.PI / 2); tip.translate(0.025, 0, 0);
+  addInst(c, tip, m, ringAt(30, 2.31, 0.40));
+}
+// 9 · Distributori HPT
+{
+  const c = comp('hpt_nozzle', COL.hptV, V(1.35, 0, 0));
+  const mc = makeMat(COL.casing, 900, { metal: 0.45, rough: 0.5 });
+  add(c, revolve(shellP(2.96, 3.36, x => tipR(x) + 0.004, 0.045, 10)), mc, null, true);
+  add(c, revolve(ringP(0.49, 0.56, 3.33, 3.36)), mc, null, true);
+  [[2.99, 46, 0.055, 1150], [3.15, 48, 0.05, 950]].forEach(([x, n, ch, T]) => {
+    const m = makeMat(COL.hptV, T, { metal: 0.5, rough: 0.45 });
+    row(c, { x, n, chord: ch, mat: m, rotor: false, stagger: -6, camber: 0.3, thick: 0.24, taper: 0 });
+    add(c, revolve(ringP(hubR(x) - 0.02, hubR(x) - 0.002, x - 0.032, x + 0.032), { seg: 64 }), m);
+  });
+}
+// 10 · Rotore HPT (albero GG)
+{
+  const c = comp('hpt_rotor', COL.hptB, V(1.7, 0, 0), ggSpool);
+  const md = makeMat(COL.drum, 700);
+  [[3.07, 80, 1000], [3.23, 74, 850]].forEach(([x, n, T]) => {
+    const m = makeMat(COL.hptB, T, { metal: 0.55, rough: 0.4 });
+    row(c, { x, n, chord: 0.045, mat: m, stagger: 30, twist: 6, camber: 0.32, thick: 0.24, taper: 0.05 });
+    add(c, revolve(discP(x, 0.115, hubR(x) - 0.004, 0.10, 0.032), { seg: 64 }), md);
+  });
+  add(c, revolve([[0.10, 2.92], [0.125, 2.92], [0.30, 3.05], [0.275, 3.05]], { seg: 64 }), md);
+  add(c, revolve(ringP(0.30, 0.345, 3.09, 3.21), { seg: 64 }), md);
+}
+// 11 · Albero GG
+{
+  const c = comp('gg_shaft', COL.shaft, V(0, 0, 0), ggSpool);
+  const m = makeMat(COL.shaft, 300, { metal: 0.85, rough: 0.25 });
+  add(c, revolve(ringP(0.065, 0.10, 0.26, 3.30), { seg: 48 }), m);
+}
+// 12 · Telaio intermedio turbina
+{
+  const c = comp('tmf', COL.frame, V(2.1, 0, 0));
+  const m = makeMat(COL.frame, 800);
+  add(c, revolve(shellP(3.36, 3.80, hubR, -0.012, 10)), m);
+  add(c, revolve(shellP(3.36, 3.80, x => tipR(x) + 0.002, 0.012, 10)), m);
+  const casR = x => 0.53 + 0.10 * (x - 3.36) / 0.44;
+  add(c, revolve(shellP(3.36, 3.80, casR, 0.03, 10)), m, null, true);
+  add(c, revolve(ringP(0.49, 0.58, 3.36, 3.39)), m, null, true);
+  add(c, revolve(ringP(0.60, 0.68, 3.77, 3.80)), m, null, true);
+  row(c, { x: 3.58, n: 8, chord: 0.26, mat: m, rotor: false, stagger: 0, camber: 0, thick: 0.2, root: hubR(3.58), tip: casR(3.58), taper: 0 });
+}
+// 13 · Statore PT (metà)
+{
+  const c = comp('pt_stator', COL.ptV, V(2.6, 0, 0));
+  const s = halves(c, 0.6);
+  const mc = makeMat(COL.casing, 650, { metal: 0.45, rough: 0.5 });
+  const prof = shellP(3.80, 4.80, x => tipR(x) + 0.004, 0.04, 20);
+  add(c, revolve(prof, HALF.up), mc, s.up, true); add(c, revolve(prof, HALF.lo), mc, s.lo, true);
+  [3.80, 4.77].forEach(x => { const r = tipR(x) + 0.044, p = ringP(r, r + 0.04, x, x + 0.03); add(c, revolve(p, HALF.up), mc, s.up, true); add(c, revolve(p, HALF.lo), mc, s.lo, true); });
+  [1, -1].forEach(sign => {
+    const gs = [];
+    for (let i = 0; i < 10; i++) { const xm = 3.85 + i * 0.1, r = tipR(xm) + 0.065; [1, -1].forEach(side => { const b = new THREE.BoxGeometry(0.1, 0.022, 0.05); b.translate(xm, sign * 0.011, side * r); gs.push(b); }); }
+    add(c, mergeGeometries(gs), mc, sign > 0 ? s.up : s.lo, true);
+  });
+  for (let i = 0; i < 6; i++) {
+    const x = 3.84 + i * 0.16, T = 760 - 32 * i;
+    const m = makeMat(COL.ptV, T, { metal: 0.55, rough: 0.4 });
+    row(c, { x, n: 56 + 4 * i, chord: 0.06 + 0.005 * i, mat: m, rotor: false, stagger: -8, camber: 0.26, thick: 0.18, taper: 0, sides: s });
+    const p = ringP(hubR(x) - 0.018, hubR(x) - 0.002, x - 0.035, x + 0.035);
+    add(c, revolve(p, { ...HALF.up, seg: 64 }), m, s.up); add(c, revolve(p, { ...HALF.lo, seg: 64 }), m, s.lo);
+  }
+}
+// 14 · Rotore PT (albero PT)
+{
+  const c = comp('pt_rotor', COL.ptB, V(2.6, 0, 0), ptSpool);
+  const md = makeMat(COL.drum, 600);
+  for (let i = 0; i < 6; i++) {
+    const x = 3.92 + i * 0.16, T = 720 - 28 * i, ch = 0.055 + 0.006 * i;
+    const m = makeMat(COL.ptB, T, { metal: 0.6, rough: 0.35 });
+    row(c, { x, n: 70 + 4 * i, chord: ch, mat: m, stagger: 28, twist: 18, camber: 0.28, thick: 0.18, taper: 0.2 });
+    add(c, revolve(ringP(tipR(x) - 0.014, tipR(x) - 0.004, x - 0.022, x + 0.022)), m);
+    add(c, revolve(discP(x, 0.135, hubR(x) - 0.004, 0.07, 0.02), { seg: 64 }), md);
+  }
+  add(c, revolve(shellP(3.89, 4.75, hubR, -0.015, 12)), md);
+  add(c, revolve([[0.395, 4.73], [0.415, 4.75], [0.14, 4.98], [0.12, 4.98]], { seg: 64 }), md);
+}
+// 15 · Albero PT e flangia di accoppiamento
+{
+  const c = comp('pt_shaft', COL.shaft, V(2.6, 0, 0), ptSpool);
+  const m = makeMat(COL.shaft, 450, { metal: 0.85, rough: 0.25 });
+  add(c, revolve(ringP(0.08, 0.12, 3.95, 6.20), { seg: 48 }), m);
+  add(c, revolve(ringP(0.08, 0.30, 6.10, 6.16), { seg: 64 }), m);
+  add(c, revolve(ringP(0.08, 0.17, 5.95, 6.10), { seg: 48 }), m);
+  const bolt = new THREE.CylinderGeometry(0.014, 0.014, 0.09, 10); bolt.rotateZ(Math.PI / 2);
+  addInst(c, bolt, m, ringAt(12, 6.13, 0.25));
+}
+// 16 · Scarico
+{
+  const c = comp('exhaust', COL.exh, V(3.3, 0, 0));
+  const m = makeMat(COL.exh, 566, { metal: 0.4, rough: 0.55 });
+  add(c, revolve(shellP(4.80, 5.65, x => tipR(x) + 0.003, 0.025, 16)), m, null, true);
+  add(c, revolve(ringP(0.70, 0.80, 4.80, 4.83)), m, null, true);
+  add(c, revolve(ringP(0.94, 1.03, 5.62, 5.65)), m, null, true);
+  add(c, revolve(shellP(4.80, 5.65, hubR, -0.02, 16)), m);
+  add(c, revolve(ringP(0.125, 0.22, 5.63, 5.65), { seg: 64 }), m);
+  add(c, revolve(ringP(0.125, 0.17, 4.98, 5.22), { seg: 48 }), m);
+  row(c, { x: 4.92, n: 10, chord: 0.2, mat: m, rotor: false, stagger: 0, camber: 0, thick: 0.22, root: hubR(4.92) - 0.01, tip: tipR(4.92) + 0.01, taper: 0 });
+}
+// 17 · Scatola accessori
+{
+  const c = comp('agb', COL.agb, V(0, -0.35, 1.2));
+  const m = makeMat(COL.agb, 80, { metal: 0.35, rough: 0.55 });
+  const box = new THREE.BoxGeometry(0.80, 0.20, 0.34); box.translate(0.80, -0.80, 0);
+  add(c, box, m);
+  const sh = new THREE.CylinderGeometry(0.035, 0.035, 0.52, 14); sh.translate(0.27, -0.45, 0);
+  add(c, sh, m);
+  const tgb = new THREE.BoxGeometry(0.14, 0.10, 0.16); tgb.translate(0.27, -0.66, 0);
+  add(c, tgb, m);
+  const acc = [[0.32, -0.80, 0.06, 0.08, 0.22, 'x'], [0.60, -0.97, 0.0, 0.055, 0.15, 'y'], [0.92, -0.97, 0.0, 0.05, 0.14, 'y'], [1.30, -0.80, -0.04, 0.06, 0.18, 'x']];
+  acc.forEach(([x, y, z, r, h, ax]) => { const g = new THREE.CylinderGeometry(r, r, h, 20); if (ax === 'x') g.rotateZ(Math.PI / 2); g.translate(ax === 'x' ? (x < 0.8 ? x - h / 2 + 0.05 : x + h / 2 - 0.05) : x, ax === 'y' ? y - h / 2 + 0.07 : y, z); add(c, g, m); });
+}
+
+/* ------------------------------------------------------------------ */
+/* Stato e interfaccia                                                 */
+/* ------------------------------------------------------------------ */
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const state = { spin: !reduced, explode: false, temp: false, casing: true, stations: true, selected: null, isolate: false };
+let ex = 0;
+const $ = id => document.getElementById(id);
+const tSpin = $('tSpin'); tSpin.checked = state.spin;
+
+function applyColors() {
+  allMats.forEach(m => {
+    const col = state.temp ? tempColor(m.userData.T) : m.userData.base;
+    m.color.copy(col);
+    m.userData.cap.value.copy(col).lerp(WHITE, 0.28);
+    m.metalness = state.temp ? 0.1 : m.userData.metal;
+  });
+  $('legend').classList.toggle('on', state.temp);
+}
+function applyHighlight() {
+  Object.values(comps).forEach(c => {
+    const sel = state.selected === c.id;
+    const ghost = state.isolate && state.selected && !sel;
+    c.mats.forEach(m => {
+      m.emissive.set(sel ? '#f0a43a' : '#000000');
+      m.emissiveIntensity = sel ? 0.22 : 0;
+      if (m.transparent !== ghost) { m.transparent = ghost; m.depthWrite = !ghost; m.needsUpdate = true; }
+      m.opacity = ghost ? 0.1 : 1;
+    });
+  });
+}
+function applyCasing() { pickables.forEach(m => { if (m.userData.casing) m.visible = state.casing; }); }
+
+function esc(s) { return s.replace(/[&<>]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[ch])); }
+function renderInfo() {
+  const id = state.selected, d = id ? INFO[id] : OVERVIEW;
+  const color = id ? comps[id].color : '#f0a43a';
+  const facts = d.facts.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('');
+  const actions = id
+    ? `<button class="btn primary" type="button" id="bIso">${state.isolate ? 'Mostra tutti i componenti' : 'Isola il componente'}</button><button class="btn" type="button" id="bAll">Vista d’insieme</button>`
+    : '';
+  $('info').innerHTML = `<div class="tag"><span class="dot" style="background:${color}"></span>${esc(d.sec)}</div><h2>${esc(d.name)}</h2><p>${esc(d.text)}</p><dl class="facts">${facts}</dl>${d.course ? `<div class="course"><strong>Nel corso</strong>${esc(d.course)}</div>` : ''}<div class="actions">${actions}</div>`;
+  if (id) {
+    $('bIso').onclick = () => { state.isolate = !state.isolate; applyHighlight(); renderInfo(); };
+    $('bAll').onclick = () => select(null);
+  }
+  document.querySelectorAll('.chip').forEach(ch => ch.setAttribute('aria-pressed', String(ch.dataset.id === id)));
+}
+function select(id, { focus = false, scroll = false } = {}) {
+  state.selected = id;
+  if (!id) state.isolate = false;
+  applyHighlight(); renderInfo();
+  if (focus && id) focusOn(id);
+  if (scroll) $('info').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
+}
+
+$('chips').innerHTML = ORDER.map(id => `<button class="chip" type="button" data-id="${id}" aria-pressed="false"><span class="dot" style="background:${comps[id].color}"></span>${esc(INFO[id].short)}</button>`).join('');
+$('chips').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; const id = b.dataset.id; select(state.selected === id ? null : id, { focus: true, scroll: true }); });
+
+// controlli di sezione
+const segBtns = [...document.querySelectorAll('.seg button')];
+function syncCut() {
+  updatePlanes();
+  $('oAlpha').textContent = `${cut.alpha}°`;
+  $('oCenter').textContent = `${cut.center}°`;
+  $('oExtent').textContent = cut.extent >= 100 ? 'tutta la macchina' : `x = ${(X_MIN + (X_MAX - X_MIN) * cut.extent / 100).toFixed(2).replace('.', ',')} m`;
+  segBtns.forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.preset) === cut.alpha)));
+}
+segBtns.forEach(b => b.addEventListener('click', () => { cut.alpha = Number(b.dataset.preset); $('rAlpha').value = cut.alpha; syncCut(); }));
+$('rAlpha').addEventListener('input', e => { cut.alpha = Number(e.target.value); syncCut(); });
+$('rCenter').addEventListener('input', e => { cut.center = Number(e.target.value); syncCut(); });
+$('rExtent').addEventListener('input', e => { cut.extent = Number(e.target.value); syncCut(); });
+tSpin.addEventListener('change', e => { state.spin = e.target.checked; updateRpm(); });
+$('tExplode').addEventListener('change', e => { state.explode = e.target.checked; fitView(state.explode); });
+$('tTemp').addEventListener('change', e => { state.temp = e.target.checked; applyColors(); });
+$('tCasing').addEventListener('change', e => { state.casing = e.target.checked; applyCasing(); });
+$('tStations').addEventListener('change', e => { state.stations = e.target.checked; });
+$('resetView').addEventListener('click', () => fitView(state.explode));
+function updateRpm() { $('rpm').innerHTML = state.spin ? '<span class="long">Rotori al rallentatore · </span>GG ≈ 9.500 rpm · PT 3.600 rpm' : ''; }
+
+/* ------------------------------------------------------------------ */
+/* Stazioni del ciclo                                                  */
+/* ------------------------------------------------------------------ */
+const STATIONS = [[1, 'Aspirazione', 0.34, 0.66, false], [2, 'Mandata compressore', 2.10, 0.74, true], [3, 'Ingresso turbina', 2.98, 0.80, false], [4, 'Scarico', 4.85, 0.98, false]];
+const stEls = STATIONS.map(([n, label, , , rev]) => { const el = document.createElement('div'); el.className = rev ? 'station rev' : 'station'; el.innerHTML = `<b>${n}</b><span>${label}</span>`; $('stations').appendChild(el); return el; });
+const tmpV = new THREE.Vector3();
+function placeStations() {
+  const show = state.stations && ex < 0.05;
+  const w = viewer.clientWidth, h = viewer.clientHeight;
+  STATIONS.forEach(([, , x, y], i) => {
+    const el = stEls[i];
+    tmpV.set(x, y, 0).project(camera);
+    const vis = show && tmpV.z < 1 && Math.abs(tmpV.x) < 1.05 && Math.abs(tmpV.y) < 1.05;
+    el.style.display = vis ? 'flex' : 'none';
+    if (vis) el.style.transform = `translate(${(tmpV.x * 0.5 + 0.5) * w}px, ${(-tmpV.y * 0.5 + 0.5) * h - 16}px) translate(${el.classList.contains('rev') ? 'calc(-100% + 10px)' : '-10px'}, -100%)`;
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* Camera: inquadratura, focus                                         */
+/* ------------------------------------------------------------------ */
+const VIEW_DIR = new THREE.Vector3();
+function viewDir() { return camera.aspect < 1 ? VIEW_DIR.set(1.15, 0.55, 0.85).normalize() : VIEW_DIR.set(0.62, 0.42, 1.0).normalize(); }
+const camAnim = { active: false, t: 0, fromP: new THREE.Vector3(), toP: new THREE.Vector3(), fromT: new THREE.Vector3(), toT: new THREE.Vector3() };
+function animateTo(pos, target) {
+  camAnim.fromP.copy(camera.position); camAnim.toP.copy(pos);
+  camAnim.fromT.copy(controls.target); camAnim.toT.copy(target);
+  camAnim.t = reduced ? 1 : 0; camAnim.active = true;
+}
+function fitPose(box) {
+  const center = box.getCenter(new THREE.Vector3()), half = box.getSize(new THREE.Vector3()).multiplyScalar(0.5);
+  const d = viewDir().clone();
+  const right = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), d).normalize();
+  const up = new THREE.Vector3().crossVectors(d, right).normalize();
+  const vf = THREE.MathUtils.degToRad(camera.fov), hf = 2 * Math.atan(Math.tan(vf / 2) * camera.aspect);
+  let hw = 0, hh = 0, hd = 0;
+  for (const sx of [-1, 1]) for (const sy of [-1, 1]) for (const sz of [-1, 1]) {
+    const v = new THREE.Vector3(sx * half.x, sy * half.y, sz * half.z);
+    hw = Math.max(hw, Math.abs(v.dot(right))); hh = Math.max(hh, Math.abs(v.dot(up))); hd = Math.max(hd, v.dot(d));
+  }
+  const dist = Math.max(hw / Math.tan(hf / 2), hh / Math.tan(vf / 2)) * 1.02 + hd * 0.4;
+  return { pos: center.clone().addScaledVector(d, dist), target: center };
+}
+function fitView(exploded, instant = false) {
+  const box = exploded ? new THREE.Box3(new THREE.Vector3(-2.2, -1.3, -1.0), new THREE.Vector3(9.0, 1.3, 1.6)) : new THREE.Box3(new THREE.Vector3(-0.6, -0.9, -0.9), new THREE.Vector3(6.2, 0.9, 0.9));
+  const { pos, target } = fitPose(box);
+  if (instant) { camera.position.copy(pos); controls.target.copy(target); controls.update(); } else animateTo(pos, target);
+}
+function focusOn(id) {
+  const box = new THREE.Box3().setFromObject(comps[id].group);
+  if (box.isEmpty()) return;
+  const center = box.getCenter(new THREE.Vector3());
+  const offset = camera.position.clone().sub(controls.target);
+  const size = box.getSize(new THREE.Vector3()).length();
+  const dist = THREE.MathUtils.clamp(size * 1.6, 2.2, offset.length());
+  animateTo(center.clone().add(offset.setLength(dist)), center);
+}
+
+/* ------------------------------------------------------------------ */
+/* Selezione con tocco/clic                                            */
+/* ------------------------------------------------------------------ */
+const ray = new THREE.Raycaster();
+const ndc = new THREE.Vector2();
+let down = null;
+function worldVisible(o) { while (o) { if (!o.visible) return false; o = o.parent; } return true; }
+canvas.addEventListener('pointerdown', e => { down = { x: e.clientX, y: e.clientY }; });
+canvas.addEventListener('pointerup', e => {
+  if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6) { down = null; return; }
+  down = null;
+  const r = canvas.getBoundingClientRect();
+  ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const hits = ray.intersectObjects(pickables, false).filter(h => {
+    const id = h.object.userData.comp;
+    if (!worldVisible(h.object)) return false;
+    if (state.isolate && state.selected && id !== state.selected) return false;
+    return !isClipped(h.point);
+  });
+  if (hits.length) { const id = hits[0].object.userData.comp; select(state.selected === id ? null : id, { scroll: true }); }
+  else select(null);
+});
+
+/* ------------------------------------------------------------------ */
+/* Ciclo di rendering                                                  */
+/* ------------------------------------------------------------------ */
+let fitted = false;
+function resize() {
+  const w = viewer.clientWidth, h = viewer.clientHeight;
+  if (!w || !h) return;
+  renderer.setSize(w, h, false);
+  const wasPortrait = camera.aspect < 1;
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+  if (fitted && wasPortrait !== camera.aspect < 1) fitView(state.explode, true);
+}
+new ResizeObserver(resize).observe(viewer);
+resize();
+syncCut(); applyColors(); applyHighlight(); applyCasing(); renderInfo(); updateRpm();
+fitView(false, true);
+fitted = true;
+
+const clock = new THREE.Clock();
+function frame() {
+  const dt = Math.min(clock.getDelta(), 0.05);
+  if (state.spin) { ggSpool.rotation.x += dt * 1.6; ptSpool.rotation.x += dt * 0.6; }
+  const target = state.explode ? 1 : 0;
+  ex += (target - ex) * Math.min(1, dt * (reduced ? 60 : 3.5));
+  Object.values(comps).forEach(c => { c.group.position.copy(c.explode).multiplyScalar(ex); c.parts.forEach(p => p.obj.position.copy(p.dir).multiplyScalar(ex)); });
+  if (camAnim.active) {
+    camAnim.t = Math.min(1, camAnim.t + dt * 1.8);
+    const k = 1 - Math.pow(1 - camAnim.t, 3);
+    camera.position.lerpVectors(camAnim.fromP, camAnim.toP, k);
+    controls.target.lerpVectors(camAnim.fromT, camAnim.toT, k);
+    if (camAnim.t >= 1) camAnim.active = false;
+  }
+  controls.update();
+  renderer.render(scene, camera);
+  placeStations();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+window.__ready = true;
+</script>
+</body>
+</html>
