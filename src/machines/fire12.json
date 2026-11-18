@@ -1,0 +1,672 @@
+{
+  "id": "fire12",
+  "title": "FIAT FIRE 1.2 8V",
+  "eyebrow": "Motori a combustione interna · Modulo 2",
+  "subtitle": "Benzina, ciclo Otto a 4 tempi · 4 cilindri in linea · 1.242 cm³ · 51 kW",
+  "canvasLabel": "Modello 3D interattivo del motore a benzina FIAT FIRE 1.2 8V",
+  "note": "Modello didattico parametrico. Alesaggio, corsa, cilindrata, prestazioni e architettura seguono i dati pubblicati da Fiat; forme, lunghezza della biella, interasse dei cilindri, valvole e fasatura sono semplificati e indicativi.",
+  "overview": {
+    "name": "Vista d’insieme",
+    "section": "FIAT FIRE 1.2 8V",
+    "text": "Motore a benzina a quattro tempi con quattro cilindri in linea, della famiglia FIRE (Fully Integrated Robotized Engine): progettato da Fiat per il montaggio robotizzato, prodotto a Termoli dal 1985 al 2020 in oltre 23 milioni di esemplari. La versione 1.2 8V da 69 CV (sigla 169A4000) ha equipaggiato tra le altre Panda, 500, Punto e Lancia Ypsilon. Ogni cilindro compie un ciclo completo ogni due giri dell’albero motore.",
+    "facts": [
+      ["Cilindrata","1.242 cm³"],
+      ["Alesaggio × corsa","70,8 × 78,86 mm"],
+      ["Rapporto di compressione","11,1 : 1"],
+      ["Potenza massima","51 kW (69 CV) a 5.500 giri/min"],
+      ["Coppia massima","102 N·m a 3.000 giri/min"],
+      ["Distribuzione","monoalbero in testa, 2 valvole per cilindro"],
+      ["Alimentazione","iniezione elettronica multipoint"]
+    ],
+    "course": "Ciclo Otto ideale: rendimento η = 1 − 1/ε^(k−1); con ε = 11,1 e k = 1,4 vale circa 0,62. Il rendimento reale è circa la metà, per scambi di calore, combustione non istantanea, attriti e lavoro di pompaggio."
+  },
+  "spools": {
+    "crank": {"speed":1.6},
+    "cam": {"of":"crank","ratio":0.5,"center":[0.32923,0]},
+    "pump": {"of":"crank","ratio":0.90625,"center":[0.085,-0.052]},
+    "tensioner": {"of":"crank","ratio":1.31818,"center":[0.21,0.052]}
+  },
+  "spinLabel": "nella realtà fino a 5.500 giri/min, cioè ≈ 46 cicli al secondo per cilindro",
+  "spinNote": "Al rallentatore",
+  "spinToggle": "Motore in moto",
+  "practice": [
+    ["Riconosci il componente","Il modello evidenzia un pezzo del motore: scegli il nome giusto tra quelli proposti."],
+    ["Le fasi del ciclo","Dato l’angolo di manovella, indica in che fase si trova ciascun cilindro."],
+    [
+      "Calcoli sul ciclo Otto",
+      "Cilindrata, volume della camera, rendimento ideale, velocità media del pistone, coppia e potenza."
+    ]
+  ],
+  "section": {"xMin":-0.24,"xMax":0.21,"alpha":180,"center":90,"extent":100,"unit":"mm","scale":1000},
+  "kinematics": {"crank":{"spool":"crank","radius":0.03943,"rod":0.127}},
+  "cycle": {
+    "spool": "crank",
+    "length": 720,
+    "title": "Ciclo Otto a quattro tempi",
+    "strokes": [
+      {"name":"Aspirazione","color":"#4ea3e0"},
+      {"name":"Compressione","color":"#e3c14a"},
+      {"name":"Espansione","color":"#e8532f"},
+      {"name":"Scarico","color":"#8d95a0"}
+    ],
+    "cylinders": [
+      {"label":"Cil. 1","offset":0},
+      {"label":"Cil. 2","offset":540},
+      {"label":"Cil. 3","offset":180},
+      {"label":"Cil. 4","offset":360}
+    ],
+    "note": "Ordine di accensione 1-3-4-2: in un quattro cilindri c’è un’espansione ogni 180°. Con θ = 0° il pistone 1 è al PMS e inizia l’aspirazione."
+  },
+  "view": {
+    "fov": 32,
+    "near": 0.01,
+    "far": 20,
+    "minDistance": 0.12,
+    "maxDistance": 3,
+    "focusMin": 0.3,
+    "fit": {"assembled":[[-0.24,-0.17,-0.16],[0.21,0.385,0.16]],"exploded":[[-0.38,-0.5,-0.3],[0.34,0.95,0.3]]},
+    "grid": {"size":1.4,"divisions":28,"position":[0,-0.172,0]}
+  },
+  "temperature": {
+    "label": "Temperatura indicativa dei componenti a regime (°C)",
+    "stops": [[20,"#3d6fb0"],[100,"#3fa7a0"],[250,"#d9c94a"],[450,"#ec8a2f"],[800,"#d6372a"]]
+  },
+  "stations": [],
+  "palette": {
+    "iron": "#6f7881",
+    "bearing": "#c9945a",
+    "filter": "#3f6290",
+    "alu": "#a9b3bc",
+    "gasket": "#55595e",
+    "cover": "#3a4047",
+    "cap": "#c9a13b",
+    "cam": "#c7cdd2",
+    "belt": "#2b2f33",
+    "pulley": "#8f989f",
+    "mark": "#f0a43a",
+    "valveIn": "#d2b56a",
+    "valveEx": "#c9784a",
+    "steel": "#b8c0c7",
+    "tappet": "#9aa5b0",
+    "spring": "#6f8fae",
+    "piston": "#cfd5da",
+    "ring": "#3a3f45",
+    "rod": "#8e9aa6",
+    "crank": "#b9c1c8",
+    "flywheel": "#5f6a74",
+    "gasA": "#4ea3e0",
+    "intake": "#3f4b57",
+    "injector": "#2f3a44",
+    "plug": "#b0b6bc",
+    "ceramic": "#e8e4dc",
+    "exh": "#8a6a52",
+    "pan": "#56616b",
+    "oil": "#a8741f"
+  },
+  "components": [
+    {
+      "id": "basamento",
+      "name": "Basamento (blocco cilindri)",
+      "short": "Basamento",
+      "section": "Struttura",
+      "text": "Getto in ghisa che contiene i quattro cilindri e i supporti dell’albero motore. Le canne sono ricavate direttamente nella ghisa, affiancate senza spazio tra l’una e l’altra; intorno scorre il liquido di raffreddamento nell’intercapedine. In basso cinque supporti di banco, con le bronzine, reggono l’albero motore. Sul fianco è avvitato il filtro dell’olio.",
+      "facts": [
+        ["Materiale","ghisa"],
+        ["Cilindri","4 in linea"],
+        ["Supporti di banco","5"],
+        ["Interasse cilindri","≈ 79 mm (indicativo)"]
+      ],
+      "course": "Cilindrata unitaria V = π·D²/4·c = π × 7,08² / 4 × 7,886 ≈ 310,5 cm³; per quattro cilindri 1.242 cm³.",
+      "color": "iron",
+      "explode": [0,0,0],
+      "materials": {
+        "iron": {"color":"iron","T":95,"metal":0.45,"rough":0.55},
+        "bearing": {"color":"bearing","T":110,"metal":0.7,"rough":0.35},
+        "filter": {"color":"filter","T":100,"metal":0.3,"rough":0.5}
+      },
+      "parts": [
+        {"type":"extrude","mat":"iron","axis":"y","from":0.072,"to":0.08,"shape":{"rect":[-0.0544,-0.1734,0.0544,0.1734]},"holes":[{"circle":[0,-0.1185,0.0354]},{"circle":[0,-0.0395,0.0354]},{"circle":[0,0.0395,0.0354]},{"circle":[0,0.1185,0.0354]}]},
+        {"type":"extrude","mat":"iron","axis":"y","from":0.08,"to":0.19253,"shape":{"rrect":[-0.0414,-0.16,0.0414,0.16,0.04]},"holes":[{"circle":[0,-0.1185,0.0354]},{"circle":[0,-0.0395,0.0354]},{"circle":[0,0.0395,0.0354]},{"circle":[0,0.1185,0.0354]}]},
+        {"type":"extrude","mat":"iron","axis":"y","from":0.08,"to":0.19253,"shape":{"rect":[-0.0544,-0.1734,0.0544,0.1734]},"holes":[{"rrect":[-0.0484,-0.1674,0.0484,0.1674,0.01]}],"casing":true},
+        {"type":"extrude","mat":"iron","axis":"x","from":-0.1734,"to":0.1734,"shape":{"polygon":[[-0.045,0.075],[0.035,0.075],[0.08,0.0484],[0.08,0.0544],[0.035,0.083],[-0.045,0.083]]},"casing":true},
+        {"type":"extrude","mat":"iron","axis":"x","from":-0.1734,"to":0.1734,"shape":{"polygon":[[-0.045,-0.075],[0.035,-0.075],[0.08,-0.0484],[0.08,-0.0544],[0.035,-0.083],[-0.045,-0.083]]},"casing":true},
+        {"type":"extrude","mat":"iron","axis":"x","from":-0.1734,"to":-0.15,"shape":{"polygon":[[-0.045,-0.075],[0.035,-0.075],[0.072,-0.0528],[0.072,0.0528],[0.035,0.075],[-0.045,0.075]]},"holes":[{"circle":[0,0,0.0245]}]},
+        {"type":"revolve","mat":"bearing","profile":{"ring":[0.0225,0.0245,-0.1675,-0.1485]},"seg":48},
+        {"type":"extrude","mat":"iron","axis":"x","from":-0.087,"to":-0.071,"shape":{"polygon":[[-0.045,-0.075],[0.035,-0.075],[0.072,-0.0528],[0.072,0.0528],[0.035,0.075],[-0.045,0.075]]},"holes":[{"circle":[0,0,0.0245]}]},
+        {"type":"revolve","mat":"bearing","profile":{"ring":[0.0225,0.0245,-0.088,-0.07]},"seg":48},
+        {"type":"extrude","mat":"iron","axis":"x","from":-0.008,"to":0.008,"shape":{"polygon":[[-0.045,-0.075],[0.035,-0.075],[0.072,-0.0528],[0.072,0.0528],[0.035,0.075],[-0.045,0.075]]},"holes":[{"circle":[0,0,0.0245]}]},
+        {"type":"revolve","mat":"bearing","profile":{"ring":[0.0225,0.0245,-0.009,0.009]},"seg":48},
+        {"type":"extrude","mat":"iron","axis":"x","from":0.071,"to":0.087,"shape":{"polygon":[[-0.045,-0.075],[0.035,-0.075],[0.072,-0.0528],[0.072,0.0528],[0.035,0.075],[-0.045,0.075]]},"holes":[{"circle":[0,0,0.0245]}]},
+        {"type":"revolve","mat":"bearing","profile":{"ring":[0.0225,0.0245,0.07,0.088]},"seg":48},
+        {"type":"extrude","mat":"iron","axis":"x","from":0.15,"to":0.1734,"shape":{"polygon":[[-0.045,-0.075],[0.035,-0.075],[0.072,-0.0528],[0.072,0.0528],[0.035,0.075],[-0.045,0.075]]},"holes":[{"circle":[0,0,0.0245]}]},
+        {"type":"revolve","mat":"bearing","profile":{"ring":[0.0225,0.0245,0.1485,0.1675]},"seg":48},
+        {"type":"cylinder","mat":"filter","r":0.037,"h":0.07,"seg":32,"axis":"z","at":[0.12,0,-0.118]}
+      ]
+    },
+    {
+      "id": "testata",
+      "name": "Testata",
+      "short": "Testata",
+      "section": "Struttura",
+      "text": "In lega di alluminio: chiude i cilindri e contiene le camere di combustione, i condotti di aspirazione (da un lato) e di scarico (dal lato opposto), le sedi e le guide delle valvole, le sedi delle punterie e i supporti dell’albero a camme. La guarnizione tra testata e basamento fa tenuta su gas, olio e liquido di raffreddamento.",
+      "facts": [
+        ["Materiale","lega di alluminio"],
+        ["Valvole","2 per cilindro"],
+        ["Condotti","aspirazione e scarico su lati opposti"],
+        ["Volume camera","≈ 30,7 cm³ (calcolato)"]
+      ],
+      "course": "Volume della camera di combustione: Vc = V / (ε − 1) = 310,5 / 10,1 ≈ 30,7 cm³, con rapporto di compressione ε = 11,1.",
+      "color": "alu",
+      "explode": [0,0.26,0],
+      "materials": {
+        "alu": {"color":"alu","T":120,"metal":0.55,"rough":0.4},
+        "gasket": {"color":"gasket","T":150,"metal":0.4,"rough":0.6},
+        "port": {"color":"alu","T":160,"metal":0.55,"rough":0.4}
+      },
+      "parts": [
+        {"type":"extrude","mat":"gasket","axis":"y","from":0.19253,"to":0.19373,"shape":{"rect":[-0.0544,-0.1734,0.0544,0.1734]},"holes":[{"circle":[0,-0.1185,0.0364]},{"circle":[0,-0.0395,0.0364]},{"circle":[0,0.0395,0.0364]},{"circle":[0,0.1185,0.0364]}]},
+        {"type":"extrude","mat":"alu","axis":"y","from":0.19373,"to":0.20173,"shape":{"rect":[-0.0544,-0.1734,0.0544,0.1734]},"holes":[{"circle":[0,-0.1185,0.0345]},{"circle":[0,-0.0395,0.0345]},{"circle":[0,0.0395,0.0345]},{"circle":[0,0.1185,0.0345]}]},
+        {"type":"extrude","mat":"alu","axis":"y","from":0.20173,"to":0.20973,"shape":{"rect":[-0.0544,-0.1734,0.0544,0.1734]},"holes":[{"circle":[0,-0.135,0.0155]},{"circle":[0,-0.102,0.0135]},{"circle":[0,-0.056,0.0155]},{"circle":[0,-0.023,0.0135]},{"circle":[0,0.023,0.0155]},{"circle":[0,0.056,0.0135]},{"circle":[0,0.102,0.0155]},{"circle":[0,0.135,0.0135]}]},
+        {"type":"extrude","mat":"alu","axis":"y","from":0.20973,"to":0.30873,"shape":{"rect":[-0.0544,-0.1734,0.0544,0.1734]},"holes":[{"rrect":[-0.0484,-0.1674,0.0484,0.1674,0.006]}],"casing":true},
+        {"type":"extrude","mat":"alu","axis":"y","from":0.24973,"to":0.25573,"shape":{"rrect":[-0.0484,-0.1674,0.0484,0.1674,0.006]},"holes":[{"circle":[0,-0.135,0.0065]},{"circle":[0,-0.056,0.0065]},{"circle":[0,0.023,0.0065]},{"circle":[0,0.102,0.0065]},{"circle":[0,-0.102,0.0065]},{"circle":[0,-0.023,0.0065]},{"circle":[0,0.056,0.0065]},{"circle":[0,0.135,0.0065]}]},
+        {"type":"extrude","mat":"alu","axis":"y","from":0.26873,"to":0.27673,"shape":{"rrect":[-0.0484,-0.1674,0.0484,0.1674,0.006]},"holes":[{"circle":[0,-0.135,0.0145]},{"circle":[0,-0.056,0.0145]},{"circle":[0,0.023,0.0145]},{"circle":[0,0.102,0.0145]},{"circle":[0,-0.102,0.0145]},{"circle":[0,-0.023,0.0145]},{"circle":[0,0.056,0.0145]},{"circle":[0,0.135,0.0145]}]},
+        {"type":"revolve","mat":"alu","profile":{"ring":[0.0035,0.0062,0.21973,0.24973]},"axis":"y","at":[-0.135,0,0],"seg":24},
+        {"type":"revolve","mat":"alu","profile":{"ring":[0.0145,0.0185,0.27673,0.30573]},"axis":"y","at":[-0.135,0,0],"seg":40},
+        {"type":"revolve","mat":"alu","profile":{"ring":[0.0035,0.0062,0.21973,0.24973]},"axis":"y","at":[-0.056,0,0],"seg":24},
+        {"type":"revolve","mat":"alu","profile":{"ring":[0.0145,0.0185,0.27673,0.30573]},"axis":"y","at":[-0.056,0,0],"seg":40},
+        {"type":"revolve","mat":"alu","profile":{"ring":[0.0035,0.0062,0.21973,0.24973]},"axis":"y","at":[0.023,0,0],"seg":24},
+        {"type":"revolve","mat":"alu","profile":{"ring":[0.0145,0.0185,0.27673,0.30573]},"axis":"y","at":[0.023,0,0],"seg":40},
+        {"type":"revolve","mat":"alu","profile":{"ring":[0.0035,0.0062,0.21973,0.24973]},"axis":"y","at":[0.102,0,0],"seg":24},
+        {"type":"revolve","mat":"alu","profile":{"ring":[0.0145,0.0185,0.27673,0.30573]},"axis":"y","at":[0.102,0,0],"seg":40},
+        {"type":"revolve","mat":"alu","profile":{"ring":[0.0035,0.0062,0.21973,0.24973]},"axis":"y","at":[-0.102,0,0],"seg":24},
+        {"type":"revolve","mat":"alu","profile":{"ring":[0.0145,0.0185,0.27673,0.30573]},"axis":"y","at":[-0.102,0,0],"seg":40},
+        {"type":"revolve","mat":"alu","profile":{"ring":[0.0035,0.0062,0.21973,0.24973]},"axis":"y","at":[-0.023,0,0],"seg":24},
+        {"type":"revolve","mat":"alu","profile":{"ring":[0.0145,0.0185,0.27673,0.30573]},"axis":"y","at":[-0.023,0,0],"seg":40},
+        {"type":"revolve","mat":"alu","profile":{"ring":[0.0035,0.0062,0.21973,0.24973]},"axis":"y","at":[0.056,0,0],"seg":24},
+        {"type":"revolve","mat":"alu","profile":{"ring":[0.0145,0.0185,0.27673,0.30573]},"axis":"y","at":[0.056,0,0],"seg":40},
+        {"type":"revolve","mat":"alu","profile":{"ring":[0.0035,0.0062,0.21973,0.24973]},"axis":"y","at":[0.135,0,0],"seg":24},
+        {"type":"revolve","mat":"alu","profile":{"ring":[0.0145,0.0185,0.27673,0.30573]},"axis":"y","at":[0.135,0,0],"seg":40},
+        {"type":"extrude","mat":"alu","axis":"x","from":-0.165,"to":-0.151,"shape":{"rect":[0.27673,-0.032,0.35123,0.032]},"holes":[{"circle":[0.32923,0,0.0145]}]},
+        {"type":"extrude","mat":"alu","axis":"x","from":-0.086,"to":-0.072,"shape":{"rect":[0.27673,-0.032,0.35123,0.032]},"holes":[{"circle":[0.32923,0,0.0145]}]},
+        {"type":"extrude","mat":"alu","axis":"x","from":-0.007,"to":0.007,"shape":{"rect":[0.27673,-0.032,0.35123,0.032]},"holes":[{"circle":[0.32923,0,0.0145]}]},
+        {"type":"extrude","mat":"alu","axis":"x","from":0.072,"to":0.086,"shape":{"rect":[0.27673,-0.032,0.35123,0.032]},"holes":[{"circle":[0.32923,0,0.0145]}]},
+        {"type":"extrude","mat":"alu","axis":"x","from":0.151,"to":0.165,"shape":{"rect":[0.27673,-0.032,0.35123,0.032]},"holes":[{"circle":[0.32923,0,0.0145]}]},
+        {"type":"tube","mat":"port","points":[[-0.135,0.20573,0],[-0.135,0.21973,0.004],[-0.135,0.23373,0.024],[-0.135,0.23773,0.05],[-0.135,0.23873,0.062]],"r":0.0125},
+        {"type":"tube","mat":"port","points":[[-0.102,0.20573,0],[-0.102,0.21973,-0.004],[-0.102,0.23373,-0.024],[-0.102,0.23773,-0.05],[-0.102,0.23873,-0.062]],"r":0.0115},
+        {"type":"tube","mat":"port","points":[[-0.056,0.20573,0],[-0.056,0.21973,0.004],[-0.056,0.23373,0.024],[-0.056,0.23773,0.05],[-0.056,0.23873,0.062]],"r":0.0125},
+        {"type":"tube","mat":"port","points":[[-0.023,0.20573,0],[-0.023,0.21973,-0.004],[-0.023,0.23373,-0.024],[-0.023,0.23773,-0.05],[-0.023,0.23873,-0.062]],"r":0.0115},
+        {"type":"tube","mat":"port","points":[[0.023,0.20573,0],[0.023,0.21973,0.004],[0.023,0.23373,0.024],[0.023,0.23773,0.05],[0.023,0.23873,0.062]],"r":0.0125},
+        {"type":"tube","mat":"port","points":[[0.056,0.20573,0],[0.056,0.21973,-0.004],[0.056,0.23373,-0.024],[0.056,0.23773,-0.05],[0.056,0.23873,-0.062]],"r":0.0115},
+        {"type":"tube","mat":"port","points":[[0.102,0.20573,0],[0.102,0.21973,0.004],[0.102,0.23373,0.024],[0.102,0.23773,0.05],[0.102,0.23873,0.062]],"r":0.0125},
+        {"type":"tube","mat":"port","points":[[0.135,0.20573,0],[0.135,0.21973,-0.004],[0.135,0.23373,-0.024],[0.135,0.23773,-0.05],[0.135,0.23873,-0.062]],"r":0.0115}
+      ]
+    },
+    {
+      "id": "coperchio",
+      "name": "Coperchio punterie",
+      "short": "Coperchio",
+      "section": "Struttura",
+      "text": "Chiude in alto la testata e trattiene l’olio che lubrifica albero a camme e punterie. Dal tappo sul coperchio si rabbocca l’olio motore.",
+      "facts": [["Funzione","tenuta dell’olio"],["Rabbocco olio","tappo superiore"]],
+      "color": "cover",
+      "explode": [0,0.56,0],
+      "materials": {"body":{"color":"cover","T":95,"metal":0.3,"rough":0.55},"cap":{"color":"cap","T":80,"metal":0.1,"rough":0.6}},
+      "parts": [
+        {"type":"extrude","mat":"body","axis":"y","from":0.30873,"to":0.36373,"shape":{"rrect":[-0.0544,-0.1734,0.0544,0.1734,0.012]},"holes":[{"rrect":[-0.0494,-0.1684,0.0494,0.1684,0.008]}],"casing":true},
+        {"type":"extrude","mat":"body","axis":"y","from":0.36373,"to":0.36973,"shape":{"rrect":[-0.0544,-0.1734,0.0544,0.1734,0.012]},"casing":true},
+        {"type":"cylinder","mat":"cap","r":0.018,"h":0.012,"seg":32,"at":[0.08,0.37573,0],"casing":true}
+      ]
+    },
+    {
+      "id": "albero_camme",
+      "name": "Albero a camme in testa",
+      "short": "Albero a camme",
+      "section": "Distribuzione",
+      "text": "Un solo albero in testa (SOHC) con otto camme, una per valvola. È trascinato dall’albero motore con una cinghia dentata e gira a metà velocità: ogni valvola si apre una volta ogni due giri dell’albero motore, cioè una volta per ciclo. Osserva i segni sulle pulegge della distribuzione: quella dell’albero a camme fa mezzo giro mentre l’albero motore ne fa uno.",
+      "facts": [
+        ["Disposizione","monoalbero in testa (SOHC)"],
+        ["Camme","8"],
+        ["Rapporto di velocità","1 : 2"],
+        ["Alzata valvole","≈ 8,5 mm (indicativa)"]
+      ],
+      "course": "La puleggia dell’albero a camme ha il doppio dei denti di quella dell’albero motore: n_camme = n_motore / 2.",
+      "color": "cam",
+      "explode": [0,0.47,0],
+      "spool": "cam",
+      "clip": false,
+      "materials": {"steel":{"color":"cam","T":110,"metal":0.85,"rough":0.25}},
+      "parts": [
+        {"type":"cylinder","mat":"steel","r":0.0135,"h":0.37,"seg":32,"axis":"x","at":[-0.02,0.32923,0]},
+        {"type":"extrude","mat":"steel","axis":"x","from":-0.142,"to":-0.128,"shape":{"cam":{"u":0.32923,"v":0,"base":0.0175,"lift":0.0085,"duration":118,"angle":125}}},
+        {"type":"extrude","mat":"steel","axis":"x","from":-0.109,"to":-0.095,"shape":{"cam":{"u":0.32923,"v":0,"base":0.0175,"lift":0.0085,"duration":118,"angle":235}}},
+        {"type":"extrude","mat":"steel","axis":"x","from":-0.063,"to":-0.049,"shape":{"cam":{"u":0.32923,"v":0,"base":0.0175,"lift":0.0085,"duration":118,"angle":215}}},
+        {"type":"extrude","mat":"steel","axis":"x","from":-0.03,"to":-0.016,"shape":{"cam":{"u":0.32923,"v":0,"base":0.0175,"lift":0.0085,"duration":118,"angle":325}}},
+        {"type":"extrude","mat":"steel","axis":"x","from":0.016,"to":0.03,"shape":{"cam":{"u":0.32923,"v":0,"base":0.0175,"lift":0.0085,"duration":118,"angle":35}}},
+        {"type":"extrude","mat":"steel","axis":"x","from":0.049,"to":0.063,"shape":{"cam":{"u":0.32923,"v":0,"base":0.0175,"lift":0.0085,"duration":118,"angle":145}}},
+        {"type":"extrude","mat":"steel","axis":"x","from":0.095,"to":0.109,"shape":{"cam":{"u":0.32923,"v":0,"base":0.0175,"lift":0.0085,"duration":118,"angle":305}}},
+        {"type":"extrude","mat":"steel","axis":"x","from":0.128,"to":0.142,"shape":{"cam":{"u":0.32923,"v":0,"base":0.0175,"lift":0.0085,"duration":118,"angle":55}}}
+      ]
+    },
+    {
+      "id": "distribuzione",
+      "name": "Cinghia e pulegge della distribuzione",
+      "short": "Distribuzione",
+      "section": "Distribuzione",
+      "text": "Una cinghia dentata collega la puleggia dell’albero motore a quella, grande il doppio, dell’albero a camme; trascina anche la pompa dell’acqua. Il tenditore mantiene la tensione corretta. Davanti, la puleggia dei servizi muove l’alternatore con una seconda cinghia. La cinghia di distribuzione va sostituita agli intervalli indicati dal costruttore.",
+      "facts": [["Trasmissione","cinghia dentata"],["Rapporto","2 : 1"],["Trascina anche","pompa dell’acqua"]],
+      "course": "Rapporto di trasmissione i = z_camme / z_motore = 2: a parità di passo dei denti il diametro della puleggia condotta è doppio.",
+      "color": "belt",
+      "explode": [-0.15,0.04,0],
+      "materials": {
+        "belt": {"color":"belt","T":80,"metal":0.05,"rough":0.85},
+        "pulley": {"color":"pulley","T":90,"metal":0.7,"rough":0.35},
+        "mark": {"color":"mark","T":90,"metal":0.2,"rough":0.5}
+      },
+      "parts": [
+        {"type":"extrude","mat":"belt","axis":"x","from":-0.2045,"to":-0.1885,"shape":{"hull":[[0,0,0.033],[0.32923,0,0.062],[0.21,0.052,0.026],[0.085,-0.052,0.036]]},"holes":[{"hull":[[0,0,0.029],[0.32923,0,0.058],[0.21,0.052,0.022],[0.085,-0.052,0.032]]}]},
+        {"type":"cylinder","mat":"pulley","r":0.029,"h":0.017,"seg":32,"axis":"x","at":[-0.1965,0,0],"spool":"crank"},
+        {"type":"box","mat":"mark","size":[0.004,0.012,0.006],"at":[-0.206,0.021,0],"spool":"crank"},
+        {"type":"cylinder","mat":"pulley","r":0.056,"h":0.018,"seg":32,"axis":"x","at":[-0.225,0,0],"spool":"crank"},
+        {"type":"cylinder","mat":"pulley","r":0.058,"h":0.017,"seg":32,"axis":"x","at":[-0.1965,0.32923,0],"spool":"cam"},
+        {"type":"cylinder","mat":"pulley","r":0.022,"h":0.03,"seg":32,"axis":"x","at":[-0.183,0.32923,0],"spool":"cam"},
+        {"type":"box","mat":"mark","size":[0.004,0.02,0.008],"at":[-0.206,0.37323,0],"spool":"cam"},
+        {"type":"cylinder","mat":"pulley","r":0.022,"h":0.017,"seg":32,"axis":"x","at":[-0.1965,0.21,0.052],"spool":"tensioner"},
+        {"type":"box","mat":"mark","size":[0.004,0.008,0.005],"at":[-0.206,0.224,0.052],"spool":"tensioner"},
+        {"type":"cylinder","mat":"pulley","r":0.032,"h":0.017,"seg":32,"axis":"x","at":[-0.1965,0.085,-0.052],"spool":"pump"},
+        {"type":"box","mat":"mark","size":[0.004,0.01,0.006],"at":[-0.206,0.107,-0.052],"spool":"pump"},
+        {"type":"cylinder","mat":"pulley","r":0.026,"h":0.02,"seg":32,"axis":"x","at":[-0.178,0.085,-0.052]}
+      ]
+    },
+    {
+      "id": "valvole_asp",
+      "name": "Valvole di aspirazione",
+      "short": "Valvole asp.",
+      "section": "Distribuzione",
+      "text": "Si aprono durante la corsa di aspirazione e lasciano entrare la miscela di aria e benzina. Sono più grandi di quelle di scarico per riempire meglio il cilindro. La camma spinge la punteria a bicchiere, che apre la valvola; la molla la richiude.",
+      "facts": [
+        ["Numero","4 (una per cilindro)"],
+        ["Apertura","≈ 8° prima del PMS"],
+        ["Chiusura","≈ 48° dopo il PMI"],
+        ["Alzata","≈ 8,5 mm (indicativa)"]
+      ],
+      "course": "Diagramma della distribuzione: anticipi e ritardi di apertura e chiusura sfruttano l’inerzia dei gas e migliorano il riempimento rispetto al ciclo teorico.",
+      "color": "valveIn",
+      "explode": [0,0.37,0],
+      "clip": false,
+      "materials": {
+        "valve": {"color":"valveIn","T":300,"metal":0.75,"rough":0.3},
+        "retainer": {"color":"steel","T":150,"metal":0.8,"rough":0.3},
+        "tappet": {"color":"tappet","T":120,"metal":0.8,"rough":0.3},
+        "spring": {"color":"spring","T":120,"metal":0.6,"rough":0.4}
+      },
+      "parts": [
+        {"type":"revolve","mat":"valve","axis":"y","at":[-0.135,0,0],"seg":40,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":125}}},"profile":{"polygon":[[0,0.20223],[0.0155,0.20223],[0.0155,0.20473],[0.0045,0.21273],[0.0035,0.21773],[0.0035,0.30873],[0,0.30873]]}},
+        {"type":"revolve","mat":"retainer","profile":{"ring":[0.0035,0.0115,0.28373,0.28723]},"axis":"y","at":[-0.135,0,0],"seg":32,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":125}}}},
+        {"type":"revolve","mat":"tappet","axis":"y","at":[-0.135,0,0],"seg":40,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":125}}},"profile":{"polygon":[[0,0.31173],[0.0142,0.31173],[0.0142,0.28773],[0.0124,0.28773],[0.0124,0.30873],[0,0.30873]]}},
+        {"type":"tube","mat":"spring","helix":{"at":[-0.135,0.25573,0],"radius":0.0095,"height":0.028,"turns":6},"r":0.0016,"radialSeg":8,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":125},"spring":[0.25573,0.28373]}}},
+        {"type":"revolve","mat":"valve","axis":"y","at":[-0.056,0,0],"seg":40,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":215}}},"profile":{"polygon":[[0,0.20223],[0.0155,0.20223],[0.0155,0.20473],[0.0045,0.21273],[0.0035,0.21773],[0.0035,0.30873],[0,0.30873]]}},
+        {"type":"revolve","mat":"retainer","profile":{"ring":[0.0035,0.0115,0.28373,0.28723]},"axis":"y","at":[-0.056,0,0],"seg":32,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":215}}}},
+        {"type":"revolve","mat":"tappet","axis":"y","at":[-0.056,0,0],"seg":40,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":215}}},"profile":{"polygon":[[0,0.31173],[0.0142,0.31173],[0.0142,0.28773],[0.0124,0.28773],[0.0124,0.30873],[0,0.30873]]}},
+        {"type":"tube","mat":"spring","helix":{"at":[-0.056,0.25573,0],"radius":0.0095,"height":0.028,"turns":6},"r":0.0016,"radialSeg":8,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":215},"spring":[0.25573,0.28373]}}},
+        {"type":"revolve","mat":"valve","axis":"y","at":[0.023,0,0],"seg":40,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":35}}},"profile":{"polygon":[[0,0.20223],[0.0155,0.20223],[0.0155,0.20473],[0.0045,0.21273],[0.0035,0.21773],[0.0035,0.30873],[0,0.30873]]}},
+        {"type":"revolve","mat":"retainer","profile":{"ring":[0.0035,0.0115,0.28373,0.28723]},"axis":"y","at":[0.023,0,0],"seg":32,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":35}}}},
+        {"type":"revolve","mat":"tappet","axis":"y","at":[0.023,0,0],"seg":40,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":35}}},"profile":{"polygon":[[0,0.31173],[0.0142,0.31173],[0.0142,0.28773],[0.0124,0.28773],[0.0124,0.30873],[0,0.30873]]}},
+        {"type":"tube","mat":"spring","helix":{"at":[0.023,0.25573,0],"radius":0.0095,"height":0.028,"turns":6},"r":0.0016,"radialSeg":8,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":35},"spring":[0.25573,0.28373]}}},
+        {"type":"revolve","mat":"valve","axis":"y","at":[0.102,0,0],"seg":40,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":305}}},"profile":{"polygon":[[0,0.20223],[0.0155,0.20223],[0.0155,0.20473],[0.0045,0.21273],[0.0035,0.21773],[0.0035,0.30873],[0,0.30873]]}},
+        {"type":"revolve","mat":"retainer","profile":{"ring":[0.0035,0.0115,0.28373,0.28723]},"axis":"y","at":[0.102,0,0],"seg":32,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":305}}}},
+        {"type":"revolve","mat":"tappet","axis":"y","at":[0.102,0,0],"seg":40,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":305}}},"profile":{"polygon":[[0,0.31173],[0.0142,0.31173],[0.0142,0.28773],[0.0124,0.28773],[0.0124,0.30873],[0,0.30873]]}},
+        {"type":"tube","mat":"spring","helix":{"at":[0.102,0.25573,0],"radius":0.0095,"height":0.028,"turns":6},"r":0.0016,"radialSeg":8,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":305},"spring":[0.25573,0.28373]}}}
+      ]
+    },
+    {
+      "id": "valvole_sca",
+      "name": "Valvole di scarico",
+      "short": "Valvole sca.",
+      "section": "Distribuzione",
+      "text": "Si aprono verso la fine dell’espansione e lasciano uscire i gas combusti. Lavorano molto più calde di quelle di aspirazione: il fungo può superare i 700 °C e cede calore soprattutto alla sede nella testata.",
+      "facts": [
+        ["Numero","4 (una per cilindro)"],
+        ["Apertura","≈ 48° prima del PMI"],
+        ["Chiusura","≈ 8° dopo il PMS"],
+        ["Incrocio","≈ 16° attorno al PMS"]
+      ],
+      "course": "Incrocio delle valvole: attorno al PMS di fine scarico sono aperte entrambe per qualche grado; i gas uscenti aiutano a richiamare la carica fresca.",
+      "color": "valveEx",
+      "explode": [0,0.37,0],
+      "clip": false,
+      "materials": {
+        "valve": {"color":"valveEx","T":700,"metal":0.7,"rough":0.35},
+        "retainer": {"color":"steel","T":150,"metal":0.8,"rough":0.3},
+        "tappet": {"color":"tappet","T":120,"metal":0.8,"rough":0.3},
+        "spring": {"color":"spring","T":130,"metal":0.6,"rough":0.4}
+      },
+      "parts": [
+        {"type":"revolve","mat":"valve","axis":"y","at":[-0.102,0,0],"seg":40,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":235}}},"profile":{"polygon":[[0,0.20223],[0.0135,0.20223],[0.0135,0.20473],[0.0045,0.21273],[0.0035,0.21773],[0.0035,0.30873],[0,0.30873]]}},
+        {"type":"revolve","mat":"retainer","profile":{"ring":[0.0035,0.0115,0.28373,0.28723]},"axis":"y","at":[-0.102,0,0],"seg":32,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":235}}}},
+        {"type":"revolve","mat":"tappet","axis":"y","at":[-0.102,0,0],"seg":40,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":235}}},"profile":{"polygon":[[0,0.31173],[0.0142,0.31173],[0.0142,0.28773],[0.0124,0.28773],[0.0124,0.30873],[0,0.30873]]}},
+        {"type":"tube","mat":"spring","helix":{"at":[-0.102,0.25573,0],"radius":0.0095,"height":0.028,"turns":6},"r":0.0016,"radialSeg":8,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":235},"spring":[0.25573,0.28373]}}},
+        {"type":"revolve","mat":"valve","axis":"y","at":[-0.023,0,0],"seg":40,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":325}}},"profile":{"polygon":[[0,0.20223],[0.0135,0.20223],[0.0135,0.20473],[0.0045,0.21273],[0.0035,0.21773],[0.0035,0.30873],[0,0.30873]]}},
+        {"type":"revolve","mat":"retainer","profile":{"ring":[0.0035,0.0115,0.28373,0.28723]},"axis":"y","at":[-0.023,0,0],"seg":32,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":325}}}},
+        {"type":"revolve","mat":"tappet","axis":"y","at":[-0.023,0,0],"seg":40,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":325}}},"profile":{"polygon":[[0,0.31173],[0.0142,0.31173],[0.0142,0.28773],[0.0124,0.28773],[0.0124,0.30873],[0,0.30873]]}},
+        {"type":"tube","mat":"spring","helix":{"at":[-0.023,0.25573,0],"radius":0.0095,"height":0.028,"turns":6},"r":0.0016,"radialSeg":8,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":325},"spring":[0.25573,0.28373]}}},
+        {"type":"revolve","mat":"valve","axis":"y","at":[0.056,0,0],"seg":40,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":145}}},"profile":{"polygon":[[0,0.20223],[0.0135,0.20223],[0.0135,0.20473],[0.0045,0.21273],[0.0035,0.21773],[0.0035,0.30873],[0,0.30873]]}},
+        {"type":"revolve","mat":"retainer","profile":{"ring":[0.0035,0.0115,0.28373,0.28723]},"axis":"y","at":[0.056,0,0],"seg":32,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":145}}}},
+        {"type":"revolve","mat":"tappet","axis":"y","at":[0.056,0,0],"seg":40,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":145}}},"profile":{"polygon":[[0,0.31173],[0.0142,0.31173],[0.0142,0.28773],[0.0124,0.28773],[0.0124,0.30873],[0,0.30873]]}},
+        {"type":"tube","mat":"spring","helix":{"at":[0.056,0.25573,0],"radius":0.0095,"height":0.028,"turns":6},"r":0.0016,"radialSeg":8,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":145},"spring":[0.25573,0.28373]}}},
+        {"type":"revolve","mat":"valve","axis":"y","at":[0.135,0,0],"seg":40,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":55}}},"profile":{"polygon":[[0,0.20223],[0.0135,0.20223],[0.0135,0.20473],[0.0045,0.21273],[0.0035,0.21773],[0.0035,0.30873],[0,0.30873]]}},
+        {"type":"revolve","mat":"retainer","profile":{"ring":[0.0035,0.0115,0.28373,0.28723]},"axis":"y","at":[0.135,0,0],"seg":32,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":55}}}},
+        {"type":"revolve","mat":"tappet","axis":"y","at":[0.135,0,0],"seg":40,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":55}}},"profile":{"polygon":[[0,0.31173],[0.0142,0.31173],[0.0142,0.28773],[0.0124,0.28773],[0.0124,0.30873],[0,0.30873]]}},
+        {"type":"tube","mat":"spring","helix":{"at":[0.135,0.25573,0],"radius":0.0095,"height":0.028,"turns":6},"r":0.0016,"radialSeg":8,"motion":{"valve":{"spool":"cam","cam":{"base":0.0175,"lift":0.0085,"duration":118,"angle":55},"spring":[0.25573,0.28373]}}}
+      ]
+    },
+    {
+      "id": "pistoni",
+      "name": "Pistoni, fasce e spinotti",
+      "short": "Pistoni",
+      "section": "Manovellismo",
+      "text": "I pistoni in lega di alluminio ricevono la spinta dei gas e la trasmettono alla biella tramite lo spinotto. Le fasce elastiche fanno tenuta: le due superiori sui gas, l’inferiore raschia l’olio dalla canna. Il pistone si ferma e inverte il moto ai punti morti superiore (PMS) e inferiore (PMI).",
+      "facts": [
+        ["Diametro (alesaggio)","70,8 mm"],
+        ["Corsa","78,86 mm"],
+        ["Fasce","2 di tenuta + 1 raschiaolio"],
+        ["Velocità media a 5.500 giri/min","≈ 14,5 m/s"]
+      ],
+      "course": "Velocità media del pistone: v = 2·c·n / 60 = 2 × 0,07886 × 5.500 / 60 ≈ 14,5 m/s.",
+      "color": "piston",
+      "explode": [0,0.13,0],
+      "materials": {
+        "piston": {"color":"piston","T":280,"metal":0.6,"rough":0.35},
+        "ring": {"color":"ring","T":220,"metal":0.6,"rough":0.4},
+        "pin": {"color":"steel","T":180,"metal":0.85,"rough":0.25}
+      },
+      "parts": [
+        {"type":"revolve","mat":"piston","axis":"y","at":[-0.1185,0,0],"seg":64,"motion":{"piston":{"phase":0}},"profile":{"polygon":[[0,0.19193],[0.0352,0.19193],[0.0352,0.14443],[0.0318,0.14443],[0.0318,0.18493],[0,0.18493]]}},
+        {"type":"revolve","mat":"ring","profile":{"ring":[0.0336,0.0353,0.18643,0.18793]},"axis":"y","at":[-0.1185,0,0],"seg":64,"motion":{"piston":{"phase":0}}},
+        {"type":"revolve","mat":"ring","profile":{"ring":[0.0336,0.0353,0.18243,0.18393]},"axis":"y","at":[-0.1185,0,0],"seg":64,"motion":{"piston":{"phase":0}}},
+        {"type":"revolve","mat":"ring","profile":{"ring":[0.0336,0.0353,0.17743,0.18043]},"axis":"y","at":[-0.1185,0,0],"seg":64,"motion":{"piston":{"phase":0}}},
+        {"type":"cylinder","mat":"pin","r":0.0085,"h":0.054,"seg":32,"axis":"x","at":[-0.1185,0.16643,0],"motion":{"piston":{"phase":0}}},
+        {"type":"cylinder","mat":"piston","r":0.012,"h":0.012,"seg":32,"axis":"x","at":[-0.1435,0.16643,0],"motion":{"piston":{"phase":0}}},
+        {"type":"cylinder","mat":"piston","r":0.012,"h":0.012,"seg":32,"axis":"x","at":[-0.0935,0.16643,0],"motion":{"piston":{"phase":0}}},
+        {"type":"revolve","mat":"piston","axis":"y","at":[-0.0395,0,0],"seg":64,"motion":{"piston":{"phase":180}},"profile":{"polygon":[[0,0.11307],[0.0352,0.11307],[0.0352,0.06557],[0.0318,0.06557],[0.0318,0.10607],[0,0.10607]]}},
+        {"type":"revolve","mat":"ring","profile":{"ring":[0.0336,0.0353,0.10757,0.10907]},"axis":"y","at":[-0.0395,0,0],"seg":64,"motion":{"piston":{"phase":180}}},
+        {"type":"revolve","mat":"ring","profile":{"ring":[0.0336,0.0353,0.10357,0.10507]},"axis":"y","at":[-0.0395,0,0],"seg":64,"motion":{"piston":{"phase":180}}},
+        {"type":"revolve","mat":"ring","profile":{"ring":[0.0336,0.0353,0.09857,0.10157]},"axis":"y","at":[-0.0395,0,0],"seg":64,"motion":{"piston":{"phase":180}}},
+        {"type":"cylinder","mat":"pin","r":0.0085,"h":0.054,"seg":32,"axis":"x","at":[-0.0395,0.08757,0],"motion":{"piston":{"phase":180}}},
+        {"type":"cylinder","mat":"piston","r":0.012,"h":0.012,"seg":32,"axis":"x","at":[-0.0645,0.08757,0],"motion":{"piston":{"phase":180}}},
+        {"type":"cylinder","mat":"piston","r":0.012,"h":0.012,"seg":32,"axis":"x","at":[-0.0145,0.08757,0],"motion":{"piston":{"phase":180}}},
+        {"type":"revolve","mat":"piston","axis":"y","at":[0.0395,0,0],"seg":64,"motion":{"piston":{"phase":180}},"profile":{"polygon":[[0,0.11307],[0.0352,0.11307],[0.0352,0.06557],[0.0318,0.06557],[0.0318,0.10607],[0,0.10607]]}},
+        {"type":"revolve","mat":"ring","profile":{"ring":[0.0336,0.0353,0.10757,0.10907]},"axis":"y","at":[0.0395,0,0],"seg":64,"motion":{"piston":{"phase":180}}},
+        {"type":"revolve","mat":"ring","profile":{"ring":[0.0336,0.0353,0.10357,0.10507]},"axis":"y","at":[0.0395,0,0],"seg":64,"motion":{"piston":{"phase":180}}},
+        {"type":"revolve","mat":"ring","profile":{"ring":[0.0336,0.0353,0.09857,0.10157]},"axis":"y","at":[0.0395,0,0],"seg":64,"motion":{"piston":{"phase":180}}},
+        {"type":"cylinder","mat":"pin","r":0.0085,"h":0.054,"seg":32,"axis":"x","at":[0.0395,0.08757,0],"motion":{"piston":{"phase":180}}},
+        {"type":"cylinder","mat":"piston","r":0.012,"h":0.012,"seg":32,"axis":"x","at":[0.0145,0.08757,0],"motion":{"piston":{"phase":180}}},
+        {"type":"cylinder","mat":"piston","r":0.012,"h":0.012,"seg":32,"axis":"x","at":[0.0645,0.08757,0],"motion":{"piston":{"phase":180}}},
+        {"type":"revolve","mat":"piston","axis":"y","at":[0.1185,0,0],"seg":64,"motion":{"piston":{"phase":0}},"profile":{"polygon":[[0,0.19193],[0.0352,0.19193],[0.0352,0.14443],[0.0318,0.14443],[0.0318,0.18493],[0,0.18493]]}},
+        {"type":"revolve","mat":"ring","profile":{"ring":[0.0336,0.0353,0.18643,0.18793]},"axis":"y","at":[0.1185,0,0],"seg":64,"motion":{"piston":{"phase":0}}},
+        {"type":"revolve","mat":"ring","profile":{"ring":[0.0336,0.0353,0.18243,0.18393]},"axis":"y","at":[0.1185,0,0],"seg":64,"motion":{"piston":{"phase":0}}},
+        {"type":"revolve","mat":"ring","profile":{"ring":[0.0336,0.0353,0.17743,0.18043]},"axis":"y","at":[0.1185,0,0],"seg":64,"motion":{"piston":{"phase":0}}},
+        {"type":"cylinder","mat":"pin","r":0.0085,"h":0.054,"seg":32,"axis":"x","at":[0.1185,0.16643,0],"motion":{"piston":{"phase":0}}},
+        {"type":"cylinder","mat":"piston","r":0.012,"h":0.012,"seg":32,"axis":"x","at":[0.0935,0.16643,0],"motion":{"piston":{"phase":0}}},
+        {"type":"cylinder","mat":"piston","r":0.012,"h":0.012,"seg":32,"axis":"x","at":[0.1435,0.16643,0],"motion":{"piston":{"phase":0}}}
+      ]
+    },
+    {
+      "id": "bielle",
+      "name": "Bielle",
+      "short": "Bielle",
+      "section": "Manovellismo",
+      "text": "Collegano i pistoni all’albero motore e trasformano il moto alternato in moto rotatorio (manovellismo di spinta). Il piede della biella ruota sullo spinotto, la testa sul perno di manovella; il cappello è fissato con due bulloni.",
+      "facts": [["Materiale","acciaio"],["Sezione","a doppio T"],["Lunghezza","≈ 127 mm (indicativa)"],["λ = r / l","≈ 0,31"]],
+      "course": "Spostamento del pistone dal PMS: x = r(1 − cos θ) + l(1 − √(1 − λ² sin² θ)), con r = c/2 = 39,4 mm.",
+      "color": "rod",
+      "explode": [0,0.06,0],
+      "clip": false,
+      "materials": {
+        "rod": {"color":"rod","T":120,"metal":0.75,"rough":0.35},
+        "bolt": {"color":"steel","T":120,"metal":0.85,"rough":0.3}
+      },
+      "parts": [
+        {"type":"extrude","mat":"rod","axis":"x","from":-0.128,"to":-0.109,"shape":{"circle":[0.16643,0,0.0125]},"holes":[{"circle":[0.16643,0,0.0086]}],"motion":{"rod":{"phase":0,"x":-0.1185}}},
+        {"type":"extrude","mat":"rod","axis":"x","from":-0.128,"to":-0.109,"shape":{"circle":[0.03943,0,0.0305]},"holes":[{"circle":[0.03943,0,0.0197]}],"motion":{"rod":{"phase":0,"x":-0.1185}}},
+        {"type":"extrude","mat":"rod","axis":"x","from":-0.125,"to":-0.112,"shape":{"polygon":[[0.06643,-0.0115],[0.15493,-0.0068],[0.15493,0.0068],[0.06643,0.0115]]},"motion":{"rod":{"phase":0,"x":-0.1185}}},
+        {"type":"bar","mat":"bolt","from":[-0.1185,0.02343,-0.0235],"to":[-0.1185,0.05143,-0.0235],"r":0.0035,"motion":{"rod":{"phase":0,"x":-0.1185}}},
+        {"type":"bar","mat":"bolt","from":[-0.1185,0.02343,0.0235],"to":[-0.1185,0.05143,0.0235],"r":0.0035,"motion":{"rod":{"phase":0,"x":-0.1185}}},
+        {"type":"extrude","mat":"rod","axis":"x","from":-0.049,"to":-0.03,"shape":{"circle":[0.08757,0,0.0125]},"holes":[{"circle":[0.08757,0,0.0086]}],"motion":{"rod":{"phase":180,"x":-0.0395}}},
+        {"type":"extrude","mat":"rod","axis":"x","from":-0.049,"to":-0.03,"shape":{"circle":[-0.03943,0,0.0305]},"holes":[{"circle":[-0.03943,0,0.0197]}],"motion":{"rod":{"phase":180,"x":-0.0395}}},
+        {"type":"extrude","mat":"rod","axis":"x","from":-0.046,"to":-0.033,"shape":{"polygon":[[-0.01243,-0.0115],[0.07607,-0.0068],[0.07607,0.0068],[-0.01243,0.0115]]},"motion":{"rod":{"phase":180,"x":-0.0395}}},
+        {"type":"bar","mat":"bolt","from":[-0.0395,-0.05543,-0.0235],"to":[-0.0395,-0.02743,-0.0235],"r":0.0035,"motion":{"rod":{"phase":180,"x":-0.0395}}},
+        {"type":"bar","mat":"bolt","from":[-0.0395,-0.05543,0.0235],"to":[-0.0395,-0.02743,0.0235],"r":0.0035,"motion":{"rod":{"phase":180,"x":-0.0395}}},
+        {"type":"extrude","mat":"rod","axis":"x","from":0.03,"to":0.049,"shape":{"circle":[0.08757,0,0.0125]},"holes":[{"circle":[0.08757,0,0.0086]}],"motion":{"rod":{"phase":180,"x":0.0395}}},
+        {"type":"extrude","mat":"rod","axis":"x","from":0.03,"to":0.049,"shape":{"circle":[-0.03943,0,0.0305]},"holes":[{"circle":[-0.03943,0,0.0197]}],"motion":{"rod":{"phase":180,"x":0.0395}}},
+        {"type":"extrude","mat":"rod","axis":"x","from":0.033,"to":0.046,"shape":{"polygon":[[-0.01243,-0.0115],[0.07607,-0.0068],[0.07607,0.0068],[-0.01243,0.0115]]},"motion":{"rod":{"phase":180,"x":0.0395}}},
+        {"type":"bar","mat":"bolt","from":[0.0395,-0.05543,-0.0235],"to":[0.0395,-0.02743,-0.0235],"r":0.0035,"motion":{"rod":{"phase":180,"x":0.0395}}},
+        {"type":"bar","mat":"bolt","from":[0.0395,-0.05543,0.0235],"to":[0.0395,-0.02743,0.0235],"r":0.0035,"motion":{"rod":{"phase":180,"x":0.0395}}},
+        {"type":"extrude","mat":"rod","axis":"x","from":0.109,"to":0.128,"shape":{"circle":[0.16643,0,0.0125]},"holes":[{"circle":[0.16643,0,0.0086]}],"motion":{"rod":{"phase":0,"x":0.1185}}},
+        {"type":"extrude","mat":"rod","axis":"x","from":0.109,"to":0.128,"shape":{"circle":[0.03943,0,0.0305]},"holes":[{"circle":[0.03943,0,0.0197]}],"motion":{"rod":{"phase":0,"x":0.1185}}},
+        {"type":"extrude","mat":"rod","axis":"x","from":0.112,"to":0.125,"shape":{"polygon":[[0.06643,-0.0115],[0.15493,-0.0068],[0.15493,0.0068],[0.06643,0.0115]]},"motion":{"rod":{"phase":0,"x":0.1185}}},
+        {"type":"bar","mat":"bolt","from":[0.1185,0.02343,-0.0235],"to":[0.1185,0.05143,-0.0235],"r":0.0035,"motion":{"rod":{"phase":0,"x":0.1185}}},
+        {"type":"bar","mat":"bolt","from":[0.1185,0.02343,0.0235],"to":[0.1185,0.05143,0.0235],"r":0.0035,"motion":{"rod":{"phase":0,"x":0.1185}}}
+      ]
+    },
+    {
+      "id": "albero_motore",
+      "name": "Albero motore (a gomiti)",
+      "short": "Albero motore",
+      "section": "Manovellismo",
+      "text": "Albero a gomiti in acciaio con cinque perni di banco e quattro perni di manovella. Le manovelle dei cilindri 1 e 4 sono in fase tra loro e opposte a quelle dei cilindri 2 e 3: i pistoni si muovono a coppie. I contrappesi bilanciano le masse rotanti.",
+      "facts": [
+        ["Perni di banco","5"],
+        ["Manovelle","a 180°"],
+        ["Raggio di manovella","39,4 mm"],
+        ["Ordine di accensione","1-3-4-2"]
+      ],
+      "course": "Potenza e coppia: P = C·ω. A 5.500 giri/min, 51 kW corrispondono a C = 51.000 / (2π × 5.500 / 60) ≈ 88,5 N·m; la coppia massima, 102 N·m, si ha a 3.000 giri/min.",
+      "color": "crank",
+      "explode": [0,-0.16,0],
+      "spool": "crank",
+      "clip": false,
+      "materials": {"steel":{"color":"crank","T":110,"metal":0.8,"rough":0.3}},
+      "parts": [
+        {"type":"cylinder","mat":"steel","r":0.0225,"h":0.019,"seg":32,"axis":"x","at":[-0.158,0,0]},
+        {"type":"cylinder","mat":"steel","r":0.0225,"h":0.018,"seg":32,"axis":"x","at":[-0.079,0,0]},
+        {"type":"cylinder","mat":"steel","r":0.0225,"h":0.018,"seg":32,"axis":"x","at":[0,0,0]},
+        {"type":"cylinder","mat":"steel","r":0.0225,"h":0.018,"seg":32,"axis":"x","at":[0.079,0,0]},
+        {"type":"cylinder","mat":"steel","r":0.0225,"h":0.019,"seg":32,"axis":"x","at":[0.158,0,0]},
+        {"type":"cylinder","mat":"steel","r":0.0195,"h":0.0205,"seg":32,"axis":"x","at":[-0.1185,0.03943,0]},
+        {"type":"extrude","mat":"steel","axis":"x","from":-0.1485,"to":-0.1285,"shape":{"hull":[[0,0,0.03],[0.03943,0,0.025]]}},
+        {"type":"extrude","mat":"steel","axis":"x","from":-0.1485,"to":-0.1285,"shape":{"sector":[0,0,0,0.056,118,242]}},
+        {"type":"extrude","mat":"steel","axis":"x","from":-0.1085,"to":-0.088,"shape":{"hull":[[0,0,0.03],[0.03943,0,0.025]]}},
+        {"type":"extrude","mat":"steel","axis":"x","from":-0.1085,"to":-0.088,"shape":{"sector":[0,0,0,0.056,118,242]}},
+        {"type":"cylinder","mat":"steel","r":0.0195,"h":0.0205,"seg":32,"axis":"x","at":[-0.0395,-0.03943,0]},
+        {"type":"extrude","mat":"steel","axis":"x","from":-0.07,"to":-0.0495,"shape":{"hull":[[0,0,0.03],[-0.03943,0,0.025]]}},
+        {"type":"extrude","mat":"steel","axis":"x","from":-0.07,"to":-0.0495,"shape":{"sector":[0,0,0,0.056,298,422]}},
+        {"type":"extrude","mat":"steel","axis":"x","from":-0.0295,"to":-0.009,"shape":{"hull":[[0,0,0.03],[-0.03943,0,0.025]]}},
+        {"type":"extrude","mat":"steel","axis":"x","from":-0.0295,"to":-0.009,"shape":{"sector":[0,0,0,0.056,298,422]}},
+        {"type":"cylinder","mat":"steel","r":0.0195,"h":0.0205,"seg":32,"axis":"x","at":[0.0395,-0.03943,0]},
+        {"type":"extrude","mat":"steel","axis":"x","from":0.009,"to":0.0295,"shape":{"hull":[[0,0,0.03],[-0.03943,0,0.025]]}},
+        {"type":"extrude","mat":"steel","axis":"x","from":0.009,"to":0.0295,"shape":{"sector":[0,0,0,0.056,298,422]}},
+        {"type":"extrude","mat":"steel","axis":"x","from":0.0495,"to":0.07,"shape":{"hull":[[0,0,0.03],[-0.03943,0,0.025]]}},
+        {"type":"extrude","mat":"steel","axis":"x","from":0.0495,"to":0.07,"shape":{"sector":[0,0,0,0.056,298,422]}},
+        {"type":"cylinder","mat":"steel","r":0.0195,"h":0.0205,"seg":32,"axis":"x","at":[0.1185,0.03943,0]},
+        {"type":"extrude","mat":"steel","axis":"x","from":0.088,"to":0.1085,"shape":{"hull":[[0,0,0.03],[0.03943,0,0.025]]}},
+        {"type":"extrude","mat":"steel","axis":"x","from":0.088,"to":0.1085,"shape":{"sector":[0,0,0,0.056,118,242]}},
+        {"type":"extrude","mat":"steel","axis":"x","from":0.1285,"to":0.1485,"shape":{"hull":[[0,0,0.03],[0.03943,0,0.025]]}},
+        {"type":"extrude","mat":"steel","axis":"x","from":0.1285,"to":0.1485,"shape":{"sector":[0,0,0,0.056,118,242]}},
+        {"type":"cylinder","mat":"steel","r":0.017,"h":0.07,"seg":32,"axis":"x","at":[-0.2025,0,0]},
+        {"type":"cylinder","mat":"steel","r":0.036,"h":0.01,"seg":32,"axis":"x","at":[0.1725,0,0]}
+      ]
+    },
+    {
+      "id": "volano",
+      "name": "Volano",
+      "short": "Volano",
+      "section": "Manovellismo",
+      "text": "Disco pesante fissato all’albero motore: accumula energia cinetica e regolarizza la rotazione tra un’espansione e l’altra. Sulla corona dentata ingrana il motorino di avviamento; sulla faccia posteriore lavora la frizione.",
+      "facts": [["Funzione","regolarizza la rotazione"],["Corona dentata","per il motorino di avviamento"]],
+      "course": "Energia cinetica E = ½·J·ω²: più è grande il momento d’inerzia J, minore è la fluttuazione di velocità a ogni ciclo.",
+      "color": "flywheel",
+      "explode": [0.13,-0.16,0],
+      "spool": "crank",
+      "materials": {"body":{"color":"flywheel","T":70,"metal":0.65,"rough":0.4}},
+      "parts": [
+        {"type":"revolve","mat":"body","profile":{"ring":[0.02,0.131,0.1775,0.1995]}},
+        {"type":"revolve","mat":"body","profile":{"ring":[0.06,0.12,0.1995,0.2015]}},
+        {"type":"instances","mat":"body","shape":{"box":{"size":[0.016,0.007,0.0045],"offset":[0,0.0035,0]}},"rings":[{"n":100,"x":0.1885,"r":0.1305}]},
+        {"type":"instances","mat":"body","shape":{"cylinder":{"r":0.004,"h":0.012,"seg":10,"axis":"x"}},"rings":[{"n":6,"x":0.172,"r":0.026}]}
+      ]
+    },
+    {
+      "id": "carica",
+      "name": "Fluido nei cilindri",
+      "short": "Fluido nei cilindri",
+      "section": "Ciclo Otto",
+      "text": "Colonna di gas tra il cielo del pistone e la testata, colorata secondo la fase: azzurro durante l’aspirazione della miscela, giallo in compressione, rosso in espansione dopo la scintilla, grigio durante lo scarico. Usa il cursore “Angolo di manovella” per seguire un ciclo completo, oppure lascia girare il motore al rallentatore.",
+      "facts": [["Ciclo","720° di albero motore"],["Fasi","4 corse del pistone"],["Rapporto di compressione","11,1 : 1"]],
+      "course": "Ciclo Otto ideale: 1→2 compressione adiabatica, 2→3 combustione a volume costante, 3→4 espansione adiabatica, 4→1 scarico a volume costante. η = 1 − 1/ε^(k−1) = 1 − 1/11,1^0,4 ≈ 0,62.",
+      "color": "gasA",
+      "explode": [0,0.13,0],
+      "materials": {"gas":{"color":"gasA","T":20,"metal":0,"rough":0.6}},
+      "parts": [
+        {"type":"charge","mat":"gas","x":-0.1185,"r":0.0342,"top":0.20113,"crown":0.026,"phase":0,"cylinder":0},
+        {"type":"charge","mat":"gas","x":-0.0395,"r":0.0342,"top":0.20113,"crown":0.026,"phase":180,"cylinder":1},
+        {"type":"charge","mat":"gas","x":0.0395,"r":0.0342,"top":0.20113,"crown":0.026,"phase":180,"cylinder":2},
+        {"type":"charge","mat":"gas","x":0.1185,"r":0.0342,"top":0.20113,"crown":0.026,"phase":0,"cylinder":3}
+      ]
+    },
+    {
+      "id": "collettore_asp",
+      "name": "Collettore di aspirazione e corpo farfallato",
+      "short": "Aspirazione",
+      "section": "Alimentazione",
+      "text": "Distribuisce l’aria ai quattro cilindri attraverso condotti di uguale lunghezza. Il corpo farfallato regola la quantità d’aria aspirata e quindi il carico del motore: nel motore a benzina la potenza si regola parzializzando l’aspirazione.",
+      "facts": [["Regolazione del carico","valvola a farfalla"],["Condotti","4, uno per cilindro"]],
+      "course": "Regolazione quantitativa: a farfalla parzializzata la pressione nel collettore scende sotto quella atmosferica e aumenta il lavoro di pompaggio, perciò ai carichi bassi il rendimento cala.",
+      "color": "intake",
+      "explode": [0,0.26,0.1],
+      "materials": {
+        "body": {"color":"intake","T":40,"metal":0.1,"rough":0.6},
+        "throttle": {"color":"pulley","T":30,"metal":0.7,"rough":0.35}
+      },
+      "parts": [
+        {"type":"cylinder","mat":"body","r":0.033,"h":0.3,"seg":32,"axis":"x","at":[-0.005,0.282,0.122],"casing":true},
+        {"type":"tube","mat":"body","points":[[-0.135,0.282,0.11],[-0.135,0.276,0.085],[-0.135,0.258,0.068],[-0.135,0.23873,0.058]],"r":0.0135,"casing":true},
+        {"type":"tube","mat":"body","points":[[-0.056,0.282,0.11],[-0.056,0.276,0.085],[-0.056,0.258,0.068],[-0.056,0.23873,0.058]],"r":0.0135,"casing":true},
+        {"type":"tube","mat":"body","points":[[0.023,0.282,0.11],[0.023,0.276,0.085],[0.023,0.258,0.068],[0.023,0.23873,0.058]],"r":0.0135,"casing":true},
+        {"type":"tube","mat":"body","points":[[0.102,0.282,0.11],[0.102,0.276,0.085],[0.102,0.258,0.068],[0.102,0.23873,0.058]],"r":0.0135,"casing":true},
+        {"type":"box","mat":"body","size":[0.3,0.03,0.008],"at":[0,0.23873,0.0584],"casing":true},
+        {"type":"cylinder","mat":"throttle","r":0.025,"h":0.05,"seg":32,"axis":"x","at":[-0.18,0.282,0.122],"casing":true}
+      ]
+    },
+    {
+      "id": "iniettori",
+      "name": "Iniettori e collettore del carburante",
+      "short": "Iniettori",
+      "section": "Alimentazione",
+      "text": "Iniezione multipoint: un iniettore per cilindro spruzza la benzina nel condotto di aspirazione, davanti alla valvola. La centralina comanda il tempo di apertura per dosare il carburante e tenere il rapporto aria/benzina vicino a quello stechiometrico.",
+      "facts": [
+        ["Iniettori","4"],
+        ["Alimentazione","collettore del carburante (flauto)"],
+        ["Rapporto stechiometrico","≈ 14,7 : 1"]
+      ],
+      "course": "Coefficiente d’aria λ = (aria/benzina reale) / 14,7: con λ = 1 il catalizzatore trivalente lavora al meglio.",
+      "color": "injector",
+      "explode": [0,0.32,0.14],
+      "materials": {
+        "body": {"color":"injector","T":40,"metal":0.3,"rough":0.5},
+        "rail": {"color":"pulley","T":40,"metal":0.7,"rough":0.35}
+      },
+      "parts": [
+        {"type":"cylinder","mat":"rail","r":0.008,"h":0.29,"seg":32,"axis":"x","at":[0,0.305,0.082]},
+        {"type":"bar","mat":"body","from":[-0.135,0.305,0.082],"to":[-0.135,0.264,0.065],"r":0.0065},
+        {"type":"bar","mat":"body","from":[-0.056,0.305,0.082],"to":[-0.056,0.264,0.065],"r":0.0065},
+        {"type":"bar","mat":"body","from":[0.023,0.305,0.082],"to":[0.023,0.264,0.065],"r":0.0065},
+        {"type":"bar","mat":"body","from":[0.102,0.305,0.082],"to":[0.102,0.264,0.065],"r":0.0065},
+        {"type":"bar","mat":"rail","from":[-0.135,0.266,0.066],"to":[-0.135,0.255,0.0615],"r":0.003},
+        {"type":"bar","mat":"rail","from":[-0.056,0.266,0.066],"to":[-0.056,0.255,0.0615],"r":0.003},
+        {"type":"bar","mat":"rail","from":[0.023,0.266,0.066],"to":[0.023,0.255,0.0615],"r":0.003},
+        {"type":"bar","mat":"rail","from":[0.102,0.266,0.066],"to":[0.102,0.255,0.0615],"r":0.003}
+      ]
+    },
+    {
+      "id": "candele",
+      "name": "Candele di accensione",
+      "short": "Candele",
+      "section": "Alimentazione",
+      "text": "Accendono la miscela compressa con una scintilla tra gli elettrodi, poco prima del PMS (anticipo di accensione). La fiamma si propaga dal punto di accensione a tutta la camera: nel modello la colonna di gas si illumina all’inizio dell’espansione.",
+      "facts": [["Numero","4, una per cilindro"],["Accensione","elettronica, comandata dalla centralina"]],
+      "course": "Anticipo di accensione: la combustione dura qualche millisecondo, quindi si accende prima del PMS perché la pressione massima arrivi poco dopo.",
+      "color": "ceramic",
+      "explode": [0,0.26,-0.06],
+      "materials": {
+        "steel": {"color":"plug","T":600,"metal":0.8,"rough":0.3},
+        "ceramic": {"color":"ceramic","T":300,"metal":0.05,"rough":0.4}
+      },
+      "parts": [
+        {"type":"bar","mat":"steel","from":[-0.1185,0.19673,-0.022],"to":[-0.1185,0.21171,-0.03198],"r":0.006},
+        {"type":"bar","mat":"steel","from":[-0.1185,0.21171,-0.03198],"to":[-0.1185,0.24832,-0.05639],"r":0.0078},
+        {"type":"bar","mat":"steel","from":[-0.1185,0.24832,-0.05639],"to":[-0.1185,0.25664,-0.06194],"r":0.0095,"seg":6},
+        {"type":"bar","mat":"ceramic","from":[-0.1185,0.25664,-0.06194],"to":[-0.1185,0.27494,-0.07414],"r":0.0055},
+        {"type":"bar","mat":"steel","from":[-0.1185,0.27494,-0.07414],"to":[-0.1185,0.28077,-0.07802],"r":0.003},
+        {"type":"bar","mat":"steel","from":[-0.0395,0.19673,-0.022],"to":[-0.0395,0.21171,-0.03198],"r":0.006},
+        {"type":"bar","mat":"steel","from":[-0.0395,0.21171,-0.03198],"to":[-0.0395,0.24832,-0.05639],"r":0.0078},
+        {"type":"bar","mat":"steel","from":[-0.0395,0.24832,-0.05639],"to":[-0.0395,0.25664,-0.06194],"r":0.0095,"seg":6},
+        {"type":"bar","mat":"ceramic","from":[-0.0395,0.25664,-0.06194],"to":[-0.0395,0.27494,-0.07414],"r":0.0055},
+        {"type":"bar","mat":"steel","from":[-0.0395,0.27494,-0.07414],"to":[-0.0395,0.28077,-0.07802],"r":0.003},
+        {"type":"bar","mat":"steel","from":[0.0395,0.19673,-0.022],"to":[0.0395,0.21171,-0.03198],"r":0.006},
+        {"type":"bar","mat":"steel","from":[0.0395,0.21171,-0.03198],"to":[0.0395,0.24832,-0.05639],"r":0.0078},
+        {"type":"bar","mat":"steel","from":[0.0395,0.24832,-0.05639],"to":[0.0395,0.25664,-0.06194],"r":0.0095,"seg":6},
+        {"type":"bar","mat":"ceramic","from":[0.0395,0.25664,-0.06194],"to":[0.0395,0.27494,-0.07414],"r":0.0055},
+        {"type":"bar","mat":"steel","from":[0.0395,0.27494,-0.07414],"to":[0.0395,0.28077,-0.07802],"r":0.003},
+        {"type":"bar","mat":"steel","from":[0.1185,0.19673,-0.022],"to":[0.1185,0.21171,-0.03198],"r":0.006},
+        {"type":"bar","mat":"steel","from":[0.1185,0.21171,-0.03198],"to":[0.1185,0.24832,-0.05639],"r":0.0078},
+        {"type":"bar","mat":"steel","from":[0.1185,0.24832,-0.05639],"to":[0.1185,0.25664,-0.06194],"r":0.0095,"seg":6},
+        {"type":"bar","mat":"ceramic","from":[0.1185,0.25664,-0.06194],"to":[0.1185,0.27494,-0.07414],"r":0.0055},
+        {"type":"bar","mat":"steel","from":[0.1185,0.27494,-0.07414],"to":[0.1185,0.28077,-0.07802],"r":0.003}
+      ]
+    },
+    {
+      "id": "collettore_sca",
+      "name": "Collettore di scarico",
+      "short": "Scarico",
+      "section": "Scarico",
+      "text": "Raccoglie i gas combusti dei quattro cilindri e li porta al catalizzatore e alla marmitta. La sonda lambda misura l’ossigeno rimasto nei gas e permette alla centralina di correggere la dose di benzina. È uno dei punti più caldi del motore.",
+      "facts": [["Temperatura dei gas","fino a ≈ 800 °C (indicativa)"],["Sensore","sonda lambda"]],
+      "course": "Bilancio energetico: in un motore a benzina circa un terzo dell’energia del combustibile esce con i gas di scarico.",
+      "color": "exh",
+      "explode": [0,0.26,-0.16],
+      "materials": {
+        "body": {"color":"exh","T":750,"metal":0.5,"rough":0.55},
+        "sensor": {"color":"pulley","T":400,"metal":0.7,"rough":0.35}
+      },
+      "parts": [
+        {"type":"tube","mat":"body","points":[[-0.102,0.23873,-0.058],[-0.102,0.235,-0.085],[-0.0714,0.19,-0.11],[-0.0357,0.14,-0.118],[0.01,0.1,-0.12]],"r":0.0155,"casing":true},
+        {"type":"tube","mat":"body","points":[[-0.023,0.23873,-0.058],[-0.023,0.235,-0.085],[-0.0161,0.19,-0.11],[-0.00805,0.14,-0.118],[0.01,0.1,-0.12]],"r":0.0155,"casing":true},
+        {"type":"tube","mat":"body","points":[[0.056,0.23873,-0.058],[0.056,0.235,-0.085],[0.0392,0.19,-0.11],[0.0196,0.14,-0.118],[0.01,0.1,-0.12]],"r":0.0155,"casing":true},
+        {"type":"tube","mat":"body","points":[[0.135,0.23873,-0.058],[0.135,0.235,-0.085],[0.0945,0.19,-0.11],[0.04725,0.14,-0.118],[0.01,0.1,-0.12]],"r":0.0155,"casing":true},
+        {"type":"tube","mat":"body","points":[[0.01,0.12,-0.12],[0.01,0.06,-0.125],[0.02,-0.02,-0.13],[0.03,-0.09,-0.13]],"r":0.024,"casing":true},
+        {"type":"box","mat":"body","size":[0.3,0.032,0.008],"at":[0,0.23873,-0.0584],"casing":true},
+        {"type":"bar","mat":"sensor","from":[0.012,0.07,-0.135],"to":[0.012,0.07,-0.168],"r":0.006,"casing":true}
+      ]
+    },
+    {
+      "id": "coppa",
+      "name": "Coppa dell’olio",
+      "short": "Coppa olio",
+      "section": "Struttura",
+      "text": "Chiude in basso il basamento e contiene l’olio motore. La pompa lo aspira dalla pescante e lo manda in pressione ai cuscinetti di banco e di biella, all’albero a camme e alle punterie; poi ricade nella coppa.",
+      "facts": [["Contenuto","olio motore"],["Lubrificazione","forzata, con pompa"]],
+      "course": "L’olio lubrifica, ma anche raffredda: porta via calore dai pistoni e dai cuscinetti.",
+      "color": "pan",
+      "explode": [0,-0.32,0],
+      "materials": {"body":{"color":"pan","T":100,"metal":0.5,"rough":0.5},"oil":{"color":"oil","T":100,"metal":0.1,"rough":0.25}},
+      "parts": [
+        {"type":"extrude","mat":"body","axis":"x","from":-0.17,"to":0.17,"shape":{"polygon":[[-0.045,-0.083],[-0.045,-0.077],[-0.159,-0.072],[-0.159,0.072],[-0.045,0.077],[-0.045,0.083],[-0.165,0.078],[-0.165,-0.078]]},"casing":true},
+        {"type":"extrude","mat":"body","axis":"x","from":-0.176,"to":-0.17,"shape":{"polygon":[[-0.045,-0.083],[-0.045,0.083],[-0.165,0.078],[-0.165,-0.078]]},"casing":true},
+        {"type":"extrude","mat":"body","axis":"x","from":0.17,"to":0.176,"shape":{"polygon":[[-0.045,-0.083],[-0.045,0.083],[-0.165,0.078],[-0.165,-0.078]]},"casing":true},
+        {"type":"box","mat":"oil","size":[0.34,0.035,0.143],"at":[0,-0.1415,0]},
+        {"type":"tube","mat":"body","points":[[0.03,-0.04,0.045],[0.03,-0.1,0.04],[0.03,-0.14,0.03]],"r":0.006},
+        {"type":"cylinder","mat":"body","r":0.008,"h":0.012,"seg":32,"at":[0.1,-0.169,0]}
+      ]
+    }
+  ]
+}
