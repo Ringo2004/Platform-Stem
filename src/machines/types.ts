@@ -231,7 +231,41 @@ export interface SplitFlangesPart extends Placed {
   tipOffset: number;
 }
 
-export type Part = RevolvePart | RowPart | TorusPart | CylinderPart | BoxPart | InstancesPart | SplitFlangesPart | BarPart | TubePart | ExtrudePart | ChargePart;
+/**
+ * Girante di macchina radiale: n pale sottili tra la curva del mozzo e quella della cassa (profili
+ * meridiani [x, r] con lo stesso numero di punti, dal bordo d'attacco a quello d'uscita).
+ * L'avvolgimento θ(x) dipende solo da x: pale a "elementi radiali", come nella girante Eckardt O.
+ */
+export interface ImpellerPart extends Placed {
+  type: 'impeller';
+  n: number;
+  hub: [number, number][];
+  shroud: [number, number][];
+  /** avvolgimento della pala [x, θ in gradi] */
+  wrap: [number, number][];
+  thick: number;
+  /** gioco tra pala e cassa */
+  clearance?: number;
+}
+
+/** chiocciola (voluta) a sezione circolare crescente, nel piano x = costante, con condotto di mandata */
+export interface VoluteSpec {
+  x: number;
+  /** raggio d'ingresso (uscita del diffusore) */
+  r3: number;
+  /** raggio della sezione all'inizio (lingua) e alla fine della spirale */
+  rc0: number;
+  rcMax: number;
+  /** quanto la sezione si sovrappone al diffusore, in frazione del suo raggio */
+  overlap: number;
+  /** angolo della lingua (gradi, da +y verso +z) */
+  tongue: number;
+  /** condotto di mandata rettilineo e tangente alla fine della spirale */
+  discharge: { length: number; rExit: number };
+}
+export interface VolutePart extends Placed, VoluteSpec { type: 'volute'; wall?: number }
+
+export type Part = RevolvePart | RowPart | TorusPart | CylinderPart | BoxPart | InstancesPart | SplitFlangesPart | BarPart | TubePart | ExtrudePart | ChargePart | ImpellerPart | VolutePart;
 
 export interface ComponentDef extends Card {
   id: string;
@@ -250,7 +284,7 @@ export interface ComponentDef extends Card {
   parts: Part[];
 }
 
-export interface Station { n: number; label: string; x: number; y: number; flip?: boolean }
+export interface Station { n: number; label: string; x: number; y: number; z?: number; flip?: boolean }
 
 export interface SpoolDef {
   /** velocità di animazione in rad/s (al rallentatore) */
@@ -274,6 +308,40 @@ export interface CycleDef {
   note?: string;
 }
 
+/** scala di colori: [valore, colore] */
+export type ColorStops = [number, string][];
+
+/**
+ * Simulazione semplificata del flusso in un compressore centrifugo: modello monodimensionale lungo
+ * linee di corrente (continuità, equazione di Eulero con fattore di scorrimento, rendimento con
+ * perdite per incidenza). Le frecce si muovono con la velocità assoluta calcolata.
+ */
+export interface FlowDef {
+  title: string;
+  note: string;
+  /** albero della girante: la sua velocità segue i giri impostati */
+  spool: string;
+  /** rallentamento: secondi di animazione per secondo reale */
+  timeScale: number;
+  gas: { R: number; cp: number; k: number };
+  /** condizioni totali all'aspirazione (Pa, K) */
+  inlet: { p0: number; T0: number };
+  design: { rpm: number; mdot: number; etaImpeller: number; etaStage: number };
+  /** campo dei cursori */
+  limits: { rpm: [number, number]; mdot: [number, number] };
+  /** perdita di rendimento per incidenza: Δη = k·i² (i in radianti) */
+  incidenceLoss: number;
+  /** incidenza oltre la quale si segnala il rischio di pompaggio (gradi) */
+  surgeIncidence: number;
+  duct: { x0: number; r: number; bell: { x: number; r: number } };
+  spinner: [number, number][];
+  impeller: { blades: number; thick: number; hub: [number, number][]; shroud: [number, number][]; wrap: [number, number][] };
+  diffuser: { r3: number; xHub: number };
+  volute: VoluteSpec;
+  arrows: { spans: number[]; angles: number; perPath: number; size: number };
+  colors: { T: ColorStops; p: ColorStops; c: ColorStops };
+}
+
 export interface MachineData {
   id: string;
   title: string;
@@ -294,6 +362,8 @@ export interface MachineData {
   kinematics?: { crank: { spool: string; radius: number; rod: number } };
   /** pannello delle fasi del ciclo (motori alternativi) */
   cycle?: CycleDef;
+  /** simulazione del flusso (compressori centrifughi) */
+  flow?: FlowDef;
   /** attività previste nella sezione Esercitati: [titolo, descrizione] */
   practice?: [string, string][];
   view: {
@@ -304,6 +374,9 @@ export interface MachineData {
     maxDistance: number;
     /** distanza minima della camera quando si inquadra un componente (predefinita 2,2) */
     focusMin?: number;
+    /** direzione da cui guarda la camera (orizzontale e verticale); predefinite quelle del modulo 1 */
+    dir?: Vec3;
+    dirPortrait?: Vec3;
     fit: { assembled: [Vec3, Vec3]; exploded: [Vec3, Vec3] };
     grid: { size: number; divisions: number; position: Vec3 };
   };

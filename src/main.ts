@@ -84,7 +84,12 @@ async function navigate() {
   });
 
   const key = `${route.section}:${route.machine}`;
-  if (!views.has(key)) views.set(key, loadMachine(route.machine).then(d => makeView(route.section, d)));
+  if (!views.has(key)) {
+    // indicatore di caricamento: lo si mostra prima di costruire il modello, che blocca la pagina per un attimo
+    viewsEl.classList.add('busy');
+    const frame = () => new Promise(r => requestAnimationFrame(() => r(null)));
+    views.set(key, frame().then(frame).then(() => loadMachine(route.machine)).then(d => makeView(route.section, d)));
+  }
   let view: View;
   try {
     view = await views.get(key)!;
@@ -93,6 +98,8 @@ async function navigate() {
     views.delete(key);
     viewsEl.innerHTML = '<div class="loading">Impossibile caricare la macchina. Ricarica la pagina.</div>';
     return;
+  } finally {
+    if (my === seq) viewsEl.classList.remove('busy');
   }
   if (my !== seq) return; // nel frattempo è stata scelta un'altra scheda
 

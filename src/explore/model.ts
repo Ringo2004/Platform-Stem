@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
-import type { CamSpec, ComponentDef, MachineData, MaterialRef, MaterialSpec, Part, Profile, RadiusSpec, RingPattern, Shape, Shape2D, Vec3 } from '../machines/types';
+import type { CamSpec, ComponentDef, ImpellerPart, MachineData, MaterialRef, MaterialSpec, Part, Profile, RadiusSpec, RingPattern, Shape, Shape2D, Vec3, VolutePart } from '../machines/types';
+import { gridSurface, lerpTable, voluteAt } from './geom';
 
 /*
  * Costruisce il modello Three.js a partire dalla descrizione dati della macchina.
@@ -220,6 +221,63 @@ class HelixCurve extends THREE.Curve<THREE.Vector3> {
     const a = t * this.turns * Math.PI * 2;
     return target.set(this.at[0] + this.radius * Math.cos(a), this.at[1] + this.height * t, this.at[2] + this.radius * Math.sin(a));
   }
+}
+
+/* ------------------------------------------------------------------ */
+/* Girante radiale e chiocciola                                        */
+/* ------------------------------------------------------------------ */
+function impellerGeometry(p: ImpellerPart) {
+  const M = p.hub.length, S = 7, geoms: THREE.BufferGeometry[] = [];
+  const clear = p.clearance ?? 0.0005;
+  // punto della pala: i = posizione meridiana, s = frazione d'altezza (mozzo → cassa), side = ±1 faccia
+  const meridian = (i: number, s: number) => {
+    const [xh, rh] = p.hub[i], [xs, rs] = p.shroud[i];
+    const d = Math.hypot(xs - xh, rs - rh), smax = Math.max(0, 1 - clear / d);
+    const t = s * smax;
+    return [xh + (xs - xh) * t, rh + (rs - rh) * t] as const;
+  };
+  for (let k = 0; k < p.n; k++) {
+    const off = (2 * Math.PI * k) / p.n;
+    const at = (i: number, s: number, side: number) => {
+      const [x, r] = meridian(i, s);
+      const th = lerpTable(p.wrap, x) * DEG + off + side * (p.thick / 2) / r;
+      return new THREE.Vector3(x, r * Math.cos(th), r * Math.sin(th));
+    };
+    // direzione tangenziale (verso di rotazione) moltiplicata per la faccia: è il verso esterno delle due facce
+    const tang = (i: number, s: number, side: number) => { const th = lerpTable(p.wrap, meridian(i, s)[0]) * DEG + off; return new THREE.Vector3(0, -Math.sin(th), Math.cos(th)).multiplyScalar(side); };
+    const sp = (s: number) => s / (S - 1);
+    // due facce
+    for (const side of [1, -1]) geoms.push(gridSurface(M, S, (i, j) => at(i, sp(j), side), (i, j) => tang(i, sp(j), side)));
+    // mozzo e apice
+    for (const [s, dir] of [[0, -1], [1, 1]] as const) {
+      geoms.push(gridSurface(M, 2, (i, j) => at(i, s, j ? 1 : -1), i => at(i, 1, 0).sub(at(i, 0, 0)).multiplyScalar(dir)));
+    }
+    // bordo d'attacco e d'uscita
+    for (const [i0, i1] of [[0, 1], [M - 1, M - 2]] as const) {
+      geoms.push(gridSurface(S, 2, (j, side) => at(i0, sp(j), side ? 1 : -1), j => at(i0, sp(j), 0).sub(at(i1, sp(j), 0))));
+    }
+  }
+  const g = mergeGeometries(geoms, false);
+  geoms.forEach(x => x.dispose());
+  return g;
+}
+
+function voluteGeometry(p: VolutePart) {
+  const NU = 140, ND = 14, NV = 36, wall = p.wall ?? 0.008;
+  const us = [...Array.from({ length: NU + 1 }, (_, i) => i / NU), ...Array.from({ length: ND }, (_, i) => 1 + (i + 1) / ND)];
+  const frames = us.map(u => voluteAt(p, u));
+  const ring = (f: ReturnType<typeof voluteAt>, j: number, dr: number) => {
+    const t = (2 * Math.PI * j) / NV;
+    return f.center.clone().addScaledVector(f.e1, (f.radius + dr) * Math.cos(t)).addScaledVector(f.e2, (f.radius + dr) * Math.sin(t));
+  };
+  const outward = (f: ReturnType<typeof voluteAt>, j: number) => ring(f, j, 0).sub(f.center);
+  const outer = gridSurface(frames.length, NV, (i, j) => ring(frames[i], j, 0), (i, j) => outward(frames[i], j), true);
+  const inner = gridSurface(frames.length, NV, (i, j) => ring(frames[i], j, -wall), (i, j) => outward(frames[i], j).negate(), true);
+  // corone che chiudono lo spessore alle due estremità
+  const caps = [[0, -1], [frames.length - 1, 1]].map(([i, dir]) => gridSurface(NV + 1, 2, (j, k) => ring(frames[i], j % NV, k ? 0 : -wall), () => frames[i].tangent.clone().multiplyScalar(dir)));
+  const g = mergeGeometries([outer, inner, ...caps], false);
+  [outer, inner, ...caps].forEach(x => x.dispose());
+  return g;
 }
 
 /* ------------------------------------------------------------------ */
@@ -490,6 +548,14 @@ export function buildModel(data: MachineData, planes: THREE.Plane[]): MachineMod
         }
         case 'instances': {
           addSplit(shapeGeo(p.shape), m, p.rings.flatMap(ringAt), p);
+          break;
+        }
+        case 'impeller': {
+          add(impellerGeometry(p), m, place(p), p.casing);
+          break;
+        }
+        case 'volute': {
+          add(voluteGeometry(p), m, place(p), p.casing);
           break;
         }
         case 'splitFlanges': {
