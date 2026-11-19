@@ -11,7 +11,7 @@ import { gridSurface, lerpTable, voluteAt } from './geom';
 type Pt = [number, number]; // [r, x]
 
 export interface MachineMaterial extends THREE.MeshStandardMaterial {
-  userData: { base: THREE.Color; T: number; metal: number; cap: { value: THREE.Color } };
+  userData: { base: THREE.Color; T: number; metal: number; cap: { value: THREE.Color }; opacity?: number };
 }
 
 export interface Comp {
@@ -58,7 +58,7 @@ export function temperatureScale(stops: [number, string][]) {
 /* ------------------------------------------------------------------ */
 /* Materiali: faccia anteriore metallica, faccia posteriore = sezione  */
 /* ------------------------------------------------------------------ */
-function makeMat(hex: string, T: number, planes: THREE.Plane[], metal = 0.55, rough = 0.42): MachineMaterial {
+export function makeMat(hex: string, T: number, planes: THREE.Plane[], metal = 0.55, rough = 0.42): MachineMaterial {
   const m = new THREE.MeshStandardMaterial({ color: hex, metalness: metal, roughness: rough, side: THREE.DoubleSide, clippingPlanes: planes, clipIntersection: true }) as MachineMaterial;
   m.userData = { base: new THREE.Color(hex), T, metal, cap: { value: new THREE.Color(hex).lerp(WHITE, 0.28) } };
   m.onBeforeCompile = (shader) => {
@@ -236,15 +236,17 @@ function impellerGeometry(p: ImpellerPart) {
     const t = s * smax;
     return [xh + (xs - xh) * t, rh + (rs - rh) * t] as const;
   };
+  // avvolgimento: in funzione di x (pale a elementi radiali) oppure della frazione meridiana (pale curve)
+  const wrapAt = (i: number, x: number) => (p.wrapM ? lerpTable(p.wrapM, i / (M - 1)) : lerpTable(p.wrap ?? [[0, 0]], x));
   for (let k = 0; k < p.n; k++) {
     const off = (2 * Math.PI * k) / p.n;
     const at = (i: number, s: number, side: number) => {
       const [x, r] = meridian(i, s);
-      const th = lerpTable(p.wrap, x) * DEG + off + side * (p.thick / 2) / r;
+      const th = wrapAt(i, x) * DEG + off + side * (p.thick / 2) / r;
       return new THREE.Vector3(x, r * Math.cos(th), r * Math.sin(th));
     };
     // direzione tangenziale (verso di rotazione) moltiplicata per la faccia: è il verso esterno delle due facce
-    const tang = (i: number, s: number, side: number) => { const th = lerpTable(p.wrap, meridian(i, s)[0]) * DEG + off; return new THREE.Vector3(0, -Math.sin(th), Math.cos(th)).multiplyScalar(side); };
+    const tang = (i: number, s: number, side: number) => { const th = wrapAt(i, meridian(i, s)[0]) * DEG + off; return new THREE.Vector3(0, -Math.sin(th), Math.cos(th)).multiplyScalar(side); };
     const sp = (s: number) => s / (S - 1);
     // due facce
     for (const side of [1, -1]) geoms.push(gridSurface(M, S, (i, j) => at(i, sp(j), side), (i, j) => tang(i, sp(j), side)));

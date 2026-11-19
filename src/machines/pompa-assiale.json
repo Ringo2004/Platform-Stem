@@ -1,0 +1,1203 @@
+{
+ "id": "pompa-assiale",
+ "title": "Pompa assiale (a elica)",
+ "eyebrow": "Macchine idrauliche · Modulo 4 · Macchina singola",
+ "subtitle": "Elica a 4 pale Ø 324 mm con raddrizzatore · 980 giri/min · 300 L/s · 5 m",
+ "canvasLabel": "Modello 3D interattivo della pompa assiale con simulazione del flusso d'acqua e della cavitazione",
+ "note": "Modello didattico parametrico di una pompa assiale in linea con curva a gomito (come nelle pompe a elica degli impianti idrovori). Curve caratteristiche, rendimento e NPSH seguono andamenti tipici per questo numero di giri specifico; forme e supporti sono semplificati e indicativi.",
+ "overview": {
+  "name": "Vista d’insieme",
+  "section": "Pompa assiale",
+  "text": "L’acqua attraversa la macchina parallela all’asse: l’elica le dà energia aumentandone la rotazione, il raddrizzatore a pale fisse annulla la rotazione e la trasforma in pressione, il diffusore conico rallenta il flusso. È la pompa delle grandi portate con piccole prevalenze: impianti idrovori di bonifica, irrigazione, circolazione dell’acqua di raffreddamento. La sua curva è molto ripida e ha una “sella” instabile a portate ridotte.",
+  "facts": [
+   [
+    "Portata nominale",
+    "300 L/s (1.080 m³/h)"
+   ],
+   [
+    "Prevalenza nominale",
+    "5 m"
+   ],
+   [
+    "Velocità",
+    "980 giri/min (motore a 6 poli, 50 Hz)"
+   ],
+   [
+    "Rendimento massimo",
+    "84 %"
+   ],
+   [
+    "Potenza assorbita",
+    "≈ 17,5 kW"
+   ],
+   [
+    "NPSH richiesto (3 %)",
+    "7 m"
+   ],
+   [
+    "Numero di giri caratteristico",
+    "n_q ≈ 161 (assiale)"
+   ]
+  ],
+  "course": "Rispetto alla centrifuga, a parità di potenza la pompa assiale elabora più portata con meno prevalenza. La potenza assorbita è massima a portata nulla: la pompa assiale si avvia con la valvola di mandata aperta, la centrifuga con la valvola chiusa."
+ },
+ "spools": {
+  "rotor": {
+   "speed": 3.4
+  }
+ },
+ "spinLabel": "nella realtà 980 giri/min",
+ "spinNote": "Rallentato 30 volte",
+ "spinToggle": "Elica in moto",
+ "practice": [
+  [
+   "Triangoli di velocità al raggio medio",
+   "Dati portata e giri, ricava la rotazione impressa dall’elica e la prevalenza di Eulero."
+  ],
+  [
+   "Curva a sella",
+   "Riduci la portata con la valvola e trova la zona in cui il funzionamento diventa instabile."
+  ],
+  [
+   "Sommergenza",
+   "Trova la quota d’installazione oltre la quale la pompa assiale cavita."
+  ]
+ ],
+ "section": {
+  "xMin": -0.56,
+  "xMax": 1.9,
+  "alpha": 90,
+  "center": 45,
+  "extent": 60,
+  "unit": "mm",
+  "scale": 1000
+ },
+ "view": {
+  "fov": 32,
+  "near": 0.02,
+  "far": 40,
+  "minDistance": 0.3,
+  "maxDistance": 9,
+  "focusMin": 0.6,
+  "dir": [
+   -0.8,
+   0.55,
+   0.95
+  ],
+  "dirPortrait": [
+   -0.95,
+   0.7,
+   1
+  ],
+  "fit": {
+   "assembled": [
+    [
+     -0.56,
+     -0.47,
+     -0.3
+    ],
+    [
+     1.9,
+     0.9,
+     0.3
+    ]
+   ],
+   "exploded": [
+    [
+     -1.2,
+     -0.47,
+     -0.4
+    ],
+    [
+     2.5,
+     0.9,
+     0.4
+    ]
+   ]
+  },
+  "grid": {
+   "size": 4,
+   "divisions": 40,
+   "position": [
+    0.6,
+    -0.465,
+    0
+   ]
+  }
+ },
+ "stations": [
+  {
+   "n": 1,
+   "label": "Ingresso",
+   "x": -0.5,
+   "y": 0.2,
+   "z": 0
+  },
+  {
+   "n": 2,
+   "label": "Elica",
+   "x": 0.045,
+   "y": 0.165,
+   "z": 0,
+   "flip": true
+  },
+  {
+   "n": 3,
+   "label": "Raddrizzatore",
+   "x": 0.205,
+   "y": 0.168,
+   "z": 0
+  },
+  {
+   "n": 4,
+   "label": "Mandata",
+   "x": 0.95,
+   "y": 0.85,
+   "z": 0,
+   "flip": true
+  }
+ ],
+ "palette": {
+  "casing": "#4f6f8f",
+  "impeller": "#c9a25a",
+  "stator": "#7d8b98",
+  "shaft": "#c7cdd2",
+  "motor": "#3f6a5a",
+  "base": "#3a444d",
+  "flow": "#4ea3e0",
+  "cav": "#e8f6ff"
+ },
+ "pump": {
+  "kind": "assiale",
+  "label": "Assiale",
+  "n0": 980,
+  "bep": {
+   "Q": 0.3,
+   "H": 5,
+   "eta": 0.84,
+   "npsh3": 7.0
+  },
+  "curve": {
+   "q": [
+    0,
+    0.2,
+    0.35,
+    0.5,
+    0.58,
+    0.66,
+    0.75,
+    0.85,
+    1.0,
+    1.1,
+    1.2,
+    1.3,
+    1.4,
+    1.5
+   ],
+   "h": [
+    2.7,
+    2.25,
+    1.85,
+    1.55,
+    1.5,
+    1.52,
+    1.42,
+    1.24,
+    1.0,
+    0.82,
+    0.63,
+    0.42,
+    0.2,
+    0.0
+   ],
+   "p": [
+    2.0,
+    1.8,
+    1.6,
+    1.42,
+    1.36,
+    1.32,
+    1.22,
+    1.11,
+    1.0,
+    0.93,
+    0.84,
+    0.72,
+    0.55,
+    0.38
+   ],
+   "npsh": [
+    2.5,
+    2.2,
+    1.9,
+    1.5,
+    1.35,
+    1.2,
+    1.05,
+    0.95,
+    1.0,
+    1.15,
+    1.45,
+    1.9,
+    2.5,
+    3.2
+   ]
+  },
+  "npshiFactor": 1.5,
+  "por": [
+   0.75,
+   1.15
+  ],
+  "limits": {
+   "rpm": [
+    600,
+    1200
+   ]
+  },
+  "geometry": {
+   "r1h": 0.075,
+   "r1s": 0.162,
+   "r2": 0.162,
+   "b2": 0,
+   "beta2": 61,
+   "Z": 4,
+   "blockage": 1
+  },
+  "mount": {
+   "base": -0.465,
+   "inlet": [
+    -0.55,
+    0,
+    0
+   ],
+   "outlet": [
+    0.95,
+    0.85,
+    0
+   ],
+   "inletR": 0.2,
+   "outletR": 0.2
+  },
+  "flow": {
+   "title": "Flusso nella pompa",
+   "note": "",
+   "spool": "rotor",
+   "timeScale": 30,
+   "inlet": [
+    [
+     -0.55,
+     0.2,
+     0
+    ],
+    [
+     -0.25,
+     0.162,
+     0
+    ],
+    [
+     -0.22,
+     0.162,
+     0.0
+    ],
+    [
+     -0.2,
+     0.162,
+     0.03
+    ],
+    [
+     -0.16,
+     0.162,
+     0.05
+    ],
+    [
+     -0.1,
+     0.162,
+     0.065
+    ],
+    [
+     -0.05,
+     0.162,
+     0.073
+    ],
+    [
+     -0.02,
+     0.162,
+     0.075
+    ],
+    [
+     0,
+     0.162,
+     0.075
+    ]
+   ],
+   "impeller": {
+    "hub": [
+     [
+      0.0,
+      0.075
+     ],
+     [
+      0.01,
+      0.075
+     ],
+     [
+      0.02,
+      0.075
+     ],
+     [
+      0.03,
+      0.075
+     ],
+     [
+      0.04,
+      0.075
+     ],
+     [
+      0.05,
+      0.075
+     ],
+     [
+      0.06,
+      0.075
+     ],
+     [
+      0.07,
+      0.075
+     ],
+     [
+      0.08,
+      0.075
+     ],
+     [
+      0.09,
+      0.075
+     ]
+    ],
+    "shroud": [
+     [
+      0.0,
+      0.162
+     ],
+     [
+      0.01,
+      0.162
+     ],
+     [
+      0.02,
+      0.162
+     ],
+     [
+      0.03,
+      0.162
+     ],
+     [
+      0.04,
+      0.162
+     ],
+     [
+      0.05,
+      0.162
+     ],
+     [
+      0.06,
+      0.162
+     ],
+     [
+      0.07,
+      0.162
+     ],
+     [
+      0.08,
+      0.162
+     ],
+     [
+      0.09,
+      0.162
+     ]
+    ],
+    "wrapM": [
+     [
+      0,
+      0
+     ],
+     [
+      1,
+      0
+     ]
+    ],
+    "blades": 4
+   },
+   "stator": {
+    "x0": 0.15,
+    "x1": 0.26
+   },
+   "diffuser": [
+    [
+     0.27,
+     0.162,
+     0.075
+    ],
+    [
+     0.4,
+     0.18,
+     0.06
+    ],
+    [
+     0.55,
+     0.2,
+     0.03
+    ]
+   ],
+   "bend": {
+    "x": 0.55,
+    "R": 0.4,
+    "r": 0.2,
+    "up": 0.85
+   },
+   "arrows": {
+    "spans": [
+     0.2,
+     0.5,
+     0.8
+    ],
+    "angles": 12,
+    "perPath": 7,
+    "size": 0.026
+   },
+   "colors": {
+    "p": [
+     [
+      0,
+      "#3d6fb0"
+     ],
+     [
+      45,
+      "#3fa7a0"
+     ],
+     [
+      90,
+      "#d9c94a"
+     ],
+     [
+      135,
+      "#ec8a2f"
+     ],
+     [
+      180,
+      "#d6372a"
+     ]
+    ],
+    "c": [
+     [
+      0,
+      "#3d6fb0"
+     ],
+     [
+      4,
+      "#3fa7a0"
+     ],
+     [
+      8,
+      "#d9c94a"
+     ],
+     [
+      12,
+      "#ec8a2f"
+     ],
+     [
+      16,
+      "#d6372a"
+     ]
+    ]
+   }
+  }
+ },
+ "components": [
+  {
+   "id": "a_ingresso",
+   "name": "Cono d’aspirazione",
+   "short": "Aspirazione",
+   "section": "Aspirazione",
+   "text": "Un cono convergente porta l’acqua dalla tubazione d’aspirazione (DN 400) alla cassa dell’elica accelerandola in modo uniforme; l’ogiva sul mozzo dell’elica guida il flusso senza distacchi.",
+   "facts": [
+    [
+     "Ingresso",
+     "DN 400"
+    ],
+    [
+     "Velocità davanti all’elica",
+     "≈ 4,6 m/s (calcolata)"
+    ]
+   ],
+   "color": "casing",
+   "explode": [
+    -0.5,
+    0,
+    0
+   ],
+   "materials": {
+    "body": {
+     "color": "casing",
+     "T": 20,
+     "metal": 0.45,
+     "rough": 0.5
+    }
+   },
+   "parts": [
+    {
+     "type": "revolve",
+     "mat": "body",
+     "casing": true,
+     "profile": {
+      "polygon": [
+       [
+        0.2,
+        -0.55
+       ],
+       [
+        0.27,
+        -0.55
+       ],
+       [
+        0.27,
+        -0.525
+       ],
+       [
+        0.212,
+        -0.525
+       ],
+       [
+        0.174,
+        -0.25
+       ],
+       [
+        0.174,
+        -0.02
+       ],
+       [
+        0.162,
+        -0.02
+       ],
+       [
+        0.162,
+        -0.22
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "a_elica",
+   "name": "Elica a 4 pale",
+   "short": "Elica",
+   "section": "Girante",
+   "text": "Quattro pale svergolate sul mozzo: vicino al mozzo sono più inclinate rispetto al piano di rotazione, all’apice quasi parallele a esso, perché la velocità periferica cresce con il raggio. In molte pompe assiali l’angolo delle pale si può regolare, anche in moto, per adattare la portata all’impianto.",
+   "facts": [
+    [
+     "Diametro",
+     "324 mm"
+    ],
+    [
+     "Rapporto mozzo/apice",
+     "0,46"
+    ],
+    [
+     "Velocità periferica all’apice",
+     "≈ 16,6 m/s a 980 giri/min"
+    ],
+    [
+     "Pale",
+     "4, svergolate"
+    ]
+   ],
+   "course": "Progetto a vortice libero: c_u·r = costante, così u·c_u (e quindi la prevalenza di Eulero) è la stessa a tutti i raggi. Al raggio medio H_th = u·c_u2/g.",
+   "color": "impeller",
+   "explode": [
+    0.15,
+    0,
+    0
+   ],
+   "spool": "rotor",
+   "materials": {
+    "body": {
+     "color": "impeller",
+     "T": 20,
+     "metal": 0.7,
+     "rough": 0.32
+    }
+   },
+   "parts": [
+    {
+     "type": "revolve",
+     "mat": "body",
+     "profile": {
+      "polygon": [
+       [
+        0,
+        -0.22
+       ],
+       [
+        0.03,
+        -0.2
+       ],
+       [
+        0.05,
+        -0.16
+       ],
+       [
+        0.065,
+        -0.1
+       ],
+       [
+        0.073,
+        -0.05
+       ],
+       [
+        0.075,
+        -0.02
+       ],
+       [
+        0.075,
+        0.11
+       ],
+       [
+        0,
+        0.11
+       ]
+      ]
+     }
+    },
+    {
+     "type": "row",
+     "mat": "body",
+     "x": 0.045,
+     "n": 4,
+     "chord": 0.17,
+     "rotor": true,
+     "stagger": 64,
+     "twist": 16,
+     "camber": 0.12,
+     "thick": 0.07,
+     "taper": -0.3,
+     "root": 0.075,
+     "tip": 0.16
+    }
+   ]
+  },
+  {
+   "id": "a_cassa",
+   "name": "Cassa e raddrizzatore",
+   "short": "Raddrizzatore",
+   "section": "Raddrizzatore",
+   "text": "Dopo l’elica l’acqua ruota attorno all’asse: le sette pale fisse del raddrizzatore la riportano parallela all’asse, trasformando l’energia cinetica della rotazione in pressione. Sostengono anche il mozzo fisso con il cuscinetto lato elica.",
+   "facts": [
+    [
+     "Pale fisse",
+     "7"
+    ],
+    [
+     "Funzione",
+     "annullano la rotazione del flusso (c_u → 0)"
+    ]
+   ],
+   "color": "stator",
+   "explode": [
+    0.35,
+    0.3,
+    0
+   ],
+   "materials": {
+    "body": {
+     "color": "stator",
+     "T": 20,
+     "metal": 0.45,
+     "rough": 0.5
+    },
+    "case": {
+     "color": "casing",
+     "T": 20,
+     "metal": 0.45,
+     "rough": 0.5
+    }
+   },
+   "parts": [
+    {
+     "type": "revolve",
+     "mat": "case",
+     "casing": true,
+     "profile": {
+      "ring": [
+       0.162,
+       0.176,
+       -0.02,
+       0.28
+      ]
+     }
+    },
+    {
+     "type": "revolve",
+     "mat": "body",
+     "profile": {
+      "polygon": [
+       [
+        0,
+        0.115
+       ],
+       [
+        0.075,
+        0.115
+       ],
+       [
+        0.075,
+        0.27
+       ],
+       [
+        0.06,
+        0.4
+       ],
+       [
+        0.04,
+        0.5
+       ],
+       [
+        0.03,
+        0.55
+       ],
+       [
+        0,
+        0.55
+       ]
+      ]
+     }
+    },
+    {
+     "type": "row",
+     "mat": "body",
+     "x": 0.205,
+     "n": 7,
+     "chord": 0.11,
+     "rotor": false,
+     "stagger": -10,
+     "twist": 0,
+     "camber": 0.16,
+     "thick": 0.08,
+     "taper": 0,
+     "root": 0.075,
+     "tip": 0.162
+    }
+   ]
+  },
+  {
+   "id": "a_diffusore",
+   "name": "Diffusore e curva di mandata",
+   "short": "Curva",
+   "section": "Mandata",
+   "text": "Il diffusore conico rallenta ancora l’acqua; la curva a 90° la porta verso l’alto, alla tubazione di mandata. L’albero esce dal lato esterno della curva attraverso un premistoppa, così il motore resta all’asciutto.",
+   "facts": [
+    [
+     "Uscita",
+     "DN 400"
+    ],
+    [
+     "Velocità in mandata",
+     "≈ 2,4 m/s alla portata nominale"
+    ]
+   ],
+   "color": "casing",
+   "explode": [
+    0.55,
+    0.25,
+    0
+   ],
+   "materials": {
+    "body": {
+     "color": "casing",
+     "T": 20,
+     "metal": 0.45,
+     "rough": 0.5
+    }
+   },
+   "parts": [
+    {
+     "type": "revolve",
+     "mat": "body",
+     "casing": true,
+     "profile": {
+      "polygon": [
+       [
+        0.162,
+        0.28
+       ],
+       [
+        0.176,
+        0.28
+       ],
+       [
+        0.214,
+        0.55
+       ],
+       [
+        0.2,
+        0.55
+       ]
+      ]
+     }
+    },
+    {
+     "type": "tube",
+     "mat": "body",
+     "casing": true,
+     "points": [
+      [
+       0.55,
+       0.0,
+       0
+      ],
+      [
+       0.60221,
+       0.00342,
+       0
+      ],
+      [
+       0.65353,
+       0.01363,
+       0
+      ],
+      [
+       0.70307,
+       0.03045,
+       0
+      ],
+      [
+       0.75,
+       0.05359,
+       0
+      ],
+      [
+       0.7935,
+       0.08266,
+       0
+      ],
+      [
+       0.83284,
+       0.11716,
+       0
+      ],
+      [
+       0.86734,
+       0.1565,
+       0
+      ],
+      [
+       0.89641,
+       0.2,
+       0
+      ],
+      [
+       0.91955,
+       0.24693,
+       0
+      ],
+      [
+       0.93637,
+       0.29647,
+       0
+      ],
+      [
+       0.94658,
+       0.34779,
+       0
+      ],
+      [
+       0.95,
+       0.4,
+       0
+      ],
+      [
+       0.95,
+       0.6,
+       0
+      ],
+      [
+       0.95,
+       0.85,
+       0
+      ]
+     ],
+     "r": 0.206,
+     "seg": 64,
+     "radialSeg": 28
+    },
+    {
+     "type": "revolve",
+     "mat": "body",
+     "casing": true,
+     "axis": "y",
+     "at": [
+      0.95,
+      0.85,
+      0
+     ],
+     "seg": 48,
+     "profile": {
+      "ring": [
+       0.2,
+       0.27,
+       -0.03,
+       0
+      ]
+     }
+    },
+    {
+     "type": "cylinder",
+     "mat": "body",
+     "r": 0.06,
+     "h": 0.14,
+     "seg": 24,
+     "axis": "x",
+     "at": [
+      0.98,
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "a_albero",
+   "name": "Albero e motore",
+   "short": "Motore",
+   "section": "Trasmissione",
+   "text": "L’albero attraversa il mozzo fisso e la curva e arriva al motore elettrico a 6 poli tramite un giunto. Nelle grandi pompe assiali ad asse verticale l’albero può essere lungo diversi metri, perché il motore sta sopra il livello dell’acqua mentre l’elica è sommersa.",
+   "facts": [
+    [
+     "Motore",
+     "asincrono trifase, 6 poli"
+    ],
+    [
+     "Potenza di targa",
+     "22 kW"
+    ],
+    [
+     "Velocità",
+     "980 giri/min a 50 Hz"
+    ]
+   ],
+   "color": "motor",
+   "explode": [
+    0.9,
+    0,
+    0
+   ],
+   "materials": {
+    "shaft": {
+     "color": "shaft",
+     "T": 20,
+     "metal": 0.85,
+     "rough": 0.25
+    },
+    "body": {
+     "color": "motor",
+     "T": 45,
+     "metal": 0.35,
+     "rough": 0.5
+    }
+   },
+   "parts": [
+    {
+     "type": "cylinder",
+     "mat": "shaft",
+     "r": 0.028,
+     "h": 1.25,
+     "seg": 32,
+     "axis": "x",
+     "at": [
+      0.625,
+      0,
+      0
+     ],
+     "spool": "rotor"
+    },
+    {
+     "type": "cylinder",
+     "mat": "shaft",
+     "r": 0.075,
+     "h": 0.08,
+     "seg": 32,
+     "axis": "x",
+     "at": [
+      1.24,
+      0,
+      0
+     ],
+     "spool": "rotor"
+    },
+    {
+     "type": "cylinder",
+     "mat": "body",
+     "r": 0.2,
+     "h": 0.56,
+     "seg": 48,
+     "axis": "x",
+     "at": [
+      1.58,
+      0,
+      0
+     ]
+    },
+    {
+     "type": "box",
+     "mat": "body",
+     "size": [
+      0.18,
+      0.12,
+      0.16
+     ],
+     "at": [
+      1.55,
+      0.24,
+      0
+     ]
+    },
+    {
+     "type": "box",
+     "mat": "body",
+     "size": [
+      0.44,
+      0.24,
+      0.34
+     ],
+     "at": [
+      1.58,
+      -0.3,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "a_basamento",
+   "name": "Basamento e appoggi",
+   "short": "Basamento",
+   "section": "Trasmissione",
+   "text": "Basamento comune a pompa e motore; la cassa e la curva poggiano su appoggi regolabili.",
+   "facts": [
+    [
+     "Materiale",
+     "acciaio saldato"
+    ]
+   ],
+   "color": "base",
+   "explode": [
+    0,
+    -0.25,
+    0
+   ],
+   "materials": {
+    "body": {
+     "color": "base",
+     "T": 20,
+     "metal": 0.4,
+     "rough": 0.6
+    }
+   },
+   "parts": [
+    {
+     "type": "box",
+     "mat": "body",
+     "size": [
+      2.4,
+      0.06,
+      0.6
+     ],
+     "at": [
+      0.65,
+      -0.435,
+      0
+     ]
+    },
+    {
+     "type": "box",
+     "mat": "body",
+     "size": [
+      0.2,
+      0.24,
+      0.2
+     ],
+     "at": [
+      0.1,
+      -0.29,
+      0
+     ]
+    },
+    {
+     "type": "box",
+     "mat": "body",
+     "size": [
+      0.2,
+      0.2,
+      0.2
+     ],
+     "at": [
+      0.95,
+      -0.31,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "a_flusso",
+   "name": "L’acqua nella pompa",
+   "short": "Flusso",
+   "section": "Simulazione",
+   "text": "Le frecce seguono linee di corrente calcolate. Davanti all’elica l’acqua è parallela all’asse; l’elica la fa ruotare e ne alza la pressione, il raddrizzatore toglie la rotazione, diffusore e curva la rallentano. Con il colore “Pressione” si vede che il punto più basso è subito dopo il bordo d’attacco delle pale, verso l’apice.",
+   "facts": [
+    [
+     "Linee di corrente",
+     "36 (3 raggi × 12 angoli)"
+    ],
+    [
+     "Rallentamento",
+     "30 volte"
+    ]
+   ],
+   "course": "Triangoli di velocità a raggio costante: u₁ = u₂ = u, c_m costante, c_u1 = 0. Prevalenza di Eulero H_th = u·c_u2/g.",
+   "color": "flow",
+   "explode": [
+    0,
+    0,
+    0
+   ],
+   "materials": {},
+   "parts": []
+  },
+  {
+   "id": "a_cavitazione",
+   "name": "Cavitazione nella pompa assiale",
+   "short": "Cavitazione",
+   "section": "Simulazione",
+   "text": "Le pompe assiali hanno un NPSH richiesto alto rispetto alla prevalenza: per questo si installano quasi sempre con l’elica sotto il livello dell’acqua (sotto battente). Le bolle nascono all’apice delle pale, dove la velocità relativa è massima, e a portate ridotte anche per il ricircolo all’ingresso.",
+   "facts": [
+    [
+     "NPSH richiesto (3 %)",
+     "7 m al punto nominale"
+    ],
+    [
+     "Installazione tipica",
+     "elica sommersa"
+    ]
+   ],
+   "course": "Con NPSH3 = 7 m e 10,1 m di colonna d’acqua disponibile, la quota massima sopra il pelo libero è di circa 2 m al netto delle perdite e del margine: basta poco per entrare in cavitazione.",
+   "color": "cav",
+   "explode": [
+    0,
+    0,
+    0
+   ],
+   "materials": {},
+   "parts": []
+  }
+ ]
+}

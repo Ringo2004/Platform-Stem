@@ -242,10 +242,15 @@ export interface ImpellerPart extends Placed {
   hub: [number, number][];
   shroud: [number, number][];
   /** avvolgimento della pala [x, θ in gradi] */
-  wrap: [number, number][];
+  wrap?: [number, number][];
   thick: number;
   /** gioco tra pala e cassa */
   clearance?: number;
+  /**
+   * in alternativa a "wrap": avvolgimento in funzione della frazione meridiana m ∈ [0, 1]
+   * (0 = bordo d'attacco, 1 = uscita) [m, θ in gradi]; serve per le pale curvate all'indietro delle pompe
+   */
+  wrapM?: [number, number][];
 }
 
 /** chiocciola (voluta) a sezione circolare crescente, nel piano x = costante, con condotto di mandata */
@@ -356,14 +361,22 @@ export interface MachineData {
   spinNote: string;
   /** etichetta dell'interruttore di animazione (predefinita "Rotori in moto") */
   spinToggle?: string;
+  /** etichetta dell'interruttore delle stazioni (predefinita "Stazioni del ciclo") */
+  stationsToggle?: string;
   /** taglio: estensione assiale e valori iniziali (gradi, %); unit/scale per mostrare la quota (es. "mm", 1000) */
-  section: { xMin: number; xMax: number; alpha: number; center: number; extent: number; unit?: string; scale?: number };
+  section?: { xMin: number; xMax: number; alpha: number; center: number; extent: number; unit?: string; scale?: number };
   /** manovellismo: albero, raggio di manovella e lunghezza di biella (m) */
   kinematics?: { crank: { spool: string; radius: number; rod: number } };
   /** pannello delle fasi del ciclo (motori alternativi) */
   cycle?: CycleDef;
   /** simulazione del flusso (compressori centrifughi) */
   flow?: FlowDef;
+  /** impianto di sollevamento (vedi PlantDef): la geometria dell'impianto è generata dal programma */
+  plant?: PlantDef;
+  /** dati della pompa (solo per le macchine usate in un impianto) */
+  pump?: PumpDef;
+  /** macchine dell'impianto, caricate insieme al modulo (vedi machines/index.ts) */
+  pumpMachines?: MachineData[];
   /** attività previste nella sezione Esercitati: [titolo, descrizione] */
   practice?: [string, string][];
   view: {
@@ -380,11 +393,97 @@ export interface MachineData {
     fit: { assembled: [Vec3, Vec3]; exploded: [Vec3, Vec3] };
     grid: { size: number; divisions: number; position: Vec3 };
   };
-  temperature: { label: string; stops: [number, string][] };
+  /** mappa temperature dei componenti (se manca l'interruttore non compare) */
+  temperature?: { label: string; stops: [number, string][] };
   stations: Station[];
   /** solo per turbomacchine */
   flowPath?: [number, number, number][];
   palette: Record<string, string>;
   /** l'ordine dell'elenco è quello dei pulsanti "Componenti" */
   components: ComponentDef[];
+}
+
+
+/* ------------------------------------------------------------------ */
+/* Impianto di sollevamento e pompe                                    */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Prestazioni di una pompa al numero di giri di riferimento n0, in forma adimensionale rispetto al
+ * punto di massimo rendimento (BEP): q = Q/Q_bep, h = H/H_bep, p = P/P_bep, npsh = NPSH3/NPSH3_bep.
+ * Agli altri giri valgono le leggi di affinità: Q ∝ n, H ∝ n², P ∝ n³, NPSH ∝ n².
+ * Il rendimento si ricava come η = η_bep · q·h/p.
+ */
+export interface PumpDef {
+  kind: 'centrifuga' | 'assiale';
+  /** nome breve (pulsanti, grafici) */
+  label: string;
+  n0: number;
+  bep: { Q: number; H: number; eta: number; npsh3: number };
+  curve: { q: number[]; h: number[]; p: number[]; npsh: number[] };
+  /** NPSH di inizio cavitazione (prime bolle) = fattore × NPSH3 */
+  npshiFactor: number;
+  /** campo di funzionamento consigliato, in frazioni della portata di massimo rendimento */
+  por: [number, number];
+  limits: { rpm: [number, number] };
+  /**
+   * geometria per i triangoli di velocità: raggi in m, angoli di pala in gradi.
+   * Centrifuga: occhio (r1h, r1s), uscita r2 e larghezza b2, β2 dalla direzione tangenziale, Z pale.
+   * Assiale: raggi di mozzo e apice, β2 dalla direzione assiale (flusso relativo in uscita), Z pale.
+   */
+  geometry: { r1h: number; r1s: number; r2: number; b2: number; beta2: number; Z: number; blockage: number };
+  /** posizione delle flange nel modello 3D della pompa (asse x, asse della girante in y = z = 0) */
+  mount: { base: number; inlet: Vec3; outlet: Vec3; inletR: number; outletR: number };
+  /** simulazione del flusso nella macchina singola */
+  flow: PumpFlowDef;
+}
+
+export interface PumpFlowDef {
+  title: string;
+  note: string;
+  spool: string;
+  timeScale: number;
+  /** condotto d'ingresso: [x, raggio esterno, raggio del mozzo] */
+  inlet: [number, number, number][];
+  /** profili meridiani (come la girante del modello) e avvolgimento θ(m) */
+  impeller: { hub: [number, number][]; shroud: [number, number][]; wrapM: [number, number][]; blades: number };
+  /** centrifuga: chiocciola */
+  volute?: VoluteSpec;
+  /** assiale: raddrizzatore, diffusore e curva */
+  stator?: { x0: number; x1: number };
+  diffuser?: [number, number, number][];
+  bend?: { x: number; R: number; r: number; up: number };
+  arrows: { spans: number[]; angles: number; perPath: number; size: number };
+  colors: { p: ColorStops; c: ColorStops };
+}
+
+/** tubazione: diametro interno, lunghezza, coefficienti di perdita concentrata [nome, K] */
+export interface PipeDef { D: number; L: number; K: [string, number][] }
+
+export interface PlantDef {
+  title: string;
+  note: string;
+  /** acqua: densità, viscosità cinematica, tensione di vapore; pressione atmosferica */
+  water: { rho: number; nu: number; pv: number; T: number };
+  patm: number;
+  g: number;
+  /** scabrezza assoluta delle tubazioni (m) */
+  roughness: number;
+  /**
+   * tubazioni. suction: aspirazione di una pompa (lunghezza orizzontale; il tratto verticale dipende dalla quota);
+   * branch: mandata di una pompa fino al collettore; link: collegamento tra due pompe in serie;
+   * main: collettore, condotta di mandata e sbocco nel bacino di monte.
+   */
+  pipes: { suction: PipeDef; branch: PipeDef; link: PipeDef; main: PipeDef };
+  /** pezzi speciali dell'aspirazione, che cambiano con l'installazione */
+  suctionFittings: { lift: [string, number][]; flooded: [string, number][]; bend: number };
+  /** disposizione: quota della bocca d'aspirazione, interasse delle pompe, ascissa delle flange */
+  layout: { intakeY: number; intakeX: number; spacing: number; pumpX: number; headerX: number; upperX: number };
+  limits: { pumps: number; Hg: [number, number]; z: [number, number] };
+  /** punto di progetto proposto per ciascuna macchina */
+  design: Record<string, { pumps: number; series: boolean; Hg: number; z: number }>;
+  colors: { p: ColorStops; c: ColorStops };
+  arrows: { size: number; spacing: number; timeScale: number };
+  /** id delle macchine (file JSON) */
+  machines: string[];
 }

@@ -20,8 +20,21 @@ import { clamp, lerpTable, slopeTable, smoothstep, voluteAt } from './geom';
 
 export type ColorMode = 'T' | 'p' | 'c';
 
-interface Sample { x: number; y: number; z: number; t: number; c: number; T: number; p: number }
-interface FlowPath { s: Sample[]; total: number }
+/** punto di una linea di corrente: posizione, tempo di arrivo, velocità, pressione (Pa), temperatura (K), bolle (0–1) */
+export interface Sample { x: number; y: number; z: number; t: number; c: number; p: number; T?: number; b?: number }
+export interface FlowPath { s: Sample[]; total: number }
+export interface ColorInfo { label: string; unit: string; value: (q: Sample) => number }
+
+/** costruisce una linea di corrente dai punti: il tempo si ricava dalla distanza e dalla velocità */
+export function makePath(pts: Omit<Sample, 't'>[]): FlowPath {
+  const s: Sample[] = [];
+  let t = 0;
+  pts.forEach((q, i) => {
+    if (i) { const a = pts[i - 1]; t += Math.hypot(q.x - a.x, q.y - a.y, q.z - a.z) / Math.max((q.c + a.c) / 2, 0.05); }
+    s.push({ ...q, t });
+  });
+  return { s, total: t };
+}
 
 export interface Triangle { u: number; cu: number; cm: number; bladeAngle?: number }
 export interface FlowResult {
@@ -202,7 +215,7 @@ export function solveFlow(f: FlowDef, rpm: number, mdot: number): FlowResult {
 /* ------------------------------------------------------------------ */
 /* Scale di colore                                                     */
 /* ------------------------------------------------------------------ */
-function colorScale(stops: ColorStops) {
+export function colorScale(stops: ColorStops) {
   const s = stops.map(([v, c]) => [v, new THREE.Color(c)] as const);
   return (v: number, out: THREE.Color) => {
     if (v <= s[0][0]) return out.copy(s[0][1]);
@@ -210,8 +223,8 @@ function colorScale(stops: ColorStops) {
     return out.copy(s[s.length - 1][1]);
   };
 }
-export const COLOR_INFO: Record<ColorMode, { label: string; unit: string; value: (q: Sample) => number }> = {
-  T: { label: 'Temperatura statica del fluido', unit: '°C', value: q => q.T - 273.15 },
+export const COLOR_INFO: Record<ColorMode, ColorInfo> = {
+  T: { label: 'Temperatura statica del fluido', unit: '°C', value: q => (q.T ?? 273.15) - 273.15 },
   p: { label: 'Pressione statica del fluido', unit: 'kPa', value: q => q.p / 1000 },
   c: { label: 'Velocità assoluta del fluido', unit: 'm/s', value: q => q.c }
 };
@@ -219,45 +232,74 @@ export const COLOR_INFO: Record<ColorMode, { label: string; unit: string; value:
 /* ------------------------------------------------------------------ */
 /* Frecce animate                                                      */
 /* ------------------------------------------------------------------ */
+export interface ArrowOptions {
+  size: number;
+  /** rallentamento: secondi di animazione per secondo reale */
+  timeScale: number;
+  /** numero massimo di frecce */
+  capacity: number;
+  /** frecce per linea di corrente (numero fisso o in funzione della linea) */
+  perPath: number | ((p: FlowPath) => number);
+  scales: Record<string, ColorStops>;
+  info: Record<string, ColorInfo>;
+  mode: string;
+}
+
 export class FlowArrows {
   readonly mesh: THREE.InstancedMesh;
   private phases: number[] = [];
-  private res: FlowResult | null = null;
-  private scales: Record<ColorMode, (v: number, out: THREE.Color) => THREE.Color>;
-  mode: ColorMode = 'T';
+  private res: { paths: FlowPath[] } | null = null;
+  private counts: number[] = [];
+  private scales: Record<string, (v: number, out: THREE.Color) => THREE.Color> = {};
+  mode: string;
+  timeScale: number;
   private m4 = new THREE.Matrix4(); private q = new THREE.Quaternion(); private col = new THREE.Color();
   private up = new THREE.Vector3(0, 1, 0); private dir = new THREE.Vector3(); private pos = new THREE.Vector3(); private sc = new THREE.Vector3();
   private cRef = 300;
+  private opts: ArrowOptions;
 
-  constructor(private def: FlowDef) {
-    const L = def.arrows.size;
+  constructor(opts: ArrowOptions) {
+    this.opts = opts;
+    this.mode = opts.mode;
+    this.timeScale = opts.timeScale;
+    const L = opts.size;
     const shaft = new THREE.CylinderGeometry(L * 0.09, L * 0.09, L * 0.62, 8); shaft.translate(0, L * 0.31, 0);
     const head = new THREE.ConeGeometry(L * 0.24, L * 0.38, 10); head.translate(0, L * 0.81, 0);
     const geo = mergeTwo(shaft, head); geo.translate(0, -L / 2, 0);
     const mat = new THREE.MeshStandardMaterial({ metalness: 0.05, roughness: 0.45, emissive: '#ffffff', emissiveIntensity: 0.12 });
-    const count = def.arrows.spans.length * def.arrows.angles * def.arrows.perPath;
-    this.mesh = new THREE.InstancedMesh(geo, mat, count);
+    this.mesh = new THREE.InstancedMesh(geo, mat, opts.capacity);
     this.mesh.frustumCulled = false;
+    this.mesh.count = 0;
     this.mesh.setColorAt(0, new THREE.Color('#ffffff'));
-    for (let i = 0; i < count; i++) this.phases.push((i % def.arrows.perPath) / def.arrows.perPath + Math.random() * 0.04);
-    this.scales = { T: colorScale(def.colors.T), p: colorScale(def.colors.p), c: colorScale(def.colors.c) };
+    for (const k of Object.keys(opts.scales)) this.scales[k] = colorScale(opts.scales[k]);
   }
 
-  setResult(res: FlowResult) {
+  setResult(res: { paths: FlowPath[] }) {
     this.res = res;
-    this.cRef = Math.max(...res.paths.flatMap(p => p.s.map(q => q.c)));
+    const per = this.opts.perPath;
+    const counts = res.paths.map(p => Math.max(0, Math.round(typeof per === 'number' ? per : per(p))));
+    let total = counts.reduce((a, b) => a + b, 0);
+    // oltre la capacità si riducono le frecce in proporzione
+    if (total > this.opts.capacity) { const k = this.opts.capacity / total; for (let i = 0; i < counts.length; i++) counts[i] = Math.floor(counts[i] * k); total = counts.reduce((a, b) => a + b, 0); }
+    if (counts.length !== this.counts.length || counts.some((c, i) => c !== this.counts[i])) {
+      this.phases = [];
+      counts.forEach(c => { for (let j = 0; j < c; j++) this.phases.push(j / c + Math.random() * 0.04); });
+      this.counts = counts;
+    }
+    this.mesh.count = total;
+    this.cRef = Math.max(1e-6, ...res.paths.flatMap(p => p.s.map(q => q.c)));
     this.update(0);
   }
 
   /** dtVis: secondi di animazione trascorsi */
   update(dtVis: number) {
     const res = this.res; if (!res) return;
-    const per = this.def.arrows.perPath, info = COLOR_INFO[this.mode], scale = this.scales[this.mode];
+    const info = this.opts.info[this.mode], scale = this.scales[this.mode];
     let n = 0;
-    for (const path of res.paths) {
-      const S = path.s;
+    res.paths.forEach((path, pi) => {
+      const S = path.s, per = this.counts[pi] ?? 0;
       for (let j = 0; j < per; j++, n++) {
-        let ph = this.phases[n] + dtVis / this.def.timeScale / path.total;
+        let ph = this.phases[n] + (path.total > 0 && isFinite(path.total) ? dtVis / this.timeScale / path.total : 0);
         ph -= Math.floor(ph);
         this.phases[n] = ph;
         const t = ph * path.total;
@@ -272,10 +314,10 @@ export class FlowArrows {
         this.sc.set(k, k, k);
         this.m4.compose(this.pos, this.q, this.sc);
         this.mesh.setMatrixAt(n, this.m4);
-        const val = info.value({ ...a, T: a.T + (b.T - a.T) * f, p: a.p + (b.p - a.p) * f, c });
-        this.mesh.setColorAt(n, scale(val, this.col));
+        const q: Sample = { x: 0, y: 0, z: 0, t, c, p: a.p + (b.p - a.p) * f, T: a.T !== undefined && b.T !== undefined ? a.T + (b.T - a.T) * f : undefined };
+        this.mesh.setColorAt(n, scale(info.value(q), this.col));
       }
-    }
+    });
     this.mesh.instanceMatrix.needsUpdate = true;
     if (this.mesh.instanceColor) this.mesh.instanceColor.needsUpdate = true;
   }
@@ -296,8 +338,9 @@ function mergeTwo(a: THREE.BufferGeometry, b: THREE.BufferGeometry) {
 /* Triangoli di velocità (SVG)                                         */
 /* ------------------------------------------------------------------ */
 const fmt = (v: number, d = 0) => v.toFixed(d).replace('.', ',');
+const fmt1 = (v: number) => (v < 10 ? fmt(v, 1) : fmt(v));
 
-export function triangleSvg(tri: Triangle, which: 'in' | 'out', scale = 0.8) {
+export function triangleSvg(tri: Triangle, which: 'in' | 'out', scale = 0.8, axialOut = false, idp = '') {
   // asse orizzontale: direzione tangenziale (verso di u); verticale: direzione meridiana del flusso
   const wu = tri.cu - tri.u;
   const pts = [[0, 0], [tri.cu, tri.cm], [wu, tri.cm]];
@@ -307,10 +350,10 @@ export function triangleSvg(tri: Triangle, which: 'in' | 'out', scale = 0.8) {
   const X = (vx: number) => padL + (vx - minX) * scale, Y = (vy: number) => H - padB - vy * scale;
   const n = which === 'in' ? '₁' : '₂';
   const line = (x0: number, y0: number, x1: number, y1: number, cls: string, label: string, lx: number, ly: number, anchor = 'middle') =>
-    `<line x1="${X(x0).toFixed(1)}" y1="${Y(y0).toFixed(1)}" x2="${X(x1).toFixed(1)}" y2="${Y(y1).toFixed(1)}" class="${cls}" marker-end="url(#ah-${cls}-${which})"/>` +
+    `<line x1="${X(x0).toFixed(1)}" y1="${Y(y0).toFixed(1)}" x2="${X(x1).toFixed(1)}" y2="${Y(y1).toFixed(1)}" class="${cls}" marker-end="url(#ah-${cls}-${which}${idp})"/>` +
     `<text x="${X(lx).toFixed(1)}" y="${Y(ly).toFixed(1)}" class="${cls}" text-anchor="${anchor}">${label}</text>`;
   const c = Math.hypot(tri.cu, tri.cm), w = Math.hypot(wu, tri.cm);
-  const markers = ['tc', 'tw', 'tu'].map(cls => `<marker id="ah-${cls}-${which}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" class="${cls}"/></marker>`).join('');
+  const markers = ['tc', 'tw', 'tu'].map(cls => `<marker id="ah-${cls}-${which}${idp}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" class="${cls}"/></marker>`).join('');
   let extra = '';
   if (which === 'in' && tri.bladeAngle !== undefined) {
     // direzione della pala all'ingresso (tratteggiata): l'angolo tra w₁ e la pala è l'incidenza
@@ -318,12 +361,12 @@ export function triangleSvg(tri: Triangle, which: 'in' | 'out', scale = 0.8) {
     extra = `<line x1="${X(0).toFixed(1)}" y1="${Y(0).toFixed(1)}" x2="${X(-bl).toFixed(1)}" y2="${Y(tri.cm).toFixed(1)}" class="tb"/>`;
   }
   const beta = Math.atan2(Math.abs(wu), tri.cm) * 180 / Math.PI, alpha = Math.atan2(tri.cu, tri.cm) * 180 / Math.PI;
-  const angleTxt = which === 'in' ? `β${n} = ${fmt(beta)}° dall'asse` : `α${n} = ${fmt(alpha)}° dalla direzione radiale`;
+  const angleTxt = which === 'in' ? `β${n} = ${fmt(beta)}° dall'asse` : `α${n} = ${fmt(alpha)}° dalla direzione ${axialOut ? 'assiale' : 'radiale'}`;
   return `<svg class="tri" viewBox="0 0 ${W.toFixed(0)} ${H.toFixed(0)}" width="${W.toFixed(0)}" role="img" aria-label="Triangolo di velocità ${which === 'in' ? 'in ingresso' : 'in uscita'}">
     <defs>${markers}</defs>${extra}
-    ${line(0, 0, tri.cu, tri.cm, 'tc', `c${n} ${fmt(c)} m/s`, tri.cu, tri.cm + 12 / scale, tri.cu >= wu ? 'start' : 'end')}
-    ${line(0, 0, wu, tri.cm, 'tw', `w${n} ${fmt(w)} m/s`, wu, tri.cm + 12 / scale, tri.cu >= wu ? 'end' : 'start')}
-    ${line(wu, tri.cm, tri.cu, tri.cm, 'tu', `u${n} ${fmt(tri.u)} m/s`, (wu + tri.cu) / 2, tri.cm + 22 / scale)}
+    ${line(0, 0, tri.cu, tri.cm, 'tc', `c${n} ${fmt1(c)} m/s`, tri.cu, tri.cm + 12 / scale, tri.cu >= wu ? 'start' : 'end')}
+    ${line(0, 0, wu, tri.cm, 'tw', `w${n} ${fmt1(w)} m/s`, wu, tri.cm + 12 / scale, tri.cu >= wu ? 'end' : 'start')}
+    ${line(wu, tri.cm, tri.cu, tri.cm, 'tu', `u${n} ${fmt1(tri.u)} m/s`, (wu + tri.cu) / 2, tri.cm + 22 / scale)}
     <text x="${X(0).toFixed(1)}" y="${(H - 10).toFixed(1)}" class="tl" text-anchor="middle">${esc(angleTxt)}</text>
   </svg>`;
 }

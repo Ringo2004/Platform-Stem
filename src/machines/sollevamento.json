@@ -1,0 +1,655 @@
+{
+ "id": "sollevamento",
+ "title": "Impianto di sollevamento",
+ "eyebrow": "Macchine idrauliche · Modulo 4",
+ "subtitle": "Dal bacino di valle al bacino di monte · pompe centrifughe o assiali, in serie o in parallelo",
+ "canvasLabel": "Modello 3D interattivo dell'impianto di sollevamento con bacini, tubazioni, valvole e pompe",
+ "note": "Modello didattico. Perdite di carico con la formula di Darcy-Weisbach (fattore d’attrito di Swamee-Jain, acciaio commerciale) e coefficienti K dei pezzi speciali di uso comune nei manuali; acqua a 20 °C e pressione atmosferica di 101,3 kPa. Le lunghezze delle condotte non sono in scala; le altezze sono in scala fino a 10 m.",
+ "overview": {
+  "name": "Vista d’insieme",
+  "section": "Impianto di sollevamento",
+  "text": "Le pompe aspirano l’acqua dal bacino di valle e la spingono, attraverso valvole, collettore e condotta di mandata, nel bacino di monte. La prevalenza che devono fornire è il salto geodetico più le perdite di carico, che crescono con il quadrato della portata: è la curva dell’impianto. Il punto di funzionamento è dove questa curva incontra la curva caratteristica delle pompe. Nel pannello puoi scegliere la macchina, il numero di pompe, il collegamento, i giri, il salto e la quota d’installazione, e vedere come cambiano punto di funzionamento e rischio di cavitazione.",
+  "facts": [
+   [
+    "Fluido",
+    "acqua a 20 °C (ρ = 998 kg/m³)"
+   ],
+   [
+    "Aspirazione",
+    "DN 400, una per pompa"
+   ],
+   [
+    "Mandata di ogni pompa",
+    "DN 400 con valvola di ritegno e saracinesca"
+   ],
+   [
+    "Condotta di mandata",
+    "DN 600, 400 m, acciaio"
+   ],
+   [
+    "Regolazione",
+    "valvola a farfalla sulla condotta"
+   ]
+  ],
+  "course": "Curva dell’impianto: H_imp = H_g + Σ(λ·L/D + ΣK)·v²/(2g). Punto di funzionamento: H_pompe(Q) = H_imp(Q). Potenza assorbita P = ρ·g·Q·H/η."
+ },
+ "spools": {},
+ "spinLabel": "",
+ "spinNote": "Velocità dell’acqua raddoppiata",
+ "spinToggle": "Flusso in moto",
+ "stationsToggle": "Etichette",
+ "practice": [
+  [
+   "Punto di funzionamento",
+   "Traccia curva dell’impianto e curva della pompa e trova portata e prevalenza."
+  ],
+  [
+   "Serie o parallelo",
+   "Confronta due pompe in serie e in parallelo sullo stesso impianto con salti diversi."
+  ],
+  [
+   "Quota d’installazione",
+   "Calcola NPSH disponibile e la quota massima della pompa sopra il pelo libero."
+  ],
+  [
+   "Regolazione",
+   "Confronta la potenza assorbita regolando la portata con la valvola e con i giri."
+  ]
+ ],
+ "plant": {
+  "title": "Impianto di sollevamento",
+  "note": "Le curve delle pompe derivano da andamenti tipici (adimensionali rispetto al punto di massimo rendimento) e dalle leggi di affinità; la cavitazione abbassa la prevalenza quando NPSH disponibile < NPSH richiesto. Il punto di funzionamento è calcolato a valvola di regolazione tutta aperta, oppure con la portata imposta strozzando la valvola.",
+  "water": {
+   "rho": 998.2,
+   "nu": 1.004e-06,
+   "pv": 2339,
+   "T": 20
+  },
+  "patm": 101325,
+  "g": 9.81,
+  "roughness": 5e-05,
+  "pipes": {
+   "suction": {
+    "D": 0.4,
+    "L": 4.5,
+    "K": [
+     [
+      "Riduzione eccentrica all’ingresso della pompa",
+      0.1
+     ]
+    ]
+   },
+   "branch": {
+    "D": 0.4,
+    "L": 9,
+    "K": [
+     [
+      "Allargamento conico dopo la pompa",
+      0.1
+     ],
+     [
+      "Valvola di ritegno a clapet",
+      2.5
+     ],
+     [
+      "Saracinesca aperta",
+      0.15
+     ],
+     [
+      "Curva a 90°",
+      0.3
+     ],
+     [
+      "Curva a 90°",
+      0.3
+     ],
+     [
+      "Innesto a T nel collettore",
+      1.0
+     ]
+    ]
+   },
+   "link": {
+    "D": 0.4,
+    "L": 7,
+    "K": [
+     [
+      "Curve a 90° (4)",
+      1.2
+     ]
+    ]
+   },
+   "main": {
+    "D": 0.6,
+    "L": 400,
+    "K": [
+     [
+      "Curva a 90°",
+      0.3
+     ],
+     [
+      "Curve a 45° (2)",
+      0.4
+     ],
+     [
+      "Valvola di regolazione a farfalla aperta",
+      0.5
+     ],
+     [
+      "Sbocco nel bacino di monte",
+      1.0
+     ]
+    ]
+   }
+  },
+  "suctionFittings": {
+   "lift": [
+    [
+     "Valvola di fondo con succhieruola",
+     2.5
+    ]
+   ],
+   "flooded": [
+    [
+     "Imbocco a campana",
+     0.05
+    ],
+    [
+     "Saracinesca d’aspirazione aperta",
+     0.15
+    ]
+   ],
+   "bend": 0.3
+  },
+  "layout": {
+   "intakeY": -1.6,
+   "intakeX": -2.2,
+   "spacing": 1.8,
+   "pumpX": 0.9,
+   "headerX": 3.4,
+   "upperX": 12
+  },
+  "limits": {
+   "pumps": 4,
+   "Hg": [
+    0,
+    40
+   ],
+   "z": [
+    -5,
+    9
+   ]
+  },
+  "design": {
+   "pompa-centrifuga": {
+    "pumps": 1,
+    "series": false,
+    "Hg": 26.5,
+    "z": 2
+   },
+   "pompa-assiale": {
+    "pumps": 1,
+    "series": false,
+    "Hg": 2.5,
+    "z": -2
+   }
+  },
+  "colors": {
+   "p": [
+    [
+     0,
+     "#3d6fb0"
+    ],
+    [
+     100,
+     "#3fa7a0"
+    ],
+    [
+     200,
+     "#d9c94a"
+    ],
+    [
+     300,
+     "#ec8a2f"
+    ],
+    [
+     400,
+     "#d6372a"
+    ]
+   ],
+   "c": [
+    [
+     0,
+     "#3d6fb0"
+    ],
+    [
+     0.75,
+     "#3fa7a0"
+    ],
+    [
+     1.5,
+     "#d9c94a"
+    ],
+    [
+     2.25,
+     "#ec8a2f"
+    ],
+    [
+     3,
+     "#d6372a"
+    ]
+   ]
+  },
+  "arrows": {
+   "size": 0.32,
+   "spacing": 1.1,
+   "timeScale": 0.5
+  },
+  "machines": [
+   "pompa-centrifuga",
+   "pompa-assiale"
+  ]
+ },
+ "view": {
+  "fov": 34,
+  "near": 0.1,
+  "far": 500,
+  "minDistance": 2,
+  "maxDistance": 140,
+  "focusMin": 3,
+  "dir": [
+   0.25,
+   0.42,
+   1.0
+  ],
+  "dirPortrait": [
+   0.35,
+   0.55,
+   1.0
+  ],
+  "fit": {
+   "assembled": [
+    [
+     -8,
+     -7.5,
+     -5
+    ],
+    [
+     20,
+     12,
+     4.4
+    ]
+   ],
+   "exploded": [
+    [
+     -8,
+     -7.5,
+     -5
+    ],
+    [
+     20,
+     12,
+     4.4
+    ]
+   ]
+  },
+  "grid": {
+   "size": 80,
+   "divisions": 40,
+   "position": [
+    6,
+    -8.05,
+    0
+   ]
+  }
+ },
+ "stations": [],
+ "palette": {
+  "concrete": "#7b8086",
+  "water": "#2f86c7",
+  "pipe": "#a9b6c2",
+  "steel": "#5d6b78",
+  "valve": "#3d6d9c",
+  "trim": "#c9a25a",
+  "earth": "#5a5640",
+  "pump": "#4f6f8f",
+  "flow": "#4ea3e0",
+  "cav": "#e8f6ff"
+ },
+ "components": [
+  {
+   "id": "valle",
+   "name": "Bacino di valle (vasca d’aspirazione)",
+   "short": "Bacino di valle",
+   "section": "Aspirazione",
+   "text": "La vasca da cui le pompe prelevano l’acqua. Il suo pelo libero è il riferimento delle quote: la pompa è “in aspirazione” se sta sopra (z > 0), “sotto battente” se sta sotto (z < 0). La bocca d’aspirazione deve stare abbastanza sotto il pelo libero per non risucchiare aria con i vortici.",
+   "facts": [
+    [
+     "Quota del pelo libero",
+     "0 m (riferimento)"
+    ],
+    [
+     "Pressione sul pelo libero",
+     "atmosferica, 101,3 kPa"
+    ]
+   ],
+   "color": "water",
+   "explode": [
+    -4,
+    0,
+    0
+   ],
+   "materials": {
+    "concrete": {
+     "color": "concrete",
+     "T": 15,
+     "metal": 0,
+     "rough": 0.9
+    },
+    "water": {
+     "color": "water",
+     "T": 15,
+     "metal": 0.1,
+     "rough": 0.15
+    }
+   },
+   "parts": []
+  },
+  {
+   "id": "aspirazione",
+   "name": "Tubazione d’aspirazione",
+   "short": "Aspirazione",
+   "section": "Aspirazione",
+   "text": "Ogni pompa ha la sua tubazione d’aspirazione, corta e con poche curve: le perdite qui riducono direttamente l’NPSH disponibile. Con la pompa sopra il pelo libero serve una valvola di fondo con succhieruola, che trattiene l’acqua a pompa ferma (la pompa resta adescata) e ferma i detriti; sotto battente basta un imbocco a campana con una saracinesca per la manutenzione.",
+   "facts": [
+    [
+     "Diametro",
+     "DN 400"
+    ],
+    [
+     "Valvola di fondo con succhieruola",
+     "K ≈ 2,5"
+    ],
+    [
+     "Imbocco a campana",
+     "K ≈ 0,05"
+    ],
+    [
+     "Curva a 90°",
+     "K ≈ 0,3"
+    ]
+   ],
+   "course": "NPSH disponibile = (p_atm − p_v)/(ρg) − z − h_asp: ogni metro di perdita in aspirazione equivale a installare la pompa un metro più in alto.",
+   "color": "pipe",
+   "explode": [
+    -1.5,
+    0,
+    0
+   ],
+   "materials": {
+    "pipe": {
+     "color": "pipe",
+     "T": 15,
+     "metal": 0.5,
+     "rough": 0.35
+    },
+    "steel": {
+     "color": "steel",
+     "T": 15,
+     "metal": 0.5,
+     "rough": 0.45
+    },
+    "strainer": {
+     "color": "trim",
+     "T": 15,
+     "metal": 0.6,
+     "rough": 0.4
+    }
+   },
+   "parts": []
+  },
+  {
+   "id": "pompe",
+   "name": "Gruppo di pompe",
+   "short": "Pompe",
+   "section": "Pompe",
+   "text": "Da una a quattro pompe uguali. In parallelo ciascuna ha la sua aspirazione e la sua mandata e le portate si sommano a pari prevalenza: conviene quando la curva dell’impianto è piatta (salto grande, perdite piccole). In serie l’acqua passa da una pompa all’altra e le prevalenze si sommano a pari portata: conviene quando il salto supera la prevalenza di una sola pompa. Le pompe diventano rosse se cavitano.",
+   "facts": [
+    [
+     "Parallelo",
+     "Q = N·Q₁ a pari H"
+    ],
+    [
+     "Serie",
+     "H = N·H₁ a pari Q"
+    ],
+    [
+     "In serie",
+     "cavita solo la prima pompa"
+    ]
+   ],
+   "course": "Curva del gruppo: in parallelo si sommano le ascisse (portate), in serie le ordinate (prevalenze). Il punto di funzionamento si trova sempre sull’intersezione con la curva dell’impianto: con due pompe in parallelo la portata non raddoppia, perché le perdite crescono.",
+   "color": "pump",
+   "explode": [
+    0,
+    2.2,
+    0
+   ],
+   "materials": {},
+   "parts": []
+  },
+  {
+   "id": "valvole",
+   "name": "Valvole di ritegno, saracinesche e valvola di regolazione",
+   "short": "Valvole",
+   "section": "Mandata",
+   "text": "Sulla mandata di ogni pompa una valvola di ritegno impedisce all’acqua di tornare indietro quando la pompa si ferma (e il colpo d’ariete), una saracinesca permette di isolarla per la manutenzione. Sulla condotta, la valvola a farfalla di regolazione può strozzare il flusso: aggiunge una perdita e sposta il punto di funzionamento verso portate minori, sprecando energia.",
+   "facts": [
+    [
+     "Valvola di ritegno a clapet",
+     "K ≈ 2,5"
+    ],
+    [
+     "Saracinesca aperta",
+     "K ≈ 0,15"
+    ],
+    [
+     "Valvola a farfalla aperta",
+     "K ≈ 0,5"
+    ]
+   ],
+   "course": "Regolazione per strozzamento: la valvola dissipa ΔH_v = H_pompa(Q) − H_imp(Q); la potenza persa è ρ·g·Q·ΔH_v. Con l’inverter (variazione dei giri) quella potenza non si spende.",
+   "color": "valve",
+   "explode": [
+    0,
+    1.5,
+    1.5
+   ],
+   "materials": {
+    "body": {
+     "color": "valve",
+     "T": 15,
+     "metal": 0.5,
+     "rough": 0.4
+    },
+    "trim": {
+     "color": "trim",
+     "T": 15,
+     "metal": 0.6,
+     "rough": 0.35
+    }
+   },
+   "parts": []
+  },
+  {
+   "id": "mandata",
+   "name": "Collettore e condotta di mandata",
+   "short": "Mandata",
+   "section": "Mandata",
+   "text": "Le mandate delle pompe confluiscono in un collettore DN 600, da cui parte la condotta di mandata lunga 400 m che risale fino al bacino di monte. Le sue perdite distribuite crescono con il quadrato della velocità e danno la curvatura della curva dell’impianto.",
+   "facts": [
+    [
+     "Diametro",
+     "DN 600"
+    ],
+    [
+     "Lunghezza",
+     "400 m (non in scala)"
+    ],
+    [
+     "Scabrezza",
+     "0,05 mm (acciaio commerciale)"
+    ],
+    [
+     "Sbocco nel bacino",
+     "K = 1"
+    ]
+   ],
+   "course": "Perdite distribuite (Darcy-Weisbach): h = λ·(L/D)·v²/(2g), con λ dal diagramma di Moody o dalla formula di Swamee-Jain λ = 0,25 / [log₁₀(ε/(3,7D) + 5,74/Re^0,9)]².",
+   "color": "pipe",
+   "explode": [
+    0,
+    0.8,
+    0
+   ],
+   "materials": {
+    "pipe": {
+     "color": "pipe",
+     "T": 15,
+     "metal": 0.5,
+     "rough": 0.35
+    },
+    "steel": {
+     "color": "steel",
+     "T": 15,
+     "metal": 0.5,
+     "rough": 0.45
+    }
+   },
+   "parts": []
+  },
+  {
+   "id": "monte",
+   "name": "Bacino di monte",
+   "short": "Bacino di monte",
+   "section": "Mandata",
+   "text": "Il serbatoio d’arrivo. La differenza di quota tra i due peli liberi è il salto geodetico H_g: è la parte della prevalenza che non dipende dalla portata. La condotta sbocca sotto il pelo libero, quindi l’energia cinetica dell’acqua in uscita si perde (K = 1).",
+   "facts": [
+    [
+     "Salto geodetico",
+     "regolabile da 0 a 40 m"
+    ],
+    [
+     "Disegno",
+     "in scala fino a 10 m di salto"
+    ]
+   ],
+   "color": "water",
+   "explode": [
+    4,
+    0,
+    0
+   ],
+   "materials": {
+    "concrete": {
+     "color": "concrete",
+     "T": 15,
+     "metal": 0,
+     "rough": 0.9
+    },
+    "water": {
+     "color": "water",
+     "T": 15,
+     "metal": 0.1,
+     "rough": 0.15
+    },
+    "earth": {
+     "color": "earth",
+     "T": 15,
+     "metal": 0,
+     "rough": 0.95
+    }
+   },
+   "parts": []
+  },
+  {
+   "id": "locale",
+   "name": "Locale pompe",
+   "short": "Locale pompe",
+   "section": "Pompe",
+   "text": "Il basamento in calcestruzzo su cui poggiano le pompe: la sua quota fissa la quota d’installazione z. Sotto battente il locale è una camera a secco più bassa del pelo libero della vasca.",
+   "facts": [
+    [
+     "Quota d’installazione",
+     "regolabile da −5 a +9 m"
+    ]
+   ],
+   "color": "concrete",
+   "explode": [
+    0,
+    -1.5,
+    0
+   ],
+   "materials": {
+    "concrete": {
+     "color": "concrete",
+     "T": 15,
+     "metal": 0,
+     "rough": 0.9
+    }
+   },
+   "parts": []
+  },
+  {
+   "id": "flusso",
+   "name": "Il flusso nell’impianto",
+   "short": "Flusso",
+   "section": "Simulazione",
+   "text": "Le frecce seguono l’acqua dal bacino di valle a quello di monte, con la velocità calcolata (al doppio della realtà). Con il colore “Pressione” si vede la pressione assoluta: scende nella tubazione d’aspirazione, sale di colpo nella pompa, cala lungo la mandata per le perdite. Tubazioni e acqua sono disegnate in trasparenza.",
+   "facts": [
+    [
+     "Velocità in aspirazione",
+     "≈ 1,6 m/s alla portata nominale"
+    ],
+    [
+     "Velocità nella condotta",
+     "1–2 m/s"
+    ]
+   ],
+   "color": "flow",
+   "explode": [
+    0,
+    0,
+    0
+   ],
+   "materials": {},
+   "parts": []
+  },
+  {
+   "id": "cavitazione",
+   "name": "Cavitazione e quota d’installazione",
+   "short": "Cavitazione",
+   "section": "Simulazione",
+   "text": "Più la pompa sta in alto rispetto al pelo libero di valle, più bassa è la pressione al suo ingresso. Quando l’NPSH disponibile scende sotto quello di inizio cavitazione compaiono le prime bolle (cavitazione incipiente); sotto l’NPSH richiesto la prevalenza cala del 3 % e poi crolla (cavitazione sviluppata): la curva della pompa viene “troncata” e la portata diminuisce. Installare la pompa sotto battente è il rimedio più sicuro.",
+   "facts": [
+    [
+     "Limite teorico d’aspirazione",
+     "10,1 m (acqua a 20 °C)"
+    ],
+    [
+     "Margine consigliato",
+     "NPSHa ≥ NPSH3 + 0,5 m"
+    ]
+   ],
+   "course": "Quota massima d’installazione: z_max = (p_atm − p_v)/(ρg) − h_asp − NPSH_r − margine. Con 10,1 m, h_asp ≈ 0,5 m e NPSH_r = 4,5 m si ottiene z_max ≈ 4,6 m.",
+   "color": "cav",
+   "explode": [
+    0,
+    0,
+    0
+   ],
+   "materials": {},
+   "parts": []
+  }
+ ]
+}
