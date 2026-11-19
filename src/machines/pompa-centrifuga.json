@@ -1,0 +1,2073 @@
+{
+ "id": "pompa-centrifuga",
+ "title": "Pompa centrifuga",
+ "eyebrow": "Macchine idrauliche · Modulo 4 · Macchina singola",
+ "subtitle": "Monostadio ad aspirazione assiale · girante chiusa Ø 330 mm a 6 pale · 1.450 giri/min · 200 L/s · 28 m",
+ "canvasLabel": "Modello 3D interattivo della pompa centrifuga con simulazione del flusso d'acqua e della cavitazione",
+ "note": "Modello didattico parametrico di una pompa centrifuga di grandi dimensioni (simile alle pompe normalizzate EN 733 / ISO 2858). Curve caratteristiche, rendimento e NPSH seguono andamenti tipici per questo numero di giri specifico; forme, spessori e supporti sono semplificati e indicativi.",
+ "overview": {
+  "name": "Vista d’insieme",
+  "section": "Pompa centrifuga",
+  "text": "L’acqua entra assiale dalla bocca d’aspirazione, la girante la mette in rotazione e la spinge verso l’esterno; la chiocciola raccoglie il flusso e lo porta alla bocca di mandata, rallentandolo e trasformando energia cinetica in pressione. È la pompa più diffusa negli acquedotti e negli impianti di sollevamento con prevalenze medie e alte. Il punto di funzionamento (portata, prevalenza, pressione all’ingresso) è quello dell’impianto scelto nel pannello.",
+  "facts": [
+   [
+    "Portata nominale",
+    "200 L/s (720 m³/h)"
+   ],
+   [
+    "Prevalenza nominale",
+    "28 m"
+   ],
+   [
+    "Velocità",
+    "1.450 giri/min (motore a 4 poli, 50 Hz)"
+   ],
+   [
+    "Rendimento massimo",
+    "84 %"
+   ],
+   [
+    "Potenza assorbita",
+    "≈ 65 kW"
+   ],
+   [
+    "NPSH richiesto (3 %)",
+    "4,5 m"
+   ],
+   [
+    "Numero di giri caratteristico",
+    "n_q ≈ 53 (radiale)"
+   ]
+  ],
+  "course": "Numero di giri caratteristico n_q = n·√Q / H^0,75 = 1.450·√0,2 / 28^0,75 ≈ 53: macchina radiale. Con n_q tra 10 e 80 si usano pompe centrifughe, tra 80 e 160 a flusso misto (elicocentrifughe), oltre 160 assiali."
+ },
+ "spools": {
+  "rotor": {
+   "speed": 3.8
+  }
+ },
+ "spinLabel": "nella realtà 1.450 giri/min",
+ "spinNote": "Rallentato 40 volte",
+ "spinToggle": "Girante in moto",
+ "practice": [
+  [
+   "Triangoli di velocità",
+   "Dati portata e giri, ricava u, c e w all’ingresso e all’uscita della girante e la prevalenza di Eulero."
+  ],
+  [
+   "Leggi di affinità",
+   "Cambia i giri e verifica che Q ∝ n, H ∝ n² e P ∝ n³."
+  ],
+  [
+   "Altezza d’aspirazione",
+   "Trova la quota massima d’installazione per cui NPSHa supera NPSH richiesto con un margine di 0,5 m."
+  ]
+ ],
+ "section": {
+  "xMin": -0.42,
+  "xMax": 1.8,
+  "alpha": 90,
+  "center": 45,
+  "extent": 62,
+  "unit": "mm",
+  "scale": 1000
+ },
+ "view": {
+  "fov": 32,
+  "near": 0.02,
+  "far": 40,
+  "minDistance": 0.25,
+  "maxDistance": 8,
+  "focusMin": 0.5,
+  "dir": [
+   -0.8,
+   0.55,
+   0.95
+  ],
+  "dirPortrait": [
+   -0.95,
+   0.7,
+   1
+  ],
+  "fit": {
+   "assembled": [
+    [
+     -0.42,
+     -0.38,
+     -0.3
+    ],
+    [
+     1.25,
+     0.36,
+     0.3
+    ]
+   ],
+   "exploded": [
+    [
+     -1.0,
+     -0.38,
+     -0.5
+    ],
+    [
+     2.4,
+     0.42,
+     0.5
+    ]
+   ]
+  },
+  "grid": {
+   "size": 4,
+   "divisions": 40,
+   "position": [
+    0.7,
+    -0.365,
+    0
+   ]
+  }
+ },
+ "stations": [
+  {
+   "n": 1,
+   "label": "Bocca d’aspirazione",
+   "x": -0.38,
+   "y": 0.13,
+   "z": 0
+  },
+  {
+   "n": 2,
+   "label": "Occhio della girante",
+   "x": 0,
+   "y": 0.118,
+   "z": 0
+  },
+  {
+   "n": 3,
+   "label": "Uscita girante",
+   "x": 0.065,
+   "y": 0.168,
+   "z": 0,
+   "flip": true
+  },
+  {
+   "n": 4,
+   "label": "Bocca di mandata",
+   "x": 0.065,
+   "y": 0.3,
+   "z": -0.2209,
+   "flip": true
+  }
+ ],
+ "palette": {
+  "casing": "#4f6f8f",
+  "impeller": "#c9a25a",
+  "cover": "#5d7894",
+  "shaft": "#c7cdd2",
+  "bracket": "#4b5966",
+  "motor": "#3f6a5a",
+  "base": "#3a444d",
+  "flow": "#4ea3e0",
+  "cav": "#e8f6ff"
+ },
+ "pump": {
+  "kind": "centrifuga",
+  "label": "Centrifuga",
+  "n0": 1450,
+  "bep": {
+   "Q": 0.2,
+   "H": 28,
+   "eta": 0.84,
+   "npsh3": 4.5
+  },
+  "curve": {
+   "q": [
+    0,
+    0.2,
+    0.4,
+    0.6,
+    0.8,
+    1.0,
+    1.2,
+    1.4,
+    1.6,
+    1.8,
+    2.0,
+    2.2
+   ],
+   "h": [
+    1.22,
+    1.21,
+    1.18,
+    1.13,
+    1.07,
+    1.0,
+    0.9,
+    0.77,
+    0.61,
+    0.43,
+    0.22,
+    0.0
+   ],
+   "p": [
+    0.55,
+    0.67,
+    0.75,
+    0.82,
+    0.9,
+    1.0,
+    1.12,
+    1.27,
+    1.43,
+    1.57,
+    1.67,
+    1.72
+   ],
+   "npsh": [
+    0.95,
+    0.75,
+    0.62,
+    0.62,
+    0.78,
+    1.0,
+    1.32,
+    1.75,
+    2.3,
+    3.0,
+    3.8,
+    4.6
+   ]
+  },
+  "npshiFactor": 1.5,
+  "por": [
+   0.7,
+   1.2
+  ],
+  "limits": {
+   "rpm": [
+    900,
+    1800
+   ]
+  },
+  "geometry": {
+   "r1h": 0.035,
+   "r1s": 0.115,
+   "r2": 0.165,
+   "b2": 0.05,
+   "beta2": 28,
+   "Z": 6,
+   "blockage": 0.9
+  },
+  "mount": {
+   "base": -0.365,
+   "inlet": [
+    -0.4,
+    0,
+    0
+   ],
+   "outlet": [
+    0.065,
+    0.3,
+    -0.2209
+   ],
+   "inletR": 0.125,
+   "outletR": 0.075
+  },
+  "flow": {
+   "title": "Flusso nella pompa",
+   "note": "",
+   "spool": "rotor",
+   "timeScale": 40,
+   "inlet": [
+    [
+     -0.4,
+     0.125,
+     0
+    ],
+    [
+     -0.05,
+     0.118,
+     0
+    ],
+    [
+     -0.035,
+     0.117,
+     0.0
+    ],
+    [
+     -0.025,
+     0.117,
+     0.022
+    ],
+    [
+     -0.012,
+     0.116,
+     0.031
+    ],
+    [
+     0,
+     0.115,
+     0.035
+    ]
+   ],
+   "impeller": {
+    "hub": [
+     [
+      0.0,
+      0.035
+     ],
+     [
+      0.00589,
+      0.03528
+     ],
+     [
+      0.01175,
+      0.03611
+     ],
+     [
+      0.01756,
+      0.0375
+     ],
+     [
+      0.02329,
+      0.03943
+     ],
+     [
+      0.02893,
+      0.0419
+     ],
+     [
+      0.03444,
+      0.0449
+     ],
+     [
+      0.03981,
+      0.04841
+     ],
+     [
+      0.045,
+      0.05242
+     ],
+     [
+      0.05,
+      0.05691
+     ],
+     [
+      0.05479,
+      0.06186
+     ],
+     [
+      0.05934,
+      0.06726
+     ],
+     [
+      0.06364,
+      0.07308
+     ],
+     [
+      0.06767,
+      0.07929
+     ],
+     [
+      0.0714,
+      0.08586
+     ],
+     [
+      0.07483,
+      0.09278
+     ],
+     [
+      0.07794,
+      0.1
+     ],
+     [
+      0.08072,
+      0.1075
+     ],
+     [
+      0.08315,
+      0.11525
+     ],
+     [
+      0.08522,
+      0.12321
+     ],
+     [
+      0.08693,
+      0.13135
+     ],
+     [
+      0.08827,
+      0.13964
+     ],
+     [
+      0.08923,
+      0.14803
+     ],
+     [
+      0.08981,
+      0.1565
+     ],
+     [
+      0.09,
+      0.165
+     ]
+    ],
+    "shroud": [
+     [
+      0.0,
+      0.115
+     ],
+     [
+      0.00262,
+      0.11511
+     ],
+     [
+      0.00522,
+      0.11543
+     ],
+     [
+      0.0078,
+      0.11596
+     ],
+     [
+      0.01035,
+      0.1167
+     ],
+     [
+      0.01286,
+      0.11765
+     ],
+     [
+      0.01531,
+      0.11881
+     ],
+     [
+      0.01769,
+      0.12016
+     ],
+     [
+      0.02,
+      0.1217
+     ],
+     [
+      0.02222,
+      0.12343
+     ],
+     [
+      0.02435,
+      0.12533
+     ],
+     [
+      0.02637,
+      0.12741
+     ],
+     [
+      0.02828,
+      0.12964
+     ],
+     [
+      0.03007,
+      0.13203
+     ],
+     [
+      0.03173,
+      0.13456
+     ],
+     [
+      0.03326,
+      0.13722
+     ],
+     [
+      0.03464,
+      0.14
+     ],
+     [
+      0.03587,
+      0.14289
+     ],
+     [
+      0.03696,
+      0.14587
+     ],
+     [
+      0.03788,
+      0.14893
+     ],
+     [
+      0.03864,
+      0.15206
+     ],
+     [
+      0.03923,
+      0.15525
+     ],
+     [
+      0.03966,
+      0.15847
+     ],
+     [
+      0.03991,
+      0.16173
+     ],
+     [
+      0.04,
+      0.165
+     ]
+    ],
+    "wrapM": [
+     [
+      0.0,
+      -0.0
+     ],
+     [
+      0.1,
+      -16.32
+     ],
+     [
+      0.2,
+      -31.9
+     ],
+     [
+      0.3,
+      -46.73
+     ],
+     [
+      0.4,
+      -60.8
+     ],
+     [
+      0.5,
+      -74.12
+     ],
+     [
+      0.6,
+      -86.7
+     ],
+     [
+      0.7,
+      -98.52
+     ],
+     [
+      0.8,
+      -109.6
+     ],
+     [
+      0.9,
+      -119.93
+     ],
+     [
+      1.0,
+      -129.5
+     ]
+    ],
+    "blades": 6
+   },
+   "volute": {
+    "x": 0.065,
+    "r3": 0.178,
+    "rc0": 0.014,
+    "rcMax": 0.066,
+    "overlap": 0.35,
+    "tongue": 270,
+    "discharge": {
+     "length": 0.3,
+     "rExit": 0.075
+    }
+   },
+   "arrows": {
+    "spans": [
+     0.15,
+     0.5,
+     0.85
+    ],
+    "angles": 12,
+    "perPath": 6,
+    "size": 0.022
+   },
+   "colors": {
+    "p": [
+     [
+      0,
+      "#3d6fb0"
+     ],
+     [
+      90,
+      "#3fa7a0"
+     ],
+     [
+      180,
+      "#d9c94a"
+     ],
+     [
+      270,
+      "#ec8a2f"
+     ],
+     [
+      360,
+      "#d6372a"
+     ]
+    ],
+    "c": [
+     [
+      0,
+      "#3d6fb0"
+     ],
+     [
+      5,
+      "#3fa7a0"
+     ],
+     [
+      10,
+      "#d9c94a"
+     ],
+     [
+      15,
+      "#ec8a2f"
+     ],
+     [
+      20,
+      "#d6372a"
+     ]
+    ]
+   }
+  }
+ },
+ "components": [
+  {
+   "id": "c_aspirazione",
+   "name": "Bocca d’aspirazione",
+   "short": "Aspirazione",
+   "section": "Aspirazione",
+   "text": "Porta l’acqua all’occhio della girante in direzione assiale, con velocità uniforme. È il punto più delicato per la cavitazione: qui la pressione è la più bassa di tutto l’impianto, perché la pompa si trova sopra il pelo libero e l’acqua ha già perso energia nella tubazione d’aspirazione.",
+   "facts": [
+    [
+     "Diametro della bocca",
+     "DN 250"
+    ],
+    [
+     "Velocità all’occhio",
+     "≈ 5 m/s (calcolata)"
+    ],
+    [
+     "Pressione all’ingresso",
+     "dipende da quota e perdite (vedi NPSH)"
+    ]
+   ],
+   "course": "Bernoulli tra il pelo libero di valle e l’ingresso della pompa: p₁/(ρg) + c₁²/(2g) = p_atm/(ρg) − z − h_asp. La pressione all’ingresso cala se la pompa sale (z) o se aumentano le perdite d’aspirazione.",
+   "color": "casing",
+   "explode": [
+    -0.45,
+    0,
+    0
+   ],
+   "materials": {
+    "body": {
+     "color": "casing",
+     "T": 20,
+     "metal": 0.45,
+     "rough": 0.5
+    }
+   },
+   "parts": [
+    {
+     "type": "revolve",
+     "mat": "body",
+     "casing": true,
+     "profile": {
+      "polygon": [
+       [
+        0.125,
+        -0.4
+       ],
+       [
+        0.19,
+        -0.4
+       ],
+       [
+        0.19,
+        -0.375
+       ],
+       [
+        0.138,
+        -0.375
+       ],
+       [
+        0.131,
+        -0.02
+       ],
+       [
+        0.131,
+        -0.005
+       ],
+       [
+        0.118,
+        -0.005
+       ],
+       [
+        0.118,
+        -0.05
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "c_girante",
+   "name": "Girante chiusa · 6 pale curve all’indietro",
+   "short": "Girante",
+   "section": "Girante",
+   "text": "Sei pale curve all’indietro tra il disco posteriore (mozzo) e il disco anteriore di copertura: la girante è chiusa, così l’acqua non trafila tra pale e cassa. All’ingresso le pale sono inclinate per ricevere il flusso senza urto; all’uscita formano con la direzione tangenziale un angolo di circa 28°. Le pale all’indietro danno una curva caratteristica stabile, che scende al crescere della portata.",
+   "facts": [
+    [
+     "Diametro d’uscita D₂",
+     "330 mm"
+    ],
+    [
+     "Larghezza d’uscita b₂",
+     "50 mm"
+    ],
+    [
+     "Angolo di pala β₂",
+     "28° (dalla direzione tangenziale)"
+    ],
+    [
+     "Pale",
+     "6"
+    ],
+    [
+     "Velocità periferica u₂",
+     "≈ 25 m/s a 1.450 giri/min"
+    ]
+   ],
+   "course": "Equazione di Eulero senza prerotazione: H_th = u₂·c_u2/g. Con il fattore di scorrimento σ (Wiesner) c_u2 = σ·u₂ − c_m2/tan β₂: al crescere della portata c_m2 aumenta e la prevalenza teorica cala in modo lineare.",
+   "color": "impeller",
+   "explode": [
+    0.2,
+    0,
+    0
+   ],
+   "spool": "rotor",
+   "materials": {
+    "body": {
+     "color": "impeller",
+     "T": 20,
+     "metal": 0.7,
+     "rough": 0.32
+    }
+   },
+   "parts": [
+    {
+     "type": "revolve",
+     "mat": "body",
+     "profile": {
+      "polygon": [
+       [
+        0,
+        -0.035
+       ],
+       [
+        0.02,
+        -0.03
+       ],
+       [
+        0.03,
+        -0.017
+       ],
+       [
+        0.034,
+        -0.006
+       ],
+       [
+        0.035,
+        0.0
+       ],
+       [
+        0.03528,
+        0.00589
+       ],
+       [
+        0.03611,
+        0.01175
+       ],
+       [
+        0.0375,
+        0.01756
+       ],
+       [
+        0.03943,
+        0.02329
+       ],
+       [
+        0.0419,
+        0.02893
+       ],
+       [
+        0.0449,
+        0.03444
+       ],
+       [
+        0.04841,
+        0.03981
+       ],
+       [
+        0.05242,
+        0.045
+       ],
+       [
+        0.05691,
+        0.05
+       ],
+       [
+        0.06186,
+        0.05479
+       ],
+       [
+        0.06726,
+        0.05934
+       ],
+       [
+        0.07308,
+        0.06364
+       ],
+       [
+        0.07929,
+        0.06767
+       ],
+       [
+        0.08586,
+        0.0714
+       ],
+       [
+        0.09278,
+        0.07483
+       ],
+       [
+        0.1,
+        0.07794
+       ],
+       [
+        0.1075,
+        0.08072
+       ],
+       [
+        0.11525,
+        0.08315
+       ],
+       [
+        0.12321,
+        0.08522
+       ],
+       [
+        0.13135,
+        0.08693
+       ],
+       [
+        0.13964,
+        0.08827
+       ],
+       [
+        0.14803,
+        0.08923
+       ],
+       [
+        0.1565,
+        0.08981
+       ],
+       [
+        0.165,
+        0.09
+       ],
+       [
+        0.165,
+        0.098
+       ],
+       [
+        0.06,
+        0.098
+       ],
+       [
+        0.045,
+        0.104
+       ],
+       [
+        0.045,
+        0.135
+       ],
+       [
+        0,
+        0.135
+       ]
+      ]
+     }
+    },
+    {
+     "type": "revolve",
+     "mat": "body",
+     "profile": {
+      "polygon": [
+       [
+        0.115,
+        -0.014
+       ],
+       [
+        0.115,
+        0.0
+       ],
+       [
+        0.11511,
+        0.00262
+       ],
+       [
+        0.11543,
+        0.00522
+       ],
+       [
+        0.11596,
+        0.0078
+       ],
+       [
+        0.1167,
+        0.01035
+       ],
+       [
+        0.11765,
+        0.01286
+       ],
+       [
+        0.11881,
+        0.01531
+       ],
+       [
+        0.12016,
+        0.01769
+       ],
+       [
+        0.1217,
+        0.02
+       ],
+       [
+        0.12343,
+        0.02222
+       ],
+       [
+        0.12533,
+        0.02435
+       ],
+       [
+        0.12741,
+        0.02637
+       ],
+       [
+        0.12964,
+        0.02828
+       ],
+       [
+        0.13203,
+        0.03007
+       ],
+       [
+        0.13456,
+        0.03173
+       ],
+       [
+        0.13722,
+        0.03326
+       ],
+       [
+        0.14,
+        0.03464
+       ],
+       [
+        0.14289,
+        0.03587
+       ],
+       [
+        0.14587,
+        0.03696
+       ],
+       [
+        0.14893,
+        0.03788
+       ],
+       [
+        0.15206,
+        0.03864
+       ],
+       [
+        0.15525,
+        0.03923
+       ],
+       [
+        0.15847,
+        0.03966
+       ],
+       [
+        0.16173,
+        0.03991
+       ],
+       [
+        0.165,
+        0.04
+       ],
+       [
+        0.16519,
+        0.033
+       ],
+       [
+        0.16209,
+        0.03292
+       ],
+       [
+        0.1592,
+        0.0327
+       ],
+       [
+        0.15635,
+        0.03232
+       ],
+       [
+        0.15352,
+        0.03179
+       ],
+       [
+        0.15076,
+        0.03112
+       ],
+       [
+        0.14808,
+        0.03032
+       ],
+       [
+        0.14546,
+        0.02936
+       ],
+       [
+        0.14293,
+        0.02828
+       ],
+       [
+        0.14052,
+        0.02709
+       ],
+       [
+        0.13823,
+        0.02577
+       ],
+       [
+        0.13605,
+        0.02434
+       ],
+       [
+        0.13402,
+        0.02282
+       ],
+       [
+        0.13213,
+        0.0212
+       ],
+       [
+        0.13038,
+        0.0195
+       ],
+       [
+        0.1288,
+        0.01774
+       ],
+       [
+        0.12738,
+        0.0159
+       ],
+       [
+        0.12612,
+        0.01402
+       ],
+       [
+        0.12502,
+        0.01208
+       ],
+       [
+        0.12409,
+        0.01012
+       ],
+       [
+        0.12334,
+        0.00813
+       ],
+       [
+        0.12275,
+        0.00612
+       ],
+       [
+        0.12234,
+        0.00409
+       ],
+       [
+        0.12209,
+        0.00205
+       ],
+       [
+        0.122,
+        -5e-05
+       ],
+       [
+        0.122,
+        -0.014
+       ]
+      ]
+     }
+    },
+    {
+     "type": "impeller",
+     "mat": "body",
+     "n": 6,
+     "hub": [
+      [
+       0.0,
+       0.035
+      ],
+      [
+       0.00589,
+       0.03528
+      ],
+      [
+       0.01175,
+       0.03611
+      ],
+      [
+       0.01756,
+       0.0375
+      ],
+      [
+       0.02329,
+       0.03943
+      ],
+      [
+       0.02893,
+       0.0419
+      ],
+      [
+       0.03444,
+       0.0449
+      ],
+      [
+       0.03981,
+       0.04841
+      ],
+      [
+       0.045,
+       0.05242
+      ],
+      [
+       0.05,
+       0.05691
+      ],
+      [
+       0.05479,
+       0.06186
+      ],
+      [
+       0.05934,
+       0.06726
+      ],
+      [
+       0.06364,
+       0.07308
+      ],
+      [
+       0.06767,
+       0.07929
+      ],
+      [
+       0.0714,
+       0.08586
+      ],
+      [
+       0.07483,
+       0.09278
+      ],
+      [
+       0.07794,
+       0.1
+      ],
+      [
+       0.08072,
+       0.1075
+      ],
+      [
+       0.08315,
+       0.11525
+      ],
+      [
+       0.08522,
+       0.12321
+      ],
+      [
+       0.08693,
+       0.13135
+      ],
+      [
+       0.08827,
+       0.13964
+      ],
+      [
+       0.08923,
+       0.14803
+      ],
+      [
+       0.08981,
+       0.1565
+      ],
+      [
+       0.09,
+       0.165
+      ]
+     ],
+     "shroud": [
+      [
+       0.0,
+       0.115
+      ],
+      [
+       0.00262,
+       0.11511
+      ],
+      [
+       0.00522,
+       0.11543
+      ],
+      [
+       0.0078,
+       0.11596
+      ],
+      [
+       0.01035,
+       0.1167
+      ],
+      [
+       0.01286,
+       0.11765
+      ],
+      [
+       0.01531,
+       0.11881
+      ],
+      [
+       0.01769,
+       0.12016
+      ],
+      [
+       0.02,
+       0.1217
+      ],
+      [
+       0.02222,
+       0.12343
+      ],
+      [
+       0.02435,
+       0.12533
+      ],
+      [
+       0.02637,
+       0.12741
+      ],
+      [
+       0.02828,
+       0.12964
+      ],
+      [
+       0.03007,
+       0.13203
+      ],
+      [
+       0.03173,
+       0.13456
+      ],
+      [
+       0.03326,
+       0.13722
+      ],
+      [
+       0.03464,
+       0.14
+      ],
+      [
+       0.03587,
+       0.14289
+      ],
+      [
+       0.03696,
+       0.14587
+      ],
+      [
+       0.03788,
+       0.14893
+      ],
+      [
+       0.03864,
+       0.15206
+      ],
+      [
+       0.03923,
+       0.15525
+      ],
+      [
+       0.03966,
+       0.15847
+      ],
+      [
+       0.03991,
+       0.16173
+      ],
+      [
+       0.04,
+       0.165
+      ]
+     ],
+     "wrapM": [
+      [
+       0.0,
+       -0.0
+      ],
+      [
+       0.1,
+       -16.32
+      ],
+      [
+       0.2,
+       -31.9
+      ],
+      [
+       0.3,
+       -46.73
+      ],
+      [
+       0.4,
+       -60.8
+      ],
+      [
+       0.5,
+       -74.12
+      ],
+      [
+       0.6,
+       -86.7
+      ],
+      [
+       0.7,
+       -98.52
+      ],
+      [
+       0.8,
+       -109.6
+      ],
+      [
+       0.9,
+       -119.93
+      ],
+      [
+       1.0,
+       -129.5
+      ]
+     ],
+     "thick": 0.008,
+     "clearance": 0
+    }
+   ]
+  },
+  {
+   "id": "c_chiocciola",
+   "name": "Corpo a chiocciola e bocca di mandata",
+   "short": "Chiocciola",
+   "section": "Mandata",
+   "text": "La chiocciola raccoglie l’acqua che esce dalla girante lungo tutta la circonferenza: la sezione cresce con l’angolo perché raccoglie sempre più portata. Il tronco finale è un divergente che rallenta il flusso fino alla bocca di mandata e recupera pressione. La lingua (il punto in cui la spirale si chiude) è progettata per il punto di massimo rendimento.",
+   "facts": [
+    [
+     "Bocca di mandata",
+     "DN 150"
+    ],
+    [
+     "Sezione",
+     "circolare crescente"
+    ],
+    [
+     "Velocità in mandata",
+     "≈ 11 m/s alla portata nominale"
+    ]
+   ],
+   "course": "Nella chiocciola il momento della quantità di moto si conserva (c_u·r ≈ costante): l’energia cinetica in uscita dalla girante diventa pressione statica.",
+   "color": "casing",
+   "explode": [
+    0.2,
+    0.35,
+    -0.25
+   ],
+   "materials": {
+    "body": {
+     "color": "casing",
+     "T": 20,
+     "metal": 0.45,
+     "rough": 0.5
+    }
+   },
+   "parts": [
+    {
+     "type": "volute",
+     "mat": "body",
+     "wall": 0.01,
+     "casing": true,
+     "x": 0.065,
+     "r3": 0.178,
+     "rc0": 0.014,
+     "rcMax": 0.066,
+     "overlap": 0.35,
+     "tongue": 270,
+     "discharge": {
+      "length": 0.3,
+      "rExit": 0.075
+     }
+    },
+    {
+     "type": "revolve",
+     "mat": "body",
+     "casing": true,
+     "profile": {
+      "polygon": [
+       [
+        0.131,
+        -0.005
+       ],
+       [
+        0.137,
+        -0.014
+       ],
+       [
+        0.137,
+        -0.00015
+       ],
+       [
+        0.13704,
+        0.00081
+       ],
+       [
+        0.13714,
+        0.00166
+       ],
+       [
+        0.13732,
+        0.00251
+       ],
+       [
+        0.13757,
+        0.00338
+       ],
+       [
+        0.13789,
+        0.00425
+       ],
+       [
+        0.13833,
+        0.00517
+       ],
+       [
+        0.13889,
+        0.00615
+       ],
+       [
+        0.13954,
+        0.00712
+       ],
+       [
+        0.14032,
+        0.00812
+       ],
+       [
+        0.14121,
+        0.00912
+       ],
+       [
+        0.14223,
+        0.01011
+       ],
+       [
+        0.14339,
+        0.01111
+       ],
+       [
+        0.14466,
+        0.01206
+       ],
+       [
+        0.14608,
+        0.01299
+       ],
+       [
+        0.1476,
+        0.01386
+       ],
+       [
+        0.1492,
+        0.01466
+       ],
+       [
+        0.15098,
+        0.01541
+       ],
+       [
+        0.15282,
+        0.01609
+       ],
+       [
+        0.15469,
+        0.01665
+       ],
+       [
+        0.15666,
+        0.01713
+       ],
+       [
+        0.15871,
+        0.0175
+       ],
+       [
+        0.16077,
+        0.01778
+       ],
+       [
+        0.16287,
+        0.01794
+       ],
+       [
+        0.16561,
+        0.01801
+       ],
+       [
+        0.205,
+        0.01801
+       ],
+       [
+        0.205,
+        0.03
+       ],
+       [
+        0.16528,
+        0.03
+       ],
+       [
+        0.16225,
+        0.02992
+       ],
+       [
+        0.15951,
+        0.02971
+       ],
+       [
+        0.15682,
+        0.02935
+       ],
+       [
+        0.15415,
+        0.02886
+       ],
+       [
+        0.15155,
+        0.02823
+       ],
+       [
+        0.14903,
+        0.02747
+       ],
+       [
+        0.14657,
+        0.02657
+       ],
+       [
+        0.14418,
+        0.02556
+       ],
+       [
+        0.14194,
+        0.02444
+       ],
+       [
+        0.1398,
+        0.02321
+       ],
+       [
+        0.13777,
+        0.02188
+       ],
+       [
+        0.13589,
+        0.02047
+       ],
+       [
+        0.13415,
+        0.01898
+       ],
+       [
+        0.13255,
+        0.01743
+       ],
+       [
+        0.13111,
+        0.01581
+       ],
+       [
+        0.12981,
+        0.01415
+       ],
+       [
+        0.12867,
+        0.01244
+       ],
+       [
+        0.12768,
+        0.0107
+       ],
+       [
+        0.12685,
+        0.00895
+       ],
+       [
+        0.12618,
+        0.00718
+       ],
+       [
+        0.12567,
+        0.0054
+       ],
+       [
+        0.1253,
+        0.0036
+       ],
+       [
+        0.12508,
+        0.0018
+       ],
+       [
+        0.125,
+        -7e-05
+       ],
+       [
+        0.125,
+        -0.014
+       ],
+       [
+        0.124,
+        -0.005
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "c_coperchio",
+   "name": "Coperchio e tenuta meccanica",
+   "short": "Tenuta",
+   "section": "Girante",
+   "text": "Il coperchio chiude la cassa dal lato del motore; dove passa l’albero una tenuta meccanica (due anelli che strisciano uno sull’altro, tenuti premuti da una molla) impedisce all’acqua in pressione di uscire. Gli anelli di usura sull’occhio della girante limitano il ricircolo dalla mandata all’aspirazione.",
+   "facts": [
+    [
+     "Tenuta",
+     "meccanica, ad anelli striscianti"
+    ],
+    [
+     "Perdite volumetriche",
+     "≈ 2–3 % della portata"
+    ]
+   ],
+   "color": "cover",
+   "explode": [
+    0.45,
+    0,
+    0
+   ],
+   "materials": {
+    "body": {
+     "color": "cover",
+     "T": 20,
+     "metal": 0.45,
+     "rough": 0.5
+    }
+   },
+   "parts": [
+    {
+     "type": "revolve",
+     "mat": "body",
+     "casing": true,
+     "profile": {
+      "ring": [
+       0.045,
+       0.205,
+       0.104,
+       0.116
+      ]
+     }
+    },
+    {
+     "type": "revolve",
+     "mat": "body",
+     "profile": {
+      "polygon": [
+       [
+        0.034,
+        0.116
+       ],
+       [
+        0.075,
+        0.116
+       ],
+       [
+        0.075,
+        0.17
+       ],
+       [
+        0.034,
+        0.17
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "c_supporto",
+   "name": "Albero e supporto dei cuscinetti",
+   "short": "Albero",
+   "section": "Trasmissione",
+   "text": "L’albero porta la girante a sbalzo ed è sostenuto da due cuscinetti a rotolamento nel supporto. Il cuscinetto lato giunto assorbe anche la spinta assiale, dovuta alla differenza di pressione tra le due facce della girante.",
+   "facts": [
+    [
+     "Velocità",
+     "1.450 giri/min"
+    ],
+    [
+     "Coppia alla portata nominale",
+     "≈ 430 N·m"
+    ]
+   ],
+   "course": "Coppia all’albero: C = P/ω = 65.000 / (2π·1.450/60) ≈ 430 N·m.",
+   "color": "bracket",
+   "explode": [
+    0.75,
+    0,
+    0
+   ],
+   "materials": {
+    "shaft": {
+     "color": "shaft",
+     "T": 20,
+     "metal": 0.85,
+     "rough": 0.25
+    },
+    "body": {
+     "color": "bracket",
+     "T": 30,
+     "metal": 0.4,
+     "rough": 0.55
+    }
+   },
+   "parts": [
+    {
+     "type": "cylinder",
+     "mat": "shaft",
+     "r": 0.028,
+     "h": 0.92,
+     "seg": 32,
+     "axis": "x",
+     "at": [
+      0.56,
+      0,
+      0
+     ],
+     "spool": "rotor"
+    },
+    {
+     "type": "revolve",
+     "mat": "body",
+     "profile": {
+      "polygon": [
+       [
+        0.06,
+        0.17
+       ],
+       [
+        0.115,
+        0.17
+       ],
+       [
+        0.115,
+        0.2
+       ],
+       [
+        0.085,
+        0.22
+       ],
+       [
+        0.085,
+        0.68
+       ],
+       [
+        0.11,
+        0.7
+       ],
+       [
+        0.11,
+        0.76
+       ],
+       [
+        0.06,
+        0.76
+       ]
+      ]
+     }
+    },
+    {
+     "type": "box",
+     "mat": "body",
+     "size": [
+      0.26,
+      0.24,
+      0.18
+     ],
+     "at": [
+      0.5,
+      -0.18,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "c_motore",
+   "name": "Motore elettrico e giunto",
+   "short": "Motore",
+   "section": "Trasmissione",
+   "text": "Un motore asincrono trifase a 4 poli trascina la pompa tramite un giunto elastico. Alimentato da un inverter può cambiare velocità: è il modo più efficiente per regolare la portata, perché la curva della pompa si sposta invece di dissipare energia in una valvola.",
+   "facts": [
+    [
+     "Motore",
+     "asincrono trifase, 4 poli"
+    ],
+    [
+     "Potenza di targa",
+     "75 kW"
+    ],
+    [
+     "Velocità",
+     "1.450 giri/min a 50 Hz"
+    ]
+   ],
+   "course": "Leggi di affinità: a giri diversi Q₂/Q₁ = n₂/n₁, H₂/H₁ = (n₂/n₁)², P₂/P₁ = (n₂/n₁)³. Riducendo i giri del 20 % la potenza scende circa alla metà.",
+   "color": "motor",
+   "explode": [
+    1.1,
+    0,
+    0
+   ],
+   "materials": {
+    "shaft": {
+     "color": "shaft",
+     "T": 20,
+     "metal": 0.85,
+     "rough": 0.25
+    },
+    "body": {
+     "color": "motor",
+     "T": 45,
+     "metal": 0.35,
+     "rough": 0.5
+    }
+   },
+   "parts": [
+    {
+     "type": "cylinder",
+     "mat": "shaft",
+     "r": 0.075,
+     "h": 0.08,
+     "seg": 32,
+     "axis": "x",
+     "at": [
+      1.02,
+      0,
+      0
+     ],
+     "spool": "rotor"
+    },
+    {
+     "type": "cylinder",
+     "mat": "body",
+     "r": 0.21,
+     "h": 0.64,
+     "seg": 48,
+     "axis": "x",
+     "at": [
+      1.42,
+      0,
+      0
+     ]
+    },
+    {
+     "type": "cylinder",
+     "mat": "body",
+     "r": 0.17,
+     "h": 0.06,
+     "seg": 40,
+     "axis": "x",
+     "at": [
+      1.77,
+      0,
+      0
+     ]
+    },
+    {
+     "type": "box",
+     "mat": "body",
+     "size": [
+      0.2,
+      0.12,
+      0.18
+     ],
+     "at": [
+      1.38,
+      0.25,
+      0
+     ]
+    },
+    {
+     "type": "box",
+     "mat": "body",
+     "size": [
+      0.5,
+      0.15,
+      0.36
+     ],
+     "at": [
+      1.42,
+      -0.23,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "c_basamento",
+   "name": "Basamento",
+   "short": "Basamento",
+   "section": "Trasmissione",
+   "text": "Pompa e motore sono fissati sullo stesso basamento d’acciaio, ancorato al pavimento del locale pompe: l’allineamento tra i due alberi deve restare preciso per non danneggiare giunto e cuscinetti.",
+   "facts": [
+    [
+     "Materiale",
+     "acciaio saldato"
+    ]
+   ],
+   "color": "base",
+   "explode": [
+    0,
+    -0.25,
+    0
+   ],
+   "materials": {
+    "body": {
+     "color": "base",
+     "T": 20,
+     "metal": 0.4,
+     "rough": 0.6
+    }
+   },
+   "parts": [
+    {
+     "type": "box",
+     "mat": "body",
+     "size": [
+      2.25,
+      0.06,
+      0.62
+     ],
+     "at": [
+      0.7,
+      -0.335,
+      0
+     ]
+    },
+    {
+     "type": "box",
+     "mat": "body",
+     "size": [
+      0.12,
+      0.1,
+      0.22
+     ],
+     "at": [
+      0.065,
+      -0.255,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "id": "c_flusso",
+   "name": "L’acqua nella pompa",
+   "short": "Flusso",
+   "section": "Simulazione",
+   "text": "Le frecce sono particelle d’acqua che seguono linee di corrente calcolate: velocità e colore vengono dal modello. All’occhio della girante la pressione è la più bassa; nella girante l’acqua riceve lavoro e la pressione sale, nella chiocciola rallenta e la pressione cresce ancora. Scegli il colore “Pressione” e alza la pompa nell’impianto: l’ingresso diventa sempre più blu.",
+   "facts": [
+    [
+     "Linee di corrente",
+     "36 (3 altezze × 12 angoli)"
+    ],
+    [
+     "Rallentamento",
+     "40 volte"
+    ],
+    [
+     "Modello",
+     "monodimensionale lungo le linee di corrente, fluido incomprimibile"
+    ]
+   ],
+   "course": "Composizione delle velocità: c = w + u. Lavoro ricevuto dall’acqua: Δp₀/ρ = u₂·c_u2 − perdite; prevalenza H = Δp₀/(ρg).",
+   "color": "flow",
+   "explode": [
+    0,
+    0,
+    0
+   ],
+   "materials": {},
+   "parts": []
+  },
+  {
+   "id": "c_cavitazione",
+   "name": "Cavitazione",
+   "short": "Cavitazione",
+   "section": "Simulazione",
+   "text": "Dove la pressione scende sotto la tensione di vapore (2,3 kPa a 20 °C) l’acqua bolle anche a temperatura ambiente: nascono bolle di vapore sul dorso delle pale, vicino al bordo d’attacco e verso il disco di copertura. Trascinate dove la pressione risale, le bolle implodono in pochi millesimi di secondo: microgetti e onde di pressione erodono il metallo, la pompa vibra, fa rumore e la prevalenza cala. Nel modello le bolle bianche compaiono quando NPSH disponibile < NPSH di inizio cavitazione.",
+   "facts": [
+    [
+     "Tensione di vapore a 20 °C",
+     "2,34 kPa"
+    ],
+    [
+     "NPSH richiesto (3 %)",
+     "4,5 m al punto nominale"
+    ],
+    [
+     "Criterio",
+     "NPSHa ≥ NPSH3 + 0,5 m"
+    ]
+   ],
+   "course": "NPSH disponibile = (p_atm − p_v)/(ρg) − z − h_asp. Con 101,3 kPa e acqua a 20 °C il primo termine vale 10,1 m: è il limite teorico dell’aspirazione. Non si può aspirare acqua da più di 10 m nemmeno con una pompa perfetta.",
+   "color": "cav",
+   "explode": [
+    0,
+    0,
+    0
+   ],
+   "materials": {},
+   "parts": []
+  }
+ ]
+}

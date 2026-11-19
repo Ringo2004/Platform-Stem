@@ -14,8 +14,13 @@ export function createTheory(data: MachineData): HTMLElement {
     if (!groups.has(c.section)) groups.set(c.section, []);
     groups.get(c.section)!.push(c);
   }
+  // macchine di un impianto: una sezione per macchina, con la scheda d'insieme in testa
+  for (const m of data.pumpMachines ?? []) {
+    groups.set(m.title, [{ ...m.overview, id: '', short: '', color: 'flow', explode: [0, 0, 0], materials: {}, parts: [] }, ...m.components]);
+  }
+  const palette = { ...Object.assign({}, ...(data.pumpMachines ?? []).map(m => m.palette)), ...data.palette } as Record<string, string>;
   const slug = (s: string) => 'sez-' + s.toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g, '-');
-  const color = (c: string) => (c.startsWith('#') ? c : data.palette[c] ?? '#888');
+  const color = (c: string) => (c.startsWith('#') ? c : palette[c] ?? '#888');
 
   const card = (d: Card, extra = '', dot = '#f0a43a') => `
     <article class="card">
@@ -41,7 +46,7 @@ export function createTheory(data: MachineData): HTMLElement {
     ${[...groups].map(([sec, list]) => `
       <section class="theory-group" id="${slug(sec)}">
         <h2>${esc(sec)}</h2>
-        ${list.map(c => card(c, `<a class="btn" href="#/esplora/${data.id}?c=${encodeURIComponent(c.id)}">Vedi nel modello 3D</a>`, color(c.color))).join('')}
+        ${list.map(c => card(c, c.id ? `<a class="btn" href="#/esplora/${data.id}?c=${encodeURIComponent(c.id)}">Vedi nel modello 3D</a>` : '', color(c.color))).join('')}
       </section>`).join('')}
     <p class="note">${esc(data.note)}</p>
   </div>`;
